@@ -10,16 +10,11 @@ OPS TOOLS
 .. toctree::
    :maxdepth: 2
 
-   JumpServer <JumpServer>
+   Zabbix Server <Zabbix_Server>
 
 .. toctree::
    :maxdepth: 2
 
-   Zabbix Server <Zabbix Server>
-
-.. toctree::
-   :maxdepth: 2
-
-   Zabbix Agent <Zabbix Agent>
+   Zabbix Agent <Zabbix_Agent>
 
 
