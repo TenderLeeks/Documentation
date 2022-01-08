@@ -310,7 +310,7 @@ EFK日志分析系统
 
 godaddy DNS 添加解析，如图所示：
 
-![](220108-zdyymsy.png)
+![](220108-gdddnssz.png)
 
 
 
