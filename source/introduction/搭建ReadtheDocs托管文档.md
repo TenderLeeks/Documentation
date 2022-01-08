@@ -120,11 +120,12 @@
 
    修改前页面样式，如图所示:
 
-   <img src="xgq.png" style="zoom:50%;" />
+   ![](xgq.png)
+
 
    修改后页面的样式，如图所示：
 
-   <img src="xgh.png" style="zoom:50%;" />
+   ![](xgh.png)
 
 ## 支持markdown编写
 
@@ -237,7 +238,7 @@ source/.DS_Store
 
 在构建过程中出现任何问题，都可以登录readthedoc找到项目中的 `构建` 页查看构建历史，点击任何一条查看详细日志:
 
-<img src="rtdsgj.png" style="zoom: 33%;" />
+![](rtdsgj.png)
 
 ## index.rst 文件编写规则
 
@@ -294,4 +295,4 @@ EFK日志分析系统
 
 文件目录如图：
 
-<img src="220108-pytools.png" style="zoom:33%;" />
+![](220108-pytools.png)
