@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Documentation's documentation!
+欢迎使用 Leeks 的文档！
 =========================================
 
 .. toctree::
@@ -12,16 +12,15 @@ Welcome to Documentation's documentation!
 
 
 .. toctree::
-   :caption: Getting Started
    :maxdepth: 2
 
-   EFL日志管理系统
+   运维工具 <ops_tools/index>
 
 
+.. toctree::
+   :caption: EFK
+   :maxdepth: 2
 
-Indices and tables
-==================
+   EFK日志分析系统 <EFK/index>
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+

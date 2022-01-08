@@ -2,3 +2,5 @@ build/
 venv/
 .idea/
 source/.DS_Store
+.DS_Store
+
