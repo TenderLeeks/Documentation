@@ -334,23 +334,23 @@ $ chmod 777 /var/www/html/zabbix/conf
 
 ## 浏览器访问配置
 
-<img src="./1585050808443-esm.png" alt="img" style="zoom:50%;" />
+![image](1585050808443-esm.png)
 
-<img src="./1585050885820-60m.png" alt="img" style="zoom:50%;" />
+![image](1585050885820-60m.png)
 
-<img src="./1585050982574-u0t.png" alt="img" style="zoom:50%;" />
+![image](1585050982574-u0t.png)
 
-<img src="./1585051683456-dzh.png" alt="img" style="zoom:50%;" />
+![image](1585051683456-dzh.png)
 
-<img src="./1585051701602-sgz.png" alt="img" style="zoom:50%;" />
+![image](1585051701602-sgz.png)
 
-<img src="./1585052024866-vog.png" alt="img" style="zoom:50%;" />
+![image](1585052024866-vog.png)
 
-<img src="./1585052068171-xvc.png" alt="img" style="zoom:50%;" />
+![image](1585052068171-xvc.png)
 
-<img src="./1585052083833-bxq.png" alt="img" style="zoom:50%;" />
+![image](1585052083833-bxq.png)
 
-<img src="./1585052162549-m45.png" alt="img" style="zoom:50%;" />
+![image](1585052162549-m45.png)
 
 ## 配置https域名代理
 
