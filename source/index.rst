@@ -8,13 +8,14 @@
 
 .. toctree::
 
-   简介 <introduction/简介>
+   搭建ReadtheDocs托管文档 <introduction/搭建ReadtheDocs托管文档>
 
 
 .. toctree::
    :maxdepth: 2
 
    运维工具 <ops_tools/index>
+   其他栏目 <other/index>
 
 
 .. toctree::
