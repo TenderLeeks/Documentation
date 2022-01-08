@@ -7,6 +7,7 @@
 =========================================
 
 .. toctree::
+   :maxdepth: 1
 
    搭建ReadtheDocs托管文档 <introduction/搭建ReadtheDocs托管文档>
 
@@ -26,7 +27,7 @@
    :caption: Linux系统环境
    :maxdepth: 2
 
-   监控相关工具 <Linux/环境部署/index>
+   Linux环境部署 <Linux/环境部署/index>
    EFK日志分析工具 <Linux/系统优化/index>
    自动化CICD工具 <Linux/Git使用/index>
 

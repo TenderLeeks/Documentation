@@ -1,4 +1,6 @@
-# 环境说明
+# EFK日志分析系统
+
+## 环境说明
 
 | 名称             | 版本    | 主机名          | IP             |
 | ---------------- | ------- | --------------- | -------------- |
@@ -10,11 +12,9 @@
 
 **注意：三个组件（elasticsearch，filebeat，kibana）版本必须一致，elasticsearch必须3台以上且总数量为单数。**
 
+## elasticsearch + filebeta + kibana 日志采集
 
-
-# elasticsearch + filebeta + kibana 日志采集
-
-## elasticsearch 安装
+### elasticsearch 安装
 
 1. 下载安装
 
@@ -170,9 +170,7 @@
 
    
 
-
-
-## filebeat 安装
+### filebeat 安装
 
 1. 下载安装
 
@@ -242,7 +240,7 @@
 
    
 
-## kibana 安装
+### kibana 安装
 
 1. 下载
 
@@ -280,17 +278,13 @@
 
    
 
+## kibana 界面配置
 
 
-# kibana 界面配置
 
 
 
- 
-
-# filebeat 配置说明
-
-
+ ### filebeat 配置说明
 
 ```yaml
 # 文件输入
@@ -337,9 +331,7 @@ logging.files:  # 日志文件
   permissions: 0600  # 日志轮转权限
 ```
 
-
-
-# kibana 配置说明
+## kibana 配置说明
 
 ```yaml
 server.port: 5601  # 本节点访问端口
@@ -350,9 +342,7 @@ elasticsearch.hosts: ["http://192.168.66.43:9200", "http://192.168.67.44:9200", 
 i18n.locale: "zh-CN"
 ```
 
-
-
-# elasticsearch 配置说明
+## elasticsearch 配置说明
 
 ```yaml
 cluster.name: my-application  # 集群名字
