@@ -19,6 +19,7 @@
    EFK日志分析工具 <ops_tools/efk-log/index>
    自动化CICD工具 <ops_tools/ci-cd/index>
    OpenVPN <ops_tools/openvpn/index>
+   网络代理配置 <ops_tools/web-proxy/index>
 
 
 .. toctree::
