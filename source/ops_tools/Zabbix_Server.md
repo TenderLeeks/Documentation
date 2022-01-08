@@ -334,8 +334,10 @@ $ chmod 777 /var/www/html/zabbix/conf
 
 ## 浏览器访问配置
 
-![image](1585050808443-esm.png)
+![](1585050808443-esm.png)
+
 ![image](1585050885820-60m.png)
+
 ![image](1585050982574-u0t.png)
 ![image](1585051683456-dzh.png)
 ![image](1585051701602-sgz.png)
