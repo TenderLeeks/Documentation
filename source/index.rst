@@ -18,7 +18,16 @@
    监控相关工具 <ops_tools/monitor/index>
    EFK日志分析工具 <ops_tools/efk-log/index>
    自动化CICD工具 <ops_tools/ci-cd/index>
+   OpenVPN <ops_tools/openvpn/index>
 
+
+.. toctree::
+   :caption: Linux系统环境
+   :maxdepth: 2
+
+   监控相关工具 <Linux/环境部署/index>
+   EFK日志分析工具 <Linux/系统优化/index>
+   自动化CICD工具 <Linux/Git使用/index>
 
 
 
