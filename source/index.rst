@@ -12,16 +12,13 @@
 
 
 .. toctree::
+   :caption: 运维工具环境部署记录
    :maxdepth: 2
 
-   运维工具 <ops_tools/index>
-   其他栏目 <other/index>
+   监控相关工具 <ops_tools/monitor/index>
+   EFK日志分析工具 <ops_tools/efk-log/index>
+   自动化CICD工具 <ops_tools/ci-cd/index>
 
 
-.. toctree::
-   :caption: EFK
-   :maxdepth: 2
-
-   EFK日志分析系统 <EFK/index>
 
 
