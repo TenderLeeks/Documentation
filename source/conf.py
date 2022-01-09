@@ -30,9 +30,9 @@ source_suffix = ['.rst', '.md']
 
 # -- Project information -----------------------------------------------------
 
-project = 'Documentation'
-copyright = '2022, TenderLeeks'
-author = 'TenderLeeks'
+project = "Leeks' Handy Notes"
+copyright = '2022, Leeks'
+author = 'Leeks'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
