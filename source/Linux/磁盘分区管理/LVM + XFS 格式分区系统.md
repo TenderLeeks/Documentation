@@ -1,6 +1,6 @@
-## LVM + XFS 格式分区系统
+# LVM + XFS 格式分区系统
 
-### CentOS 7 系统创建分区
+## CentOS 7 系统创建分区
 
 本次操作以此片vdb为例
 
@@ -18,7 +18,7 @@ $ echo "UUID=ea4b86d4-f2b9-4906-b00d-9fe66551f8cc /opt xfs noatime,nodiratime,in
 $ mount -a  # 挂载
 ```
 
-### CentOS 7 系统分区扩容
+## CentOS 7 系统分区扩容
 
 ```shell
 # 增加一块新磁盘vdc，查看新增磁盘信息
@@ -37,7 +37,7 @@ $ btrfs device add /dev/vdc /opt
 $ df -h
 ```
 
-### Debian 9  系统创建分区
+## Debian 9  系统创建分区
 
 ```shell
 $ apt-get update -y
@@ -51,7 +51,7 @@ $ mount -a
 $ df -h
 ```
 
-### 删除 LVM
+## 删除 LVM
 
 1. 查看卷组VG相关信息
 
@@ -225,9 +225,7 @@ $ df -h
    ```
 
 
-
-
-### 增加 LVM 容量
+## 增加 LVM 容量
 
 ```shell
 # 将新硬盘分区并转成pv
@@ -239,7 +237,7 @@ $ lvresize -L +7G /dev/data/mydata
 $ resize2fs -f /dev/data/mydata
 ```
 
-### LVM 扩展命令
+## LVM 扩展命令
 
 ```shell
 $ lvreduce  # 减少lv的容量
@@ -247,7 +245,7 @@ $ vgreduce  # 从vg中抽出pv
 $ pvmove  # 将组中的指定pv上的数据移走，一般是pv出错替换硬盘时使用
 ```
 
-### 移除LVM中的硬盘
+## 移除LVM中的硬盘
 
 **请不要轻易缩容和移除硬盘**，移除硬盘请参考[此处](http://mnstory.net/2017/10/20/lvm-reduce/)文档
 
@@ -257,7 +255,7 @@ $ vgreduce vg0 /dev/sdd  # 将硬盘/dev/sdd从卷组vg0中移除
 $ pvremove /dev/sdd  # 将sdd硬盘从pv中移除
 ```
 
-### 使用iostat 命令来查看磁盘读写情况
+## 使用iostat命令查看磁盘读写情况
 
 ```shell
 $ iostat 1 5
