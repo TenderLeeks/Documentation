@@ -30,6 +30,7 @@
    Linux环境部署 <Linux/环境部署/index>
    EFK日志分析工具 <Linux/系统优化/index>
    自动化CICD工具 <Linux/Git使用/index>
+   磁盘分区管理 <Linux/磁盘分区管理/index>
 
 
 
