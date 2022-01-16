@@ -30,7 +30,7 @@ source_suffix = ['.rst', '.md']
 
 # -- Project information -----------------------------------------------------
 
-project = "Leeks' Handy Notes"
+git = "Leeks' Handy Notes"
 copyright = '2022, Leeks'
 author = 'Leeks'
 
