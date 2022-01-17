@@ -5,3 +5,4 @@
    :maxdepth: 3
 
    Jenkins <Jenkins>
+   GitLab <gitlab服务>
