@@ -140,6 +140,11 @@ unicorn['port'] = 18089  # 可不修改，默认监听8080端口
 # 禁用创建组权限，GitLab默认所有的注册用户都可以创建组
 gitlab_rails['gitlab_default_can_create_group'] = false
 
+### 设置https域名还需要添加证书
+nginx['redirect_http_to_https'] = true
+nginx['ssl_certificate' = "/etc/gitlab/ssl/gitlab-ce.mshk.top.crt"
+nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/gitlab-ce.mshk.top.key"
+# 证书名称需要更改为和域名相同的名称，证书需上传到目录 /etc/gitlab/ssl 中。
 
 # 禁用内不 nginx 组件
 nginx['enable'] = false
