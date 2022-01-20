@@ -34,7 +34,6 @@
 
 
 
-.. toctree::
    :caption: 数据库笔记
    :maxdepth: 2
 
@@ -48,6 +47,7 @@
    :maxdepth: 2
 
    polygon <BlockChain/polygon/index>
+   aelf <BlockChain/aelf/index>
 
 
 
