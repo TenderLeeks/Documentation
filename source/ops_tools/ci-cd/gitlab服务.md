@@ -252,95 +252,42 @@ server {
 ## Gitlab 备份
 
 ```shell
-gitlab 备份
-gitlab-rake gitlab:backup:create
-或
-sudo /usr/bin/gitlab-rake gitlab:backup:create
-ps: 路径在/var/opt/gitlab/backups目录下
+# 执行后会生成一个[编码]_[年月日]_[版本号]_gitlab_backup.tar格式的备份文件,例如: 1642919929_2022_01_23_14.4.2_gitlab_backup.tar
+$ gitlab-rake gitlab:backup:create
+# 红色字体描述为 gitlab.rb 和gitlab-secrets.json为敏感文件需要手动备份
 
+# 查看备份文件保存目录
+$ cat /etc/gitlab/gitlab.rb | grep "backup_path" | egrep -v "^$|^#"
 gitlab_rails['backup_path'] = "/var/opt/gitlab/backups"
-执行后会生成一个[编码]_[年月日]_[版本号]_gitlab_backup.tar格式的备份文件,例如1551348332_2018_07_20_11.0.0_gitlab_backup.tar
-
-修改备份路径, 进入/gitlab.rb来修改
-
-通过/etc/gitlab/gitlab.rb配置文件来修改默认存放备份文件的目录
-
-gitlab_rails['backup_path'] = "/xxxx/gitlab_backup"
-修改后再重新配置gitlab应用程序
-
-gitlab-ctl reconfigure
 
 
-使用以下命令完整备份数据。 在/ var / opt / gitlab / backups目录下创建的默认备份，可以在/etc/gitlab/gitlab.rb文件中进行更改。
-
-sudo gitlab-rake gitlab:backup:create 
-
-您还可以添加相同的命令调度程序以每晚备份数据。 将以下作业添加到系统crontab中。
-
+# 可以添加备份命令crontab中。
 0   22  *  *  *   sudo gitlab-rake gitlab:backup:create
-
-
-
-修改配置文件
-# 打开gitlab配置文件
-vim /etc/gitlab/gitlab.rb
-
-#设置备份文件的保存位置
-gitlab_rails['backup_path'] = "/data/tools/gitlab/backup"
-
-#设置备份文件的过期时间，单位为秒，默认7天
-gitlab_rails['backup_keep_time'] = 604800
-执行wq保存后，刷新配置
-
-gitlab-ctl reconfigure
-2）执行备份命令验证
-执行备份命令，去对应的文件路径查看是否已经创建了备份文件
-
-gitlab-rake gitlab:backup:create
-
-
-红色字体描述为 gitlab.rb 和gitlab-secrets.json为敏感文件需要手动备份
-​
-
-3）通过cron定时备份
-方法1、在命令行输入: crontab -e 然后添加相应的任务，wq存盘退出。
-
-#输入命令crontab -e
-crontab -e  
-#输入相应的任务
-0 2 * * * /opt/gitlab/bin/gitlab-rake gitlab:backup:create CRON=1  
-方法2、直接编辑/etc/crontab 文件，即vim /etc/crontab，然后添加相应的任务
-
-# edited by ouyang 2017-8-11 添加定时任务，每天凌晨两点，执行gitlab备份
+0 2 * * * gitlab-rake gitlab:backup:create CRON=1  
 0  2    * * *   root    /opt/gitlab/bin/gitlab-rake gitlab:backup:create CRON=1
-重启cron服务
-
-systemctl restart crond.service
-
-
 
 ```
 
-## GitLab 迁移
+## GitLab 恢复备份数据
 
 ```shell
-将原服务器上的备份文件发送至新服务器的相应目录下
-scp /var/opt/gitlab/backups/1551348332_2018_07_20_11.0.0_gitlab_backup.tar root@192.168.1.1:/var/opt/gitlab/backups/
+# 将原服务器上的备份文件发送至新服务器的相应目录下
+$ scp 1642919929_2022_01_23_14.4.2_gitlab_backup.tar 10.10.1.154:/var/opt/gitlab/backups
 
-导入数据
-将新服务器的gitlab服务停止
-// 停止相关数据连接服务
-gitlab-ctl stop unicorn
-gitlab-ctl stop sidekiq
-修改文件权限为777,不然会提示权限不足
-chmod 777 /var/opt/gitlab/backups/1551348332_2018_07_20_11.0.0_gitlab_backup.tar
+### 导入数据
+# 将新服务器的gitlab相关数据连接服务停止
+$ gitlab-ctl stop unicorn
+$ gitlab-ctl stop sidekiq
 
-使用gitlab-rake gitlab:backup:restore恢复,注意:_gitlab_backup.tar不用加,会默认加上.
-gitlab-rake gitlab:backup:restore BACKUP=1551348332_2018_07_20_11.0.0
-会提示yes/no,输入yes
+# 修改文件权限为777,不然会提示权限不足
+$ chmod 777 1642919929_2022_01_23_14.4.2_gitlab_backup.tar
 
-重启gitlab
-gitlab-ctl restart
+# 使用 gitlab-rake gitlab:backup:restore 恢复,注意:_gitlab_backup.tar不用加,会默认加上.
+$ gitlab-rake gitlab:backup:restore BACKUP=1642919929_2022_01_23_14.4.2
+# 会提示yes/no,输入yes
+
+# 重启gitlab
+$ gitlab-ctl restart
 ```
 
 
@@ -396,5 +343,4 @@ sudo gitlab-ctl tail nginx/gitlab_acces.log  # 查看 nginx 访问日志
 sudo gitlab-ctl tail postgresql              # 查看 postgresql 日志
 
 ```
-
 
