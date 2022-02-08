@@ -420,6 +420,37 @@ server {
 }
 ```
 
+## 缓存配置
+
+```nginx
+server {
+    listen       80;
+    server_name  -;
+    location / {
+        root /apps/laikePay/;	
+        try_files $uri $uri/ /index.html;
+    }
+
+    location ^~ /beauty/{
+        alias /apps/laikeBeauty/;
+        # 以下配置解决 html 不缓存，css和js分别缓存7天和30天
+        if ($request_filename ~* .*\.(?:htm|html)$)
+            {
+                add_header Cache-Control "private, no-store, no-cache";  # 不缓存
+            }
+        if ($request_filename ~* .*\.(?:js|css)$)
+            {
+                add_header Cache-Control max-age=604800;  # 缓存7天
+            }
+        if ($request_filename ~* .*\.(?:jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm)$)
+            {
+                add_header Cache-Control max-age=2592000;  # 缓存1月
+            }
+        try_files $uri $uri/ /beauty/index.html;
+    }
+}
+```
+
 ## 重写配置
 
 ```nginx
