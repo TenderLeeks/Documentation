@@ -2,9 +2,7 @@
 
 ## 安装MySQL服务
 
-参考文档：
-
-二进制安装MySQL5.7.md
+[参考文档](https://www.leeks.info/zh_CN/latest/Databases/MySQL/MySQL%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2.html#dockermysql)
 
 ## 源码安装 zabbix server
 
@@ -398,5 +396,4 @@ server{
 
 $ systemctl reload nginx.service 
 ```
-
 
