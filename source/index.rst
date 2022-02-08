@@ -13,7 +13,7 @@
 
 
 .. toctree::
-   :caption: 运维工具环境部署记录
+   :caption: 运维相关工具部署
    :maxdepth: 2
 
    监控相关工具 <ops_tools/monitor/index>
@@ -27,14 +27,12 @@
    :caption: Linux系统环境
    :maxdepth: 2
 
-   Linux环境部署 <Linux/环境部署/index>
-   EFK日志分析工具 <Linux/系统优化/index>
-   自动化CICD工具 <Linux/Git使用/index>
-   磁盘分区管理 <Linux/磁盘分区管理/index>
+   Linux环境部署 <Linux/deploy-env/index>
+   磁盘分区管理 <Linux/disk-management/index>
 
 
-
-   :caption: 数据库笔记
+.. toctree::
+   :caption: 数据库系统
    :maxdepth: 2
 
    MySQL服务 <Databases/MySQL/index>

@@ -8,7 +8,7 @@ $ sudo apt-get update
 $ sudo apt install -y git-all unzip make autoconf build-essential docker.io
 
 # 安装nodejs环境
-# 参考：https://www.leeks.info/zh_CN/latest/Linux/环境部署/环境部署.html#node
+# 参考：https://www.leeks.info/zh_CN/latest/Linux/环境部署/deploy-env.html#node
 
 # 安装ssdb数据库
 $ cd /tmp && wget --no-check-certificate https://github.com/ideawu/ssdb/archive/master.zip
