@@ -38,6 +38,8 @@
    MySQL服务 <Databases/MySQL/index>
    Redis服务 <Databases/Redis/index>
    RabbitMQ服务 <Databases/RabbitMQ/index>
+   Oracle服务 <Databases/Oracle/index>
+
 
 
 .. toctree::
