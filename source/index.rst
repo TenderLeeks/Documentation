@@ -21,6 +21,8 @@
    自动化CICD工具 <ops_tools/ci-cd/index>
    OpenVPN <ops_tools/openvpn/index>
    网络代理配置 <ops_tools/web-proxy/index>
+   KVM虚拟化系统 <ops_tools/kvm/index>
+
 
 
 .. toctree::
