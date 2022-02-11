@@ -188,7 +188,7 @@ irb(main):005:0> exit
 
 Admin Area --> Settings --> Sign-up restrictions --> Sign-up enabled(取消前面的勾） --> save
 
-![](glqxzcgn.png)
+![](img/glqxzcgn.png)
 
 
 

@@ -76,33 +76,35 @@
    $ cat /opt/jenkins/secrets/initialAdminPassword
    ```
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/1585217352073-96s.png?raw=true" alt="1585217352073-96s.png" style="zoom:50%;" />
+   
+
+   ![](img/1585217352073-96s.png)
 
 7. 安装推荐的插件
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/1585217658938-dzi.png?raw=true" alt="1585217658938-dzi.png" style="zoom:50%;" />
+   ![](img/1585217658938-dzi.png)
 
    安装推荐插件需要一点点时间等待，请耐心！！！
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/1585217905951-pnt.png?raw=true" alt="1585217905951-pnt.png" style="zoom:50%;" />
+   ![](img/1585217905951-pnt.png)
 
 8. 登录admin
 
    安装完成后，会进入到创建第一个管理员用户页面，我选择的是继续使用admin账户，如下图所示。
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/1585225430956-jgg.png?raw=true" alt="1585225430956-jgg.png" style="zoom:50%;" />
+   ![](img/1585225430956-jgg.png)
 
 9. 配置 URL
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/1585225452505-py4.png?raw=true" alt="1585225452505-py4.png" style="zoom:50%;" />
+   ![](img/1585225452505-py4.png)
 
    这一步配置完成后，选择开始使用Jenkins。
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/1585225488686-yej.png?raw=true" alt="1585225488686-yej.png" style="zoom:50%;" />
+   ![](img/1585225488686-yej.png)
 
    登录后的页面如下图所示，到这里Jenkins就安装部署完成。
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/1585225512855-bvq.png?raw=true" alt="1585225512855-bvq.png" style="zoom:50%;" />
+   ![](img/1585225512855-bvq.png)
 
 ## Jenkins反向代理配置有误问题修复
 
@@ -145,23 +147,23 @@ server {
 
    插件：Role-based Authorization Strategy
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/image-20220106145715557.png?raw=true" alt="image-20220106145715557" style="zoom:50%;" />
+   ![](img/image-20220106145715557.png)
 
 2. 全局安全配置-授权策略
 
    当插件安装好的时候，授权策略会多出一个Role-Based Strategy选项，选择该项并保存
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/image-20220106151949078.png?raw=true" alt="image-20220106151949078" style="zoom:50%;" />
+   ![](img/image-20220106151949078.png)
 
 3. 管理和分配角色
 
    在系统管理页面进入 Manage and Assign Roles
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/image-20220106161651995.png?raw=true" alt="image-20220106161651995" style="zoom:50%;" />
+   ![](img/image-20220106161651995.png)
 
 4. 管理角色
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/image-20220106161710825.png?raw=true" alt="image-20220106161710825" style="zoom:50%;" />
+   ![](img/image-20220106161710825.png)
 
 5. 全局角色
 
@@ -175,19 +177,19 @@ server {
    >
    > build：操作构建权限
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/image-20220106161753941.png?raw=true" alt="image-20220106161753941" style="zoom:50%;" />
+   ![](img/image-20220106161753941.png)
 
 6. 项目角色
 
    **注意：Pattern是设置正则表达式，其中test.\*表示匹配以test开头的job name**
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/image-20220106161824226.png?raw=true" alt="image-20220106161824226" style="zoom:50%;" />
+   ![](img/image-20220106161824226.png)
 
 7. 分配角色
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/image-20220106161846317.png?raw=true" alt="image-20220106161846317" style="zoom:50%;" />
+   ![](img/image-20220106161846317.png)
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/image-20220106161908033.png?raw=true" alt="image-20220106161908033" style="zoom:50%;" />
+   ![](img/image-20220106161908033.png)
 
-   <img src="https://github.com/TenderLeeks/Resources/blob/main/images/jenkins/image-20220106161920922.png?raw=true" alt="image-20220106161920922" style="zoom:50%;" />
+   ![](img/image-20220106161920922.png)
 

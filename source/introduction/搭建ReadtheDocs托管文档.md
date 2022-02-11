@@ -120,11 +120,11 @@
 
    修改前页面样式，如图所示:
 
-   ![](xgq.png)
+   ![](img/xgq.png)
 
    修改后页面的样式，如图所示：
 
-   ![](xgh.png)
+   ![](img/xgh.png)
 
 ## 支持markdown编写
 
@@ -237,7 +237,7 @@ source/.DS_Store
 
 在构建过程中出现任何问题，都可以登录readthedoc找到项目中的 `构建` 页查看构建历史，点击任何一条查看详细日志:
 
-![](rtdsgj.png)
+![](img/rtdsgj.png)
 
 ## index.rst 文件编写规则
 
@@ -294,11 +294,11 @@ EFK日志分析系统
 
 文件目录如图：
 
-![](220108-pytools.png)
+![](img/220108-pytools.png)
 
 最终页面内容样式，如图所示：
 
-![](220108-zzymbj.png)
+![](img/220108-zzymbj.png)
 
 
 
@@ -306,11 +306,11 @@ EFK日志分析系统
 
 在godaddy购买一个域名，然后在 ReadtheDocs 页面管理中选择域，如图：
 
-![](220108-zdyymsy.png)
+![](img/220108-zdyymsy.png)
 
 godaddy DNS 添加解析，如图所示：
 
-![](220108-gdddnssz.png)
+![](img/220108-gdddnssz.png)
 
 
 
