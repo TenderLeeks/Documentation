@@ -20,9 +20,10 @@
    EFK日志分析工具 <ops_tools/efk-log/index>
    自动化CICD工具 <ops_tools/ci-cd/index>
    OpenVPN <ops_tools/openvpn/index>
-   网络代理配置 <ops_tools/web-proxy/index>
+   Nginx <ops_tools/nginx/index>
    KVM虚拟化系统 <ops_tools/kvm/index>
    Tomcat <ops_tools/tomcat/index>
+   ZeroTier <ops_tools/ZeroTier/index>
 
 
 .. toctree::
