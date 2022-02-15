@@ -24,7 +24,6 @@
    KVM虚拟化系统 <ops_tools/kvm/index>
 
 
-
 .. toctree::
    :caption: Linux系统环境
    :maxdepth: 2
