@@ -68,9 +68,9 @@ RabbitMQ 这款消息队列中间件产品本身是基于 Erlang 编写，Erlang
 
    配置 RabbitMQ 集群首先需要在各个主机上安装并配置 Erlang 和 RabbitMQ
 
-   Erlang安装过程可以参考: [安装Erlang环境](wiz://open_document?guid=3e0cb48f-1f0f-4592-b42e-0ed0c8ee72e3&kbguid=&private_kbguid=fe89a0f7-56e7-4d32-b1af-de509c704437)
+   Erlang安装过程可以参考: [安装Erlang环境](https://www.leeks.info/zh_CN/latest/Databases/RabbitMQ/%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85Erlang%E7%8E%AF%E5%A2%83.html)
 
-   RabbitMQ 具体过程可以参考：[安装RabbitMQ服务](wiz://open_document?guid=829cb210-bc12-4a24-906e-bea045be0d82&kbguid=&private_kbguid=fe89a0f7-56e7-4d32-b1af-de509c704437)
+   RabbitMQ 具体过程可以参考：[安装RabbitMQ服务](https://www.leeks.info/zh_CN/latest/Databases/RabbitMQ/%E5%AE%89%E8%A3%85RabbitMQ%E6%9C%8D%E5%8A%A1.html)
 
    当 Erlang 和 RabbitMQ 安装完成后就可以配置 RabbitMQ 集群了。
 
@@ -268,3 +268,4 @@ http://10.0.7.163:8100/stats
 ![](img/485c6694-d14f-4157-8a93-eac232deb8e3.png)
 
 如果用的是云主机，可以利用云服务商自己的 LB，不一定要用 HAProxy。
+

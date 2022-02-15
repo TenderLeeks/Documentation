@@ -4,7 +4,7 @@ RabbitMQ 是由 LShift 提供的一个 Advanced Message Queuing Protocol (AMQP) 
 
 本文档旨在基于 Erlang 环境在 CentOS 7 系统上安装配置 RabbitMQ
 
-因为 RabbitMQ 是用 Erlang 开发实现的，所以在安装 RabbitMQ 之前需要先配置完成 Erlang 的开发环境，Erlang 的具体安装配置可以参考：[安装Erlang环境](wiz://open_document?guid=3e0cb48f-1f0f-4592-b42e-0ed0c8ee72e3&kbguid=&private_kbguid=fe89a0f7-56e7-4d32-b1af-de509c704437)
+因为 RabbitMQ 是用 Erlang 开发实现的，所以在安装 RabbitMQ 之前需要先配置完成 Erlang 的开发环境，Erlang 的具体安装配置可以参考：[安装Erlang环境](https://www.leeks.info/zh_CN/latest/Databases/RabbitMQ/%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85Erlang%E7%8E%AF%E5%A2%83.html)
 
 ## 安装系统环境及版本如下
 
