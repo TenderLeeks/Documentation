@@ -1,4 +1,4 @@
-# 部署RabbitMQ服务
+# 简单部署RabbitMQ服务
 
 ```shell
 # 1.安装erlang

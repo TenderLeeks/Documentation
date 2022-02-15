@@ -22,6 +22,7 @@
    OpenVPN <ops_tools/openvpn/index>
    网络代理配置 <ops_tools/web-proxy/index>
    KVM虚拟化系统 <ops_tools/kvm/index>
+   Tomcat <ops_tools/tomcat/index>
 
 
 .. toctree::

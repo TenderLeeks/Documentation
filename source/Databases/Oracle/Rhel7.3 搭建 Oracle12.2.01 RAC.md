@@ -114,7 +114,7 @@
 
    **注意：**如果服务器配置是双网卡，不需要操作此步；本服务器为 KVM 虚拟机需要在宿主机上给虚拟机添加网卡；
 
-   [KVM虚拟机在线添加网卡](wiz://open_document?guid=dded58fc-a63a-4f83-9845-874e751d5a4e&kbguid=&private_kbguid=fe89a0f7-56e7-4d32-b1af-de509c704437)
+   [KVM虚拟机在线添加网卡](https://www.leeks.info/zh_CN/latest/ops_tools/kvm/KVM%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%9C%A8%E7%BA%BF%E6%B7%BB%E5%8A%A0%E7%BD%91%E5%8D%A1.html)
 
 5. 安装依赖包
 
@@ -304,7 +304,7 @@
 
 **注意：**本次使用软件 iscsi 服务来搭建 Oracle rac 共享存储；
 
-具体操作流程请参照文档：[iscsi 构建 RAC 共享存储](wiz://open_document?guid=bf1e2417-074e-426c-92f0-1b12e1525d5c&kbguid=&private_kbguid=fe89a0f7-56e7-4d32-b1af-de509c704437)
+具体操作流程请参照文档：[iscsi 构建 RAC 共享存储](https://www.leeks.info/zh_CN/latest/Databases/Oracle/iscsi%20%E6%9E%84%E5%BB%BA%20RAC%20%E5%85%B1%E4%BA%AB%E5%AD%98%E5%82%A8.html)
 
 
 
