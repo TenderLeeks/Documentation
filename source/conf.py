@@ -9,10 +9,6 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
 
 import sys
 import os
@@ -24,13 +20,13 @@ import recommonmark
 from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('.'))
 
 source_suffix = ['.rst', '.md']
 
 # -- Project information -----------------------------------------------------
 
-git = "Leeks' Handy Notes"
+project = "Leeks' Handy Notes"
 copyright = '2022, Leeks'
 author = 'Leeks'
 
