@@ -51,6 +51,13 @@
    Oracle服务 <Databases/Oracle/index>
 
 
+.. toctree::
+   :caption: Python
+   :maxdepth: 2
+
+   Django <Python/Django/index>
+   python脚本 <Python/scripts/index>
+
 
 .. toctree::
    :caption: 区块链笔记
