@@ -1,9 +1,8 @@
-Linux 相关环境部署
+Linux Shell Scripts
 =====================================
 
 .. toctree::
    :maxdepth: 3
 
-   相关环境配置 <环境部署>
-
+   Shell <shell>
 

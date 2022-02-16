@@ -1,9 +1,7 @@
-自动化CICD工具
+GitLab 服务
 =====================================
 
 .. toctree::
    :maxdepth: 3
 
-   Jenkins <Jenkins>
    GitLab <gitlab服务>
-   gitolite <安装gitolite搭建git服务器>

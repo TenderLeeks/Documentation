@@ -16,9 +16,11 @@
    :caption: 运维相关工具部署
    :maxdepth: 2
 
-   监控相关工具 <ops_tools/monitor/index>
+   监控工具 <ops_tools/monitor/index>
    EFK日志分析工具 <ops_tools/efk-log/index>
-   自动化CICD工具 <ops_tools/ci-cd/index>
+   GitLab <ops_tools/GitLab/index>
+   Jenkins <ops_tools/Jenkins/index>
+   gitolite <ops_tools/GitOlite/index>
    OpenVPN <ops_tools/openvpn/index>
    Nginx <ops_tools/nginx/index>
    KVM虚拟化系统 <ops_tools/kvm/index>
@@ -27,11 +29,16 @@
 
 
 .. toctree::
-   :caption: Linux系统环境
+   :caption: Linux 系统
    :maxdepth: 2
 
-   Linux环境部署 <Linux/deploy-env/index>
-   磁盘分区管理 <Linux/disk-management/index>
+   常用命令 <Linux/common/index>
+   环境部署 <Linux/deploy-env/index>
+   磁盘管理 <Linux/disk-management/index>
+   系统优化 <Linux/系统优化/index>
+   Git使用 <Linux/Git使用/index>
+   Shell脚本 <Linux/Shell-Scripts/index>
+   Ansible <Linux/Ansible/index>
 
 
 .. toctree::
