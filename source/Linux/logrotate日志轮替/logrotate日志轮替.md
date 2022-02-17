@@ -258,8 +258,19 @@ endscript
 
 ```shell
 $ cat /etc/logrotate.d/nohup
-/opt/app/dev/metabox-gateway/nohup_logs/nohup.out {
+/opt/app/gateway/nohup_logs/nohup.out {
     su deploy deploy
+    copytruncate
+    daily
+    compress
+    rotate 30
+    missingok
+    notifempty
+    dateext
+}
+
+$ cat /etc/logrotate.d/heco
+/opt/heco/logs/chain.log {
     copytruncate
     daily
     compress
