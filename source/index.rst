@@ -41,7 +41,7 @@
    Ansible <Linux/Ansible/index>
    logrotate日志轮替 <Linux/logrotate日志轮替/index>
    CentOS7防火墙配置 <Linux/CentOS7防火墙配置/index>
-   查看服务器硬件配置信息 <Linux/查看服务器硬件配置信息/index>
+   查看服务器硬件配置 <Linux/查看服务器硬件配置/index>
 
 
 .. toctree::
@@ -54,10 +54,12 @@
    Oracle服务 <Databases/Oracle/index>
 
 
+
 .. toctree::
    :caption: Python
    :maxdepth: 2
 
+   环境配置 <Python/环境配置/index>
    Django <Python/Django/index>
    python脚本 <Python/scripts/index>
 
