@@ -39,6 +39,7 @@
    Git使用 <Linux/Git使用/index>
    Shell脚本 <Linux/Shell-Scripts/index>
    Ansible <Linux/Ansible/index>
+   logrotate日志轮替 <Linux/logrotate日志轮替/index>
 
 
 .. toctree::
