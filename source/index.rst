@@ -40,6 +40,8 @@
    Shell脚本 <Linux/Shell-Scripts/index>
    Ansible <Linux/Ansible/index>
    logrotate日志轮替 <Linux/logrotate日志轮替/index>
+   CentOS7防火墙配置 <Linux/CentOS7防火墙配置/index>
+   查看服务器硬件配置信息 <Linux/查看服务器硬件配置信息/index>
 
 
 .. toctree::
