@@ -56,7 +56,7 @@
 
 
 .. toctree::
-   :caption: Python
+   :caption: Python笔记
    :maxdepth: 2
 
    环境配置 <Python/环境配置/index>
