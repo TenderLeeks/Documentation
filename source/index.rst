@@ -60,7 +60,6 @@
    :maxdepth: 2
 
    环境配置 <Python/环境配置/index>
-   Django <Python/Django/index>
    python脚本 <Python/scripts/index>
 
 
