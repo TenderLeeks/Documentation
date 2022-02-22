@@ -8,9 +8,10 @@
 
    ```shell
    # 下载对应的版本源码
-   $ wget https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.28-linux-glibc2.12-x86_64.tar.gz
-   $ tar -zxf mysql-5.7.28-linux-glibc2.12-x86_64.tar.gz -C /opt && cd /opt/
-   $ mv mysql-5.7.28-linux-glibc2.12-x86_64/ mysql-5.7.28
+   $ export UNZIP_DIR="/opt" && export NAME="mysql-5.7.28"
+   $ cd /tmp && wget https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.28-linux-glibc2.12-x86_64.tar.gz
+   $ tar -zxf mysql-5.7.28-linux-glibc2.12-x86_64.tar.gz -C ${UNZIP_DIR} && cd ${UNZIP_DIR}
+   $ mv mysql-5.7.28-linux-glibc2.12-x86_64/ ${NAME}
    
    # 安装相关依赖
    $ yum -y install libaio libaio-devel
@@ -26,14 +27,14 @@
    # -M不创建主目录，-s /sbin/nologin不允许登录，-r创建的是系统用户
    $ groupadd mysql && useradd -r -g mysql -s /sbin/nologin -M mysql
    #创建数据，日志等目录
-   $ mkdir -p /opt/mysql-5.7.28/{data,log,tmp,etc}
-   $ touch /opt/mysql-5.7.28/log/mysql_error.log
+   $ mkdir -p ${UNZIP_DIR}/${NAME}/{data,log,tmp,etc}
+   $ touch ${UNZIP_DIR}/${NAME}/log/mysql_error.log
    #修改所属主和所属组
-   $ chown -R mysql.mysql /opt/mysql-5.7.28/
+   $ chown -R mysql.mysql ${UNZIP_DIR}/${NAME}
    #初始化
    #basedir 是程序安装的目录
    #datadir 是mysql数据存放的目录
-   $ /opt/mysql-5.7.28/bin/mysqld --initialize --user=mysql --basedir=/opt/mysql-5.7.28 --datadir=/opt/mysql-5.7.28/data
+   $ ${UNZIP_DIR}/${NAME}/bin/mysqld --initialize --user=mysql --basedir=${UNZIP_DIR}/${NAME} --datadir=${UNZIP_DIR}/${NAME}/data
    # 输出内容，其中最后一行中 root@localhost: 8sMfT?Be&?no 是root用户的初始密码
    2021-04-21T11:32:20.506782Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
    2021-04-21T11:32:26.223027Z 0 [Warning] InnoDB: New log files created, LSN=45790
@@ -47,16 +48,15 @@
 2. 配置文件内容
 
    ```shell
-   $ vim /opt/mysql-5.7.28/etc/my.cnf
-   
+   $ tee ${UNZIP_DIR}/${NAME}/etc/my.cnf << EOF
    [mysqld]
-   basedir = /opt/mysql-5.7.28
-   datadir = /opt/mysql-5.7.28/data
+   basedir = ${UNZIP_DIR}/${NAME}
+   datadir = ${UNZIP_DIR}/${NAME}/data
    port = 3306
    socket = /var/lib/mysql/mysql.sock
    character-set-server = utf8mb4
-   log-error = /opt/mysql-5.7.28/log/mysql_error.log
-   pid-file = /opt/mysql-5.7.28/tmp/mysqld.pid
+   log-error = ${UNZIP_DIR}/${NAME}/log/mysql_error.log
+   pid-file = ${UNZIP_DIR}/${NAME}/tmp/mysqld.pid
    server-id = 1
    collation-server = utf8mb4_general_ci
    lower_case_table_names = 1
@@ -71,18 +71,24 @@
    socket = /var/lib/mysql/mysql.sock
    [client]
    socket = /var/lib/mysql/mysql.sock
+   EOF
+   
+   $ cat ${UNZIP_DIR}/${NAME}/etc/my.cnf
    ```
 
 3. 服务管理
 
    ```shell
-   $ chown -R mysql.mysql /opt/mysql-5.7.28/
+   $ chown -R mysql.mysql ${UNZIP_DIR}/${NAME}
    $ mkdir /var/lib/mysql
    $ chown -R mysql.mysql /var/lib/mysql
-   $ echo 'export PATH=/opt/mysql-5.7.28/bin:$PATH' >> /etc/profile.d/mysql.sh
+   $ tee /etc/profile.d/mysql.sh << EOF
+   export PATH=${UNZIP_DIR}/${NAME}/bin:\$PATH
+   EOF
+   $ cat /etc/profile.d/mysql.sh
    $ source /etc/profile
-   $ ln -s /opt/mysql-5.7.28/etc/my.cnf /etc/my.cnf
-   $ cp /opt/mysql-5.7.28/support-files/mysql.server /etc/init.d/mysqld
+   $ ln -s ${UNZIP_DIR}/${NAME}/etc/my.cnf /etc/my.cnf
+   $ cp ${UNZIP_DIR}/${NAME}/support-files/mysql.server /etc/init.d/mysqld
    $ chmod +x /etc/init.d/mysqld
    $ vim /etc/init.d/mysqld
    ################修改一下内容###########################
@@ -101,7 +107,7 @@
    # 测试新密码登录
    mysql -uroot -p'6#R@a7e2mSALMUg3'
    ```
-
+   
    
 
 ## 部署 MySQL 从库
@@ -308,39 +314,8 @@ $ MYSQL_HOST="/opt/mysql/mysql-5.7.36"
 $ MYSQL_NAME="mysql-1"
 
 $ mkdir -p ${MYSQL_HOST}/{conf,logs,data}
-$ vim ${MYSQL_HOST}/conf/my.cnf
-
-$ docker run -itd -p 23306:3306 --name ${MYSQL_NAME} \
--v ${MYSQL_HOST}/conf/my.cnf:/etc/mysql/my.cnf \
--v ${MYSQL_HOST}/logs:/var/log/mysql \
--v ${MYSQL_HOST}/data:/var/lib/mysql \
--v /etc/localtime:/etc/localtime \
--e MYSQL_ROOT_PASSWORD=root123456 mysql:5.7.36
-```
-
-参数说明：
-
-```shell
-run: 运行一个docker容器
--i：以交互模式运行，通常配合-t
--t：为容器重新分配一个伪输入终端，通常配合-i
--d：后台运行容器
--p：端口映射，格式为主机端口:容器端口
--e MYSQL_ROOT_PASSWORD=123456  初始化root用户的密码
---name：设置容器别名
---character-set-server=utf8mb4 ：设置字符集
---collation-server=utf8mb4_unicode_ci：设置校对集
-```
-
-```shell
-# 宿主机上备份数据库
-$ docker exec 529a4d9afd8e sh -c ' exec mysqldump --all-databases -uroot -p"123456" ' > /mydocker/mysql/all-databases.sql
-# 进入容器
-$ docker exec -it mysql-latest /bin/bash
-# 数据保存到/var/lib/mysql 路径下,exit 退出，将容器data 路径下文件copy到主机下。
-$ docker cp mysql-name:/var/lib/mysql/ /my/own/datadir
-
 # 配置文件
+$ tee ${MYSQL_HOST}/conf/my.cnf <<-'EOF'
 [mysqld]
 pid-file        = /var/run/mysqld/mysqld.pid
 socket          = /var/run/mysqld/mysqld.sock
@@ -373,5 +348,37 @@ skip_name_resolve = 1
 quick
 quote-names
 max_allowed_packet = 16M
+EOF
+
+$ cat ${MYSQL_HOST}/conf/my.cnf
+$ docker run -itd -p 23306:3306 --name ${MYSQL_NAME} \
+-v ${MYSQL_HOST}/conf/my.cnf:/etc/mysql/my.cnf \
+-v ${MYSQL_HOST}/logs:/var/log/mysql \
+-v ${MYSQL_HOST}/data:/var/lib/mysql \
+-v /etc/localtime:/etc/localtime \
+-e MYSQL_ROOT_PASSWORD=root123456 mysql:5.7.36
+```
+
+参数说明：
+
+```shell
+run: 运行一个docker容器
+-i：以交互模式运行，通常配合-t
+-t：为容器重新分配一个伪输入终端，通常配合-i
+-d：后台运行容器
+-p：端口映射，格式为主机端口:容器端口
+-e MYSQL_ROOT_PASSWORD=123456  初始化root用户的密码
+--name：设置容器别名
+--character-set-server=utf8mb4 ：设置字符集
+--collation-server=utf8mb4_unicode_ci：设置校对集
+```
+
+```shell
+# 宿主机上备份数据库
+$ docker exec 529a4d9afd8e sh -c ' exec mysqldump --all-databases -uroot -p"123456" ' > /mydocker/mysql/all-databases.sql
+# 进入容器
+$ docker exec -it mysql-latest /bin/bash
+# 数据保存到/var/lib/mysql 路径下,exit 退出，将容器data 路径下文件copy到主机下。
+$ docker cp mysql-name:/var/lib/mysql/ /my/own/datadir
 ```
 

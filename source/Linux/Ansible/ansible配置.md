@@ -106,7 +106,7 @@ Monitor ansible_ssh_port=12378 ansible_ssh_host=192.168.1.200          # 定义�
 # ansible_ssh_pass                    连接目标主机默认用户密码
 # ansible_ssh_connection              目标主机连接类型，可以是 local 、ssh 或 paramiko
 # ansible_ssh_private_key_file        连接目标主机的 ssh 私钥
-# ansible_*_interpreter               指定采用非 Python 的其他脚本语言，如 Ruby 、Perl 或其他类似 ansible_python_interpreter 解释器
+# ansible_*_interpreter               指定采用非 Python随笔 的其他脚本语言，如 Ruby 、Perl 或其他类似 ansible_python_interpreter 解释器
 [webservers]              # 主机名支持正则描述
 www[01:50].example.com
 [dbservers]

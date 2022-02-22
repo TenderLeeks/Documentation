@@ -26,6 +26,8 @@
    KVM虚拟化系统 <ops_tools/kvm/index>
    Tomcat <ops_tools/tomcat/index>
    ZeroTier <ops_tools/ZeroTier/index>
+   代码质量管理工具-SonarQube <ops_tools/代码质量管理工具-SonarQube/index>
+   性能测试 <ops_tools/性能测试/index>
 
 
 .. toctree::
@@ -59,8 +61,7 @@
    :caption: Python笔记
    :maxdepth: 2
 
-   环境配置 <Python/环境配置/index>
-   python脚本 <Python/scripts/index>
+   环境配置 <Python随笔/环境配置/index>
 
 
 .. toctree::

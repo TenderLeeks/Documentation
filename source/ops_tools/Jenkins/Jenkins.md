@@ -4,19 +4,7 @@
 
 ## 部署及配置 Jenkins
 
-1. 修改环境变量
-
-   ```shell
-   $ vim /etc/profile
-   ########################增加##############################
-   # Java环境变量
-   export JAVA_HOME=/opt/jdk1.8.0_131
-   export PATH=$JAVA_HOME/bin:$PATH
-   export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
-   ##########################################################
-   
-   $ source /etc/profile
-   ```
+1. [配置java环境变量](https://www.leeks.info/zh_CN/latest/Linux/deploy-env/%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2.html#java-jdk)
 
 2. 创建运行用户及下载软件
 
