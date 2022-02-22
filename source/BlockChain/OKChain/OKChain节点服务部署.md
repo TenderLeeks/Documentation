@@ -21,7 +21,7 @@ https://github.com/okex/testnets
 
 
 
-@Ken.Yu  你这个域名解析到的端口不对，应该解析到start命令指定的 --rest.laddr 参数上面，默认是26659端口
+你这个域名解析到的端口不对，应该解析到start命令指定的 --rest.laddr 参数上面，默认是26659端口
 
 
 

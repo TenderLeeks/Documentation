@@ -62,6 +62,7 @@
    :maxdepth: 2
 
    环境配置 <Python随笔/环境配置/index>
+   Scripts <Python随笔/scripts/index>
 
 
 .. toctree::
@@ -70,6 +71,7 @@
 
    polygon <BlockChain/polygon/index>
    aelf <BlockChain/aelf/index>
-
+   Okx <BlockChain/OKChain/index>
+   节点部署文档 <BlockChain/index>
 
 
