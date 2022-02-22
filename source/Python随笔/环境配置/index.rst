@@ -5,4 +5,5 @@ Python 环境配置
    :maxdepth: 3
 
    环境配置 <环境部署>
+   PyInstaller <PyInstaller>
 
