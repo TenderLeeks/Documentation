@@ -8,7 +8,7 @@ echo "Node version is ${VERSION}."
 echo "The Node installation directory is ${DIR}"
 echo
 
-uninstall() {
+function uninstall() {
   if [ -f "/etc/profile.d/node.sh" ]; then
     rm -f /etc/profile.d/node.sh
     echo "rm /etc/profile.d/node.sh"
@@ -31,7 +31,7 @@ uninstall() {
   fi
 }
 
-install() {
+function install() {
   uninstall
   echo
   cd /tmp
@@ -47,7 +47,7 @@ EOF
   [ $? -eq 0 ] && echo "Successful installation"
 }
 
-install_all() {
+function install_all() {
   install
   npm install -g cnpm --registry=https://registry.npm.taobao.org
   npm install yarn -g

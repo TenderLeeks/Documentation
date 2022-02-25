@@ -106,7 +106,7 @@ $ mysql -uroot -p db_name < file.sql
 
 
 
-## 参数管理
+## 参数设置
 
 ```mysql
 # 查询参数值
@@ -194,7 +194,7 @@ mysql > flush status;
 
    
 
-## Binlog 管理
+## Binlog 日志
 
 1.  查看binlog日志
 

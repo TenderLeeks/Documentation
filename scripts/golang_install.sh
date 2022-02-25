@@ -8,7 +8,7 @@ echo "GoLang version is ${VERSION}."
 echo "The GoLang installation directory is ${DIR}"
 echo
 
-uninstall() {
+function uninstall() {
   if [ -f "/etc/profile.d/go.sh" ]; then
     rm -f /etc/profile.d/go.sh
     echo "rm /etc/profile.d/go.sh"
@@ -16,8 +16,8 @@ uninstall() {
     echo "not found /etc/profile.d/go.sh"
   fi
 
-  if [ -f "go${VERSION}.linux-amd64.tar.gz" ]; then
-    rm -f go"${VERSION}".linux-amd64.tar.gz
+  if [ -f "/tmp/go${VERSION}.linux-amd64.tar.gz" ]; then
+    rm -f /tmp/go"${VERSION}".linux-amd64.tar.gz
     echo "rm go${VERSION}.linux-amd64.tar.gz"
   else
     echo "not found /tmp/go${VERSION}.linux-amd64.tar.gz"
@@ -31,7 +31,7 @@ uninstall() {
   fi
 }
 
-install() {
+function install() {
   uninstall
   echo
   cd /tmp

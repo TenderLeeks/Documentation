@@ -26,14 +26,14 @@
    
    # -M不创建主目录，-s /sbin/nologin不允许登录，-r创建的是系统用户
    $ groupadd mysql && useradd -r -g mysql -s /sbin/nologin -M mysql
-   #创建数据，日志等目录
+   # 创建数据，日志等目录
    $ mkdir -p ${UNZIP_DIR}/${NAME}/{data,log,tmp,etc}
    $ touch ${UNZIP_DIR}/${NAME}/log/mysql_error.log
-   #修改所属主和所属组
+   # 修改所属主和所属组
    $ chown -R mysql.mysql ${UNZIP_DIR}/${NAME}
-   #初始化
-   #basedir 是程序安装的目录
-   #datadir 是mysql数据存放的目录
+   # 初始化
+   # basedir 是程序安装的目录
+   # datadir 是mysql数据存放的目录
    $ ${UNZIP_DIR}/${NAME}/bin/mysqld --initialize --user=mysql --basedir=${UNZIP_DIR}/${NAME} --datadir=${UNZIP_DIR}/${NAME}/data
    # 输出内容，其中最后一行中 root@localhost: 8sMfT?Be&?no 是root用户的初始密码
    2021-04-21T11:32:20.506782Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
@@ -97,7 +97,7 @@
    ######################################################
    # 启动MySQL服务
    $ /etc/init.d/mysqld start
-   #把MySQL服务添加自启动
+   # 把MySQL服务添加自启动
    $ echo '/etc/init.d/mysqld start' >> /etc/rc.d/rc.local
    $ chmod +x /etc/rc.d/rc.local
    
