@@ -6,28 +6,29 @@
 欢迎使用 Leeks 的文档！
 =========================================
 
+介绍
+`````````````
+www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题和技术只是。
+
+
 .. toctree::
    :maxdepth: 1
+   :caption: 搭建托管文档
 
-   搭建ReadtheDocs托管文档 <introduction/搭建ReadtheDocs托管文档>
+   introduction/ReadtheDocs
 
 
 .. toctree::
-   :caption: 运维相关工具部署
+   :caption: 相关工具使用
    :maxdepth: 2
 
-   监控工具 <ops_tools/monitor/index>
-   EFK日志分析工具 <ops_tools/efk-log/index>
-   GitLab <ops_tools/GitLab/index>
-   Jenkins <ops_tools/Jenkins/index>
-   gitolite <ops_tools/GitOlite/index>
-   OpenVPN <ops_tools/openvpn/index>
-   Nginx <ops_tools/nginx/index>
-   KVM虚拟化系统 <ops_tools/kvm/index>
-   Tomcat <ops_tools/tomcat/index>
-   ZeroTier <ops_tools/ZeroTier/index>
-   代码质量管理工具-SonarQube <ops_tools/代码质量管理工具-SonarQube/index>
-   性能测试 <ops_tools/性能测试/index>
+   tools/monitor/index
+   tools/log-manage/index
+   tools/net-tools/index
+   tools/cicd-tools/index
+   KVM虚拟化系统 <tools/kvm/index>
+   Tomcat <tools/tomcat/index>
+   性能测试 <tools/性能测试/index>
 
 
 .. toctree::

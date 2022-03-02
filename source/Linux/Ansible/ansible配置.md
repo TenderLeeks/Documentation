@@ -25,28 +25,7 @@ ansible.cfg hosts roles
 ### SSH秘钥认证
 
 ```shell
-$ ssh-keygen -t rsa
-Generating public/private rsa key pair.
-Enter file in which to save the key (/root/.ssh/id_rsa): 
-Created directory '/root/.ssh'.
-Enter passphrase (empty for no passphrase): 
-Enter same passphrase again: 
-Your identification has been saved in /root/.ssh/id_rsa.
-Your public key has been saved in /root/.ssh/id_rsa.pub.
-The key fingerprint is:
-SHA256:czdHnLOKsLW164yBKu3OADwueB6WVGuVqwi+PWigJ0w root@centos-02
-The key's randomart image is:
-+---[RSA 2048]----+
-|                 |
-|       .     . . |
-|    . o       =  |
-| . . o .     . o |
-|. = o . S o + o  |
-|+E * .   B = =   |
-|B.O o.  o + o    |
-|oO+o.o..   + .   |
-|.+...+=   ..+    |
-+----[SHA256]-----+
+$ ssh-keygen -t rsa -C "Leeks"
 $ ssh-copy-id root@10.0.7.164
 $ ssh-copy-id root@10.0.7.166
 ```
@@ -105,8 +84,8 @@ Monitor ansible_ssh_port=12378 ansible_ssh_host=192.168.1.200          # 定义�
 # ansible_ssh_user                    连接目标主机默认用户
 # ansible_ssh_pass                    连接目标主机默认用户密码
 # ansible_ssh_connection              目标主机连接类型，可以是 local 、ssh 或 paramiko
-# ansible_ssh_private_key_file        连接目标主机的 ssh 私钥
-# ansible_*_interpreter               指定采用非 Python随笔 的其他脚本语言，如 Ruby 、Perl 或其他类似 ansible_python_interpreter 解释器
+# ansible_ssh_private_key_file        连接目标主机的ssh私钥
+# ansible_*_interpreter               指定采用非Python的其他脚本语言，如 Ruby 、Perl 或其他类似 ansible_python_interpreter 解释器
 [webservers]              # 主机名支持正则描述
 www[01:50].example.com
 [dbservers]
