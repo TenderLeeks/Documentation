@@ -26,6 +26,7 @@ www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题�
    tools/log-manage/index
    tools/net-tools/index
    tools/cicd-tools/index
+   tools/config/index
    KVM虚拟化系统 <tools/kvm/index>
    Tomcat <tools/tomcat/index>
    性能测试 <tools/性能测试/index>
