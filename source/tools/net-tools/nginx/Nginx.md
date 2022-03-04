@@ -634,7 +634,250 @@ server {
 }
 ```
 
+## 限流配置
 
+1. 限流算法
+
+   - 令牌桶算法
+     - 令牌以固定的速率产生并放入令牌桶中，当令牌桶放满后，多余的令牌会被抛弃；请求会消耗等比例的令牌。当令牌不够用的时候，请求过来后没有拿到令牌，这个请求就会被拒绝服务。
+   - 漏桶算法
+     - 请求好比是水流一样。水从上面到桶中，从桶中以固定的速度流出。当上面的水流过大，桶中的水没有来得及流出的时候，水就会暂时缓存到水桶中。水流过大，水桶存满后就会溢出（溢出的部分相当于丢弃请求）。
+   - `漏桶算法`能够强行限制数据的传输速率，而`令牌桶算法`在能够限制数据的平均传输速率外，还允许某种程度的突发传输（比较极端的情况，当桶中的令牌存满桶的时候，流量突增）。
+
+2. 限流配置
+
+   - `limit_req_zone`：用来限制单位时间内的请求数，即速率限制,采用的漏桶算法 "leaky bucket"。
+
+     ```nginx
+     # 语法
+     limit_req_zone key zone=name:size rate=rate [sync];
+     # 示例
+     limit_req_zone $binary_remote_addr zone=one:10m rate=10r/s;
+     limit_req_zone $http_host zone=perhost:10m rate=10r/s;
+     ```
+
+     `$binary_remote_addr`： 表示通过remote_addr这个标识来做限制，“binary_”的目的是缩写内存占用量，是限制同一客户端ip地址。
+
+     `zone=one:10m`：表示生成一个大小为10M，名字为one的内存区域，用来存储访问的频次信息。
+
+     `rate=10r/s`：表示允许相同标识的客户端的访问频次，这里限制的是每秒10次，还可以有比如30r/m的。
+
+     ```nginx
+     limit_req zone=one burst=5 nodelay;
+     limit_req zone=perhost burst=5 nodelay;
+     ```
+
+     `zone=one`：设置使用哪个配置区域来做限制，与上面`limit_req_zone` 里的`name`对应。
+
+     `burst=5`：设置一个大小为5的缓冲区当有大量请求（爆发）过来时，超过了访问频次限制的请求可以先放到这个缓冲区内。
+
+     `nodelay`：如果设置，超过访问频次而且缓冲区也满了的时候就会直接返回503，如果没有设置，则所有请求会等待排队。
+
+     示例：
+
+     ```nginx
+     http {
+       limit_req_zone $binary_remote_addr zone=one:10m rate=1r/s;
+       server {
+         location /search/ {
+           limit_req zone=one burst=5 nodelay;
+           limit_req zone=perhost burst=5 nodelay;
+         }
+       }
+     }
+     
+     # 下面配置可以限制特定UA（比如搜索引擎，爬虫等）的访问
+     http{
+       limit_req_zone $anti_spider zone=one:10m rate=10r/s;
+       limit_req zone=one burst=100 nodelay;
+       if ($http_user_agent~ * "googlebot|bingbot|Feedfetcher-Google|YisouSpider|Scrapy") {
+         set $anti_spider $http_user_agent;
+       }
+     }
+     ```
+
+     其他参数：
+
+     ```nginx
+     # 语法
+     limit_req_log_level info | notice | warn | error;
+     # 默认
+     limit_req_log_level error;
+     # 可以配置的模块: http, server, location
+     # 设置你所希望的日志级别，当服务器因为频率过高拒绝或者延迟处理请求时可以记下相应级别的日志。 延迟记录的日志级别比拒绝的低一个级别；比如， 如果设置“limit_req_log_level notice”， 延迟的日志就是info级别。
+     
+     # 语法 
+     limit_req_status code;
+     # 默认
+     limit_req_status 503;
+     # 可以配置的模块: http, server, location
+     # 设置拒绝请求的返回值 在400~599之间。
+     ```
+
+   - `limit_req_conn`：用来限制单个IP的请求数。并非所有的连接都被计数。只有在服务器处理了请求并且已经读取了整个请求头时，连接才被计数。
+
+     ```nginx
+     # 语法
+     limit_conn_zone key zone=name:size;
+     # 注：key的值为 $binary_remote_addr 而不是 $remote_addr
+     
+     # 语法
+     limit_conn zone number;
+     # 可以配置的模块: http, server, location
+     
+     # 一次只允许每个IP地址一个连接
+     limit_conn_zone $binary_remote_addr zone=addr:10m;
+     server {
+       location /download/ {
+         limit_conn addr 1;
+       }
+     }
+     
+     # limit_conn perip 10 作用的key 是 $binary_remote_addr，表示限制单个IP同时最多能持有10个连接。
+     # limit_conn perserver 100 作用的key是 $server_name，表示虚拟主机(server) 同时能处理并发连接的总数。
+     limit_conn_zone $binary_remote_addr zone=perip:10m;
+     limit_conn_zone $server_name zone=perserver:10m;
+     server {
+       limit_conn perip 10;
+       limit_conn perserver 100;
+     }
+     
+     # 当服务器限制连接数时，设置所需的日志记录级别
+     # 语法 
+     limit_conn_log_level info | notice | warn | error;
+     # 默认
+     limit_conn_log_level error;
+     # 可以配置的模块: http, server, location
+     
+     # 设置状态代码以响应被拒绝的请求而返回
+     # 语法 
+     limit_conn_status code;
+     # 默认
+     limit_conn_status 503;
+     # 可以配置的模块: http, server, location
+     ```
+
+   - 配置示例
+
+     1. 限制访问速率
+
+        ```nginx
+        # 此配置限制了 1s钟可以处理请求2次，500ms处理一次
+        limit_req_zone $binary_remote_addr zone=one:10m rate=2r/s;
+        server {
+          location / {
+            limit_req zone=one;
+          }
+        }
+        ```
+
+     2. burst缓存处理
+
+        ```nginx
+        limit_req_zone $binary_remote_addr zone=one:10m rate=2r/s;
+        server {
+          location / {
+            limit_req zone=one burst=4;
+          }
+        }
+        # burst=4指每个key(此处是每个IP)最多允许4个突发请求的到来。如果单个IP在10ms内发送6个请求则会导致1个请求立即处理，4个请求被缓存，1个请求被抛弃。 有4个请求被放到burst队列当中，工作进程每隔500ms(rate=2r/s)取一个请求进行处理，最后一个请求要排队2s才会被处理；
+        ```
+
+        注：burst的作用是让多余的请求可以先放到队列里，慢慢处理。如果不加nodelay参数，队列里的请求不会立即处理，而是按照rate设置的速度，以毫秒级精确的速度慢慢处理。
+
+     3. nodelay降低排队时间
+
+        ```nginx
+        limit_req_zone $binary_remote_addr zone=one:10m rate=2r/s;
+        server {
+          location / {
+            limit_req zone=one burst=4 nodelay;
+          }
+        }
+        
+        # nodelay参数允许请求在排队的时候就立即被处理，也就是说只要请求能够进入burst队列，就会立即被后台worker处理，请注意，这意味着burst设置了nodelay时，系统瞬间的QPS可能会超过rate设置的阈值。nodelay参数要跟burst一起使用才有作用。
+        
+        # 当单个ip在10ms中过来6个请求，成功请求率和上面一样，成功5个，失败1个。队列中的请求同时具有了被处理的资格，可以当做 5个请求是同时开始被处理的，花费时间变短了。
+        ```
+
+        注意：虽然设置burst和nodelay能够降低突发请求的处理时间，但是长期来看并不会提高吞吐量的上限，长期吞吐量的上限是由rate决定的，因为nodelay只能保证burst的请求被立即处理，但Nginx会限制队列元素释放的速度，就像是限制了令牌桶中令牌产生的速度。
+
+     4. 自定义返回值
+
+        ```nginx
+        limit_req_zone $binary_remote_addr zone=mylimit:10m rate=2r/s;
+        server {
+          location / {
+            limit_req zone=mylimit burst=4 nodelay;
+            limit_req_status 598;
+          }
+        }
+        # 这样设置，当请求因超过设置的阈值，返回的状态码就是 598
+        ```
+
+     5. 设置白名单
+
+        限流主要针对外部访问，内网访问相对安全，可以不做限流，通过设置白名单即可。
+
+        ```nginx
+          geo $limit {
+            default 1;
+            10.0.0.0/8 0;
+            192.168.0.0/24 0;
+            172.20.0.35 0;
+          }
+          map $limit $limit_key {
+            0 "";
+            1 $binary_remote_addr;
+          }
+          limit_req_zone $limit_key zone=myRateLimit:10m rate=10r/s;
+        
+        # geo 对于白名单(子网或IP都可以) 将返回0，其他IP将返回1。
+        # map 将 $limit 转换为 $limit_key，如果是 $limit 是0(白名单)，则返回空字符串；如果是1，则返回客户端实际IP。
+        # limit_req_zone 限流的key不再使用 $binary_remote_addr，而是 $limit_key 来动态获取值。如果是白名单，limit_req_zone 的限流key则为空字符串，将不会限流；若不是白名单，将会对客户端真实IP进行限流。
+        ```
+
+     6. 限制数据传输速度
+
+        ```nginx
+        location /flv/ {
+          flv;
+          limit_rate_after 20m;
+          limit_rate       100k;
+        }
+        # 这个限制是针对每个请求的，表示客户端下载前20M时不限速，后续限制100kb/s。
+        ```
+
+     7. 总体配置示例
+
+        ```nginx
+        http {
+          limit_conn_zone $binary_remote_addr zone=addr:10m;
+          limit_conn_zone $server_name zone=perserver:10m;
+          limit_req_zone $binary_remote_addr zone=one:10m rate=500r/s;
+          limit_req_zone $http_host zone=perhost:10m rate=1000r/s;
+          server {
+            location / {
+              limit_conn addr 10;
+              limit_conn perserver 10;
+              limit_req zone=one burst=100 nodelay;
+              limit_req zone=perhost burst=100 nodelay;
+              limit_req_status 598;
+              limit_conn_status 597;
+              limit_conn_log_level error;
+              limit_req_log_level error;
+            }
+            error_page 597 598 /59x.html;
+              location = /59x.html {
+                root   html;
+            }
+          }
+        }
+        ```
+
+        
+
+     
 
 ## 正向代理配置
 
