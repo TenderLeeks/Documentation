@@ -184,70 +184,69 @@ error_log  /var/log/nginx/error.log notice;
 pid        /var/run/nginx.pid;
 
 events {
-    use epoll;
-    worker_connections 65535;
-    accept_mutex off;
-    multi_accept off;
+  use epoll;
+  worker_connections 65535;
+  accept_mutex off;
+  multi_accept off;
 }
 
 http {
+  server_tokens off;
+  sendfile on;
+  tcp_nopush on;
+  tcp_nodelay on;
 
-    server_tokens off;
-    sendfile on;
-    tcp_nopush on;
-    tcp_nodelay on;
+  log_format json  '{"客户端IP":"$proxy_add_x_forwarded_for", '
+      '"请求开始时间":"$time_iso8601", '
+      '"服务端Url":"$host$uri", '
+      '"请求Url":"$http_referer", '
+      '"接口名或工程名":"$uri", '
+      '"服务端IP":"$server_addr", '
+      '"Post-body":"$request_body", '
+      '"Get-body":"$request", '
+      '"返回状态码":"$status", '
+      '"请求大小-字节":$body_bytes_sent, '
+      '"整个请求总时间":$request_time, '
+      '"Upstream响应时间":$upstream_response_time, '
+      '"真正提供服务的地址": "$upstream_addr", '
+      '"客户端浏览器信息": "$http_user_agent", '
+      '"客户端地址": "$remote_addr", '
+      '"客户端用户名称": "$remote_user"'
+      '}';
 
-    log_format json  '{"客户端IP":"$proxy_add_x_forwarded_for", '
-        '"请求开始时间":"$time_iso8601", '
-        '"服务端Url":"$host$uri", '
-        '"请求Url":"$http_referer", '
-        '"接口名或工程名":"$uri", '
-        '"服务端IP":"$server_addr", '
-        '"Post-body":"$request_body", '
-        '"Get-body":"$request", '
-        '"返回状态码":"$status", '
-        '"请求大小-字节":$body_bytes_sent, '
-        '"整个请求总时间":$request_time, '
-        '"Upstream响应时间":$upstream_response_time, '
-        '"真正提供服务的地址": "$upstream_addr", '
-        '"客户端浏览器信息": "$http_user_agent", '
-        '"客户端地址": "$remote_addr", '
-        '"客户端用户名称": "$remote_user"'
-        '}';
+  log_format main '"$proxy_add_x_forwarded_for", "$time_iso8601", '
+      '"$host$uri", "$http_referer", "$uri", "$server_addr", '
+      '"$request_body", "$request", "$status", '
+      '"$body_bytes_sent", "$request_time", "$upstream_response_time", '
+      '"$upstream_addr", "$http_user_agent", "$remote_addr", "$remote_user"';
 
-    log_format main '"$proxy_add_x_forwarded_for", "$time_iso8601", '
-                    '"$host$uri", "$http_referer", "$uri", "$server_addr", '
-                    '"$request_body", "$request", "$status", '
-                    '"$body_bytes_sent", "$request_time", "$upstream_response_time", '
-                    '"$upstream_addr", "$http_user_agent", "$remote_addr", "$remote_user"';
-
-    #access_log  logs/access.log  json;
-    access_log  /var/log/nginx/access.log  json;
-    #access_log  logs/access.log  main;
-    #access_log  /dev/null;
-    keepalive_timeout 30;
-    client_header_timeout 10;
-    client_body_timeout 10;
-    reset_timedout_connection on;
-    send_timeout 10;
-    include mime.types;
-    default_type application/octet-stream;
-    charset UTF-8;
-    gzip on;
-    gzip_disable "msie6";
-    gzip_proxied any;
-    gzip_min_length 1k;
-    gzip_comp_level 5;
-    gzip_vary on;
-    gzip_buffers 16 8k;
-    gzip_types text/plain application/x-javascript text/css application/xml application/json text/javascript text/xml;
-    open_file_cache max=102400 inactive=20s;
-    open_file_cache_valid 30s;
-    open_file_cache_min_uses 1;
-    types_hash_max_size 2048;
-    client_header_buffer_size 4k;
-    client_max_body_size 64m;
-    include conf.d/*.conf;
+  #access_log  logs/access.log  json;
+  access_log  /var/log/nginx/access.log  json;
+  #access_log  logs/access.log  main;
+  #access_log  /dev/null;
+  keepalive_timeout 30;
+  client_header_timeout 10;
+  client_body_timeout 10;
+  reset_timedout_connection on;
+  send_timeout 10;
+  include mime.types;
+  default_type application/octet-stream;
+  charset UTF-8;
+  gzip on;
+  gzip_disable "msie6";
+  gzip_proxied any;
+  gzip_min_length 1k;
+  gzip_comp_level 5;
+  gzip_vary on;
+  gzip_buffers 16 8k;
+  gzip_types text/plain application/x-javascript text/css application/xml application/json text/javascript text/xml;
+  open_file_cache max=102400 inactive=20s;
+  open_file_cache_valid 30s;
+  open_file_cache_min_uses 1;
+  types_hash_max_size 2048;
+  client_header_buffer_size 4k;
+  client_max_body_size 64m;
+  include conf.d/*.conf;
 }
 ```
 
@@ -265,80 +264,79 @@ error_log logs/error.log;
 pid logs/nginx.pid;
 
 events {
-    use epoll;
-    worker_connections 65535;
-    accept_mutex off;
-    multi_accept off;
+  use epoll;
+  worker_connections 65535;
+  accept_mutex off;
+  multi_accept off;
 }
 
 http {
+  server_tokens off;
+  sendfile on;
+  tcp_nopush on;
+  tcp_nodelay on;
 
-    server_tokens off;
-    sendfile on;
-    tcp_nopush on;
-    tcp_nodelay on;
+  log_format json  '{"客户端IP":"$proxy_add_x_forwarded_for", '
+      '"请求开始时间":"$time_iso8601", '
+      '"服务端Url":"$host$uri", '
+      '"请求Url":"$http_referer", '
+      '"接口名或工程名":"$uri", '
+      '"服务端IP":"$server_addr", '
+      '"Post-body":"$request_body", '
+      '"Get-body":"$request", '
+      '"返回状态码":"$status", '
+      '"请求大小-字节":$body_bytes_sent, '
+      '"整个请求总时间":$request_time, '
+      '"Upstream响应时间":$upstream_response_time, '
+      '"真正提供服务的地址": "$upstream_addr", '
+      '"客户端浏览器信息": "$http_user_agent", '
+      '"客户端地址": "$remote_addr", '
+      '"客户端用户名称": "$remote_user"'
+      '}';
 
-    log_format json  '{"客户端IP":"$proxy_add_x_forwarded_for", '
-        '"请求开始时间":"$time_iso8601", '
-        '"服务端Url":"$host$uri", '
-        '"请求Url":"$http_referer", '
-        '"接口名或工程名":"$uri", '
-        '"服务端IP":"$server_addr", '
-        '"Post-body":"$request_body", '
-        '"Get-body":"$request", '
-        '"返回状态码":"$status", '
-        '"请求大小-字节":$body_bytes_sent, '
-        '"整个请求总时间":$request_time, '
-        '"Upstream响应时间":$upstream_response_time, '
-        '"真正提供服务的地址": "$upstream_addr", '
-        '"客户端浏览器信息": "$http_user_agent", '
-        '"客户端地址": "$remote_addr", '
-        '"客户端用户名称": "$remote_user"'
-        '}';
+  log_format main '"$proxy_add_x_forwarded_for", "$time_iso8601", '
+      '"$host$uri", "$http_referer", "$uri", "$server_addr", '
+      '"$request_body", "$request", "$status", '
+      '"$body_bytes_sent", "$request_time", "$upstream_response_time", '
+      '"$upstream_addr", "$http_user_agent", "$remote_addr", "$remote_user"';
 
-    log_format main '"$proxy_add_x_forwarded_for", "$time_iso8601", '
-                    '"$host$uri", "$http_referer", "$uri", "$server_addr", '
-                    '"$request_body", "$request", "$status", '
-                    '"$body_bytes_sent", "$request_time", "$upstream_response_time", '
-                    '"$upstream_addr", "$http_user_agent", "$remote_addr", "$remote_user"';
+  access_log  logs/access.log  json;
+  #access_log  logs/access.log  main;
+  #access_log  /dev/null;
 
-    access_log  logs/access.log  json;
-    #access_log  logs/access.log  main;
-    #access_log  /dev/null;
-
-    keepalive_timeout 30;
-    client_header_timeout 10;
-    client_body_timeout 10;
-    reset_timedout_connection on;
-    send_timeout 10;
+  keepalive_timeout 30;
+  client_header_timeout 10;
+  client_body_timeout 10;
+  reset_timedout_connection on;
+  send_timeout 10;
 
 #    limit_conn_zone $binary_remote_addr zone=addr:10m;
 #    limit_conn addr 100;
 #    limit_conn_zone $server_name zone=perserver:10m;
 #    limit_conn perserver 100;
 
-    include mime.types;
-    default_type application/octet-stream;
-    charset UTF-8;
+  include mime.types;
+  default_type application/octet-stream;
+  charset UTF-8;
 
-    gzip on;
-    gzip_disable "msie6";
-    gzip_proxied any;
-    gzip_min_length 1k;
-    gzip_comp_level 5;
-    gzip_vary on;
-    gzip_buffers 16 8k;
-    gzip_types text/plain application/x-javascript text/css application/xml application/json text/javascript text/xml;
+  gzip on;
+  gzip_disable "msie6";
+  gzip_proxied any;
+  gzip_min_length 1k;
+  gzip_comp_level 5;
+  gzip_vary on;
+  gzip_buffers 16 8k;
+  gzip_types text/plain application/x-javascript text/css application/xml application/json text/javascript text/xml;
 
-    open_file_cache max=102400 inactive=20s;
-    open_file_cache_valid 30s;
-    open_file_cache_min_uses 1;
+  open_file_cache max=102400 inactive=20s;
+  open_file_cache_valid 30s;
+  open_file_cache_min_uses 1;
 
-    types_hash_max_size 2048;
-    client_header_buffer_size 4k;
-    client_max_body_size 64m;
+  types_hash_max_size 2048;
+  client_header_buffer_size 4k;
+  client_max_body_size 64m;
 
-    include /opt/nginx/conf/conf.d/*.conf;
+  include /opt/nginx/conf/conf.d/*.conf;
 }
 ```
 
@@ -481,110 +479,109 @@ location /test {
 
 ```nginx
 server {
-    listen       80;
-    listen       443 ssl;
-    server_name  www.xxxx.com xxxx.com;
+  listen       80;
+  listen       443 ssl;
+  server_name  www.xxxx.com xxxx.com;
 
-    ssl_certificate       /opt/nginx/conf/ssl-cert/www.xxxx.com.crt;
-    ssl_certificate_key   /opt/nginx/conf/ssl-cert/www.xxxx.com.key;
-    ssl_session_cache   shared:SSL:10m;
-    ssl_session_timeout 10m;
-    ssl_protocols SSLv3 SSLv2 TLSv1 TLSv1.1 TLSv1.2;
-    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
-    ssl_prefer_server_ciphers on;
+  ssl_certificate       /opt/nginx/conf/ssl-cert/www.xxxx.com.crt;
+  ssl_certificate_key   /opt/nginx/conf/ssl-cert/www.xxxx.com.key;
+  ssl_session_cache   shared:SSL:10m;
+  ssl_session_timeout 10m;
+  ssl_protocols SSLv3 SSLv2 TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+  ssl_prefer_server_ciphers on;
 
-    if ($scheme = http) {
-        return 301 https://$host$request_uri;
-    }
-  
-    if ($host = xxxx.com) {
-        return 301 https://www.xxxx.com$request_uri;
-    }
+  if ($scheme = http) {
+    return 301 https://$host$request_uri;
+  }
 
-    client_max_body_size 4M;  # 配置请求体缓存区大小, 不配的话
-    client_body_buffer_size 64k;  # 设置客户端请求体最大值
+  if ($host = xxxx.com) {
+    return 301 https://www.xxxx.com$request_uri;
+  }
 
-    location /api {
-        proxy_pass http://xxx.xxx;
-        proxy_redirect  off;
-        client_max_body_size 1024M;
-        proxy_next_upstream error timeout http_500 http_502 http_503 http_504;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header Connection "";
-        proxy_http_version 1.1;
-    }
+  client_max_body_size 4M;  # 配置请求体缓存区大小, 不配的话
+  client_body_buffer_size 64k;  # 设置客户端请求体最大值
 
-    location /dapp/ystarvote {
-        root   /opt/www/xxx;
-        index  index.html index.htm;
-        add_header Cache-Control "private, no-store, no-cache";
-        proxy_redirect  off;
-        proxy_set_header  Host  $host;
-        proxy_set_header  X-Real-IP  $remote_addr;
-        proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
-        #一个覆盖所有情况的候选资源：如果 URL 匹配不到任何静态资源，返回同一个 index.html 页面
-        try_files $uri $uri/dapp/ystarvote @ystarvote_router;
-    }
-    location @ystarvote_router {
-        rewrite ^.*$ /dapp/ystarvote/index.html last;
-    }
+  location /api {
+    proxy_pass http://xxx.xxx;
+    proxy_redirect  off;
+    client_max_body_size 1024M;
+    proxy_next_upstream error timeout http_500 http_502 http_503 http_504;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Connection "";
+    proxy_http_version 1.1;
+  }
 
-    location /dapp/yswap {
-        proxy_pass http://xxx.xxx.xxx.xxx;
-        proxy_redirect  off;
-        client_max_body_size 1024M;
-        proxy_next_upstream error timeout http_500 http_502 http_503 http_504;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header Connection "";
-        proxy_http_version 1.1;
-    }
+  location /dapp/ystarvote {
+    root   /opt/www/xxx;
+    index  index.html index.htm;
+    add_header Cache-Control "private, no-store, no-cache";
+    proxy_redirect  off;
+    proxy_set_header  Host  $host;
+    proxy_set_header  X-Real-IP  $remote_addr;
+    proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+    #一个覆盖所有情况的候选资源：如果 URL 匹配不到任何静态资源，返回同一个 index.html 页面
+    try_files $uri $uri/dapp/ystarvote @ystarvote_router;
+  }
+  location @ystarvote_router {
+    rewrite ^.*$ /dapp/ystarvote/index.html last;
+  }
+
+  location /dapp/yswap {
+    proxy_pass http://xxx.xxx.xxx.xxx;
+    proxy_redirect  off;
+    client_max_body_size 1024M;
+    proxy_next_upstream error timeout http_500 http_502 http_503 http_504;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Connection "";
+    proxy_http_version 1.1;
+  }
 }
 ```
 
 ## 跨域配置
 
 ```nginx
-    location /dapp/yswap {
-        proxy_pass http://xxx.xxx.xxx;
-        add_header Access-Control-Allow-Origin *;
-        add_header Access-Control-Allow-Methods 'GET,POST,PUT,DELETE,PATCH,OPTIONS';
-        add_header Access-Control-Allow-Credentials true;
-        add_header Access-Control-Allow-Headers 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Accept,Authorization';
-    }
-}
+  location /dapp/yswap {
+    proxy_pass http://xxx.xxx.xxx;
+    add_header Access-Control-Allow-Origin *;
+    add_header Access-Control-Allow-Methods 'GET,POST,PUT,DELETE,PATCH,OPTIONS';
+    add_header Access-Control-Allow-Credentials true;
+    add_header Access-Control-Allow-Headers 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Accept,Authorization';
+  }
 ```
 
 ## 缓存配置
 
 ```nginx
 server {
-    listen       80;
-    server_name  -;
-    location / {
-        root /apps/laikePay/;	
-        try_files $uri $uri/ /index.html;
-    }
+  listen       80;
+  server_name  -;
+  location / {
+    root /apps/laikePay/;	
+    try_files $uri $uri/ /index.html;
+}
 
-    location ^~ /beauty/{
-        alias /apps/laikeBeauty/;
-        # 以下配置解决 html 不缓存，css和js分别缓存7天和30天
-        if ($request_filename ~* .*\.(?:htm|html)$)
-            {
-                add_header Cache-Control "private, no-store, no-cache";  # 不缓存
-            }
-        if ($request_filename ~* .*\.(?:js|css)$)
-            {
-                add_header Cache-Control max-age=604800;  # 缓存7天
-            }
-        if ($request_filename ~* .*\.(?:jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm)$)
-            {
-                add_header Cache-Control max-age=2592000;  # 缓存1月
-            }
-        try_files $uri $uri/ /beauty/index.html;
+  location ^~ /beauty/{
+    alias /apps/laikeBeauty/;
+    # 以下配置解决 html 不缓存，css和js分别缓存7天和30天
+    if ($request_filename ~* .*\.(?:htm|html)$)
+    {
+      add_header Cache-Control "private, no-store, no-cache";  # 不缓存
+    }
+    if ($request_filename ~* .*\.(?:js|css)$)
+    {
+      add_header Cache-Control max-age=604800;  # 缓存7天
+    }
+    if ($request_filename ~* .*\.(?:jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm)$)
+    {
+      add_header Cache-Control max-age=2592000;  # 缓存1月
+    }
+    try_files $uri $uri/ /beauty/index.html;
     }
 }
 ```
@@ -883,25 +880,24 @@ server {
 
 ```nginx
 stream {
-    resolver 114.114.114.114 8.8.8.8;
+  resolver 114.114.114.114 8.8.8.8;
+  upstream node1 {
+    server 18.178.30.66:32668;
+  }
 
-    upstream node1 {
-        server 18.178.30.66:32668;
-    }
-
-    server {
-        listen 32668;
-        proxy_connect_timeout 600s;
-        proxy_timeout 900s;
-        proxy_pass node1;
-    }
+  server {
+    listen 32668;
+    proxy_connect_timeout 600s;
+    proxy_timeout 900s;
+    proxy_pass node1;
+  }
     
-    server {
-        listen 443;
-        ssl_preread on;
-        proxy_connect_timeout 60s;
-        proxy_pass $ssl_preread_server_name:$server_port;
-    }
+  server {
+    listen 443;
+    ssl_preread on;
+    proxy_connect_timeout 60s;
+    proxy_pass $ssl_preread_server_name:$server_port;
+  }
 }
 ```
 
