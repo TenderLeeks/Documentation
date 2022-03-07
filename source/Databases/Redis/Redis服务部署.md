@@ -16,6 +16,12 @@ $ bash <(curl -s "https://raw.githubusercontent.com/TenderLeeks/Documentation/ma
 # 查看服务状态
 $ netstat -nlpt
 $ ps -ef|grep redis
+
+# 管理服务
+$ systemctl stop redis-"${PORT}".service
+$ systemctl start redis-"${PORT}".service
+$ systemctl restart redis-"${PORT}".service
+$ systemctl status redis-"${PORT}".service
 ```
 
 

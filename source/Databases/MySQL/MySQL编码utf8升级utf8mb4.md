@@ -1,7 +1,5 @@
 # MySQL编码utf8升级utf8mb4
 
-具体步骤：
-
 首先将我们数据库默认字符集由 `utf8` 更改为 `utf8mb4`，然后将表默认字符集也更改为utf8mb4，最后再把存储表情的字段默认字符集也做相应的调整。 
 
 ```mysql
@@ -29,19 +27,19 @@ init_connect='SET NAMES utf8mb4'
 
 解释：
 
-> character_set_server：默认的内部操作字符集
->
-> character_set_client：客户端来源数据使用的字符集
->
-> character_set_connection：连接层字符集
->
-> character_set_results：查询结果字符集
->
-> character_set_database：当前选中数据库的默认字符集
->
-> character_set_system：系统元数据(字段名等)字符集
->
-> 还有以collation_开头的同上面对应的变量，用来描述字符序。
+- `character_set_server`：默认的内部操作字符集
+
+- `character_set_client`：客户端来源数据使用的字符集
+
+- `character_set_connection`：连接层字符集
+
+- `character_set_results`：查询结果字符集
+
+- `character_set_database`：当前选中数据库的默认字符集
+
+- `character_set_system`：系统元数据(字段名等)字符集
+
+- 还有以 `collation_` 开头的同上面对应的变量，用来描述字符序。
 
 
 
@@ -51,7 +49,7 @@ init_connect='SET NAMES utf8mb4'
 mysql > SHOW VARIABLES WHERE Variable_name LIKE 'character\_set\_%' OR Variable_name LIKE 'collation%';
 ```
 
-注意：MySQL版本必须为5.5.3以上版本，否则不支持字符集utf8mb4
+**注意：MySQL版本必须为5.5.3以上版本，否则不支持字符集utf8mb4**
 
 
 
@@ -67,7 +65,7 @@ mysql > SHOW VARIABLES WHERE Variable_name LIKE 'character\_set\_%' OR Variable_
 
 
 
-utf8_unicode_ci与utf8_general_ci的区别
+`utf8_unicode_ci` 与 `utf8_general_ci` 的区别
 
 当前，utf8_unicode_ci校对规则仅部分支持Unicode校对规则算法。一些字符还是不能支持。并且，不能完全支持组合的记号。这主要影响越南和俄罗斯的一些少数民族语言，如：Udmurt 、Tatar、Bashkir和Mari。
 

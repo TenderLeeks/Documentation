@@ -1,7 +1,5 @@
 # mysql常用命令
 
-## 管理MySQL常用命令
-
 ```mysql
 # 修改用户密码（mysql5.7版本）
 mysql > UPDATE mysql.user SET authentication_string=PASSWORD("password") WHERE user='root';

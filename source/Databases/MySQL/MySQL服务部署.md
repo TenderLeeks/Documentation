@@ -305,17 +305,18 @@ $ yum install mysql-community-client.x86_64
 
 ```shell
 # 拉取镜像
-$ docker pull mysql
-$ docker pull mysql:5.7.36
+$ docker pull mysql  # 最新版本
+$ docker pull mysql:5.7.36  # 指定版本
 # 查看镜像
 $ docker images
 # 运行容器
-$ MYSQL_HOST="/opt/mysql/mysql-5.7.36"
-$ MYSQL_NAME="mysql-1"
+$ MYSQL_PORT="3306"
+$ MYSQL_NAME="mysql-${MYSQL_PORT}"
+$ MYSQL_HOME="/opt/${MYSQL_NAME}"
+$ mkdir -p ${MYSQL_HOME}/{conf,logs,data}
 
-$ mkdir -p ${MYSQL_HOST}/{conf,logs,data}
 # 配置文件
-$ tee ${MYSQL_HOST}/conf/my.cnf <<-'EOF'
+$ tee ${MYSQL_HOME}/conf/my.cnf <<-'EOF'
 [mysqld]
 pid-file        = /var/run/mysqld/mysqld.pid
 socket          = /var/run/mysqld/mysqld.sock
@@ -350,11 +351,11 @@ quote-names
 max_allowed_packet = 16M
 EOF
 
-$ cat ${MYSQL_HOST}/conf/my.cnf
-$ docker run -itd -p 23306:3306 --name ${MYSQL_NAME} \
--v ${MYSQL_HOST}/conf/my.cnf:/etc/mysql/my.cnf \
--v ${MYSQL_HOST}/logs:/var/log/mysql \
--v ${MYSQL_HOST}/data:/var/lib/mysql \
+$ cat ${MYSQL_HOME}/conf/my.cnf
+$ docker run -itd -p ${MYSQL_PORT}:3306 --name ${MYSQL_NAME} \
+-v ${MYSQL_HOME}/conf/my.cnf:/etc/mysql/my.cnf \
+-v ${MYSQL_HOME}/logs:/var/log/mysql \
+-v ${MYSQL_HOME}/data:/var/lib/mysql \
 -v /etc/localtime:/etc/localtime \
 -e MYSQL_ROOT_PASSWORD=root123456 mysql:5.7.36
 ```

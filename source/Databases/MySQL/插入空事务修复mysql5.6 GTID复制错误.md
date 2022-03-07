@@ -1,7 +1,5 @@
 # 插入空事务修复mysql5.6 GTID复制错误
 
-## 前提
-
 在从库上误删除数据，导致MySQL主从复制时发生错误，从而MySQL主从复制服务停止；
 
 ## 查看MySQL salve状态，发现错误代码：1032
@@ -19,9 +17,7 @@
  ...
  ```
 
-
-
-​    GTID（全局事务标示符） 最初由google实现，在MySQL 5.6中引入。GTID在事务提交时生成，由UUID和事务ID组成。uuid会在第一次启动MySQL时生成，保存在数据目录下的auto.cnf文件里,事务id则从1开始自增。使用GTID的好处主要有两点：
+GTID（全局事务标示符） 最初由google实现，在MySQL 5.6中引入。GTID在事务提交时生成，由UUID和事务ID组成。uuid会在第一次启动MySQL时生成，保存在数据目录下的auto.cnf文件里,事务id则从1开始自增。使用GTID的好处主要有两点：
 
 1、不再需要指定传统复制中的 master_log_files和master_log_pos，使主从复制更简单可靠
 
