@@ -13,7 +13,7 @@ jobs:
           src: 'github/TenderLeeks'
           dst: 'gitee/Leeks'
           dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-          dst_token:  ${{ secrets.GITEE_TOKEN }}
-          #static_list: "Documentation"
+          dst_token: ${{ secrets.GITEE_TOKEN }}
+          static_list: "Documentation"
           force_update: true
           debug: true
