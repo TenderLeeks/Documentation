@@ -63,8 +63,8 @@ www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题�
    :caption: Python笔记
    :maxdepth: 2
 
-   环境配置 <Python随笔/环境配置/index>
-   Scripts <Python随笔/scripts/index>
+   Python_note/env/index
+   Python_note/scripts/index
 
 
 .. toctree::

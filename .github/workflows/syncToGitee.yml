@@ -10,10 +10,9 @@ jobs:
       - name: Mirror the Github organization repos to Gitee.
         uses: Yikun/hub-mirror-action@master
         with:
-          src: 'github/TenderLeeks'
-          dst: 'gitee/Leeks'
+          src: 'TenderLeeks/Documentation'
+          dst: 'Leeks/Documentation'
           dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
           dst_token: ${{ secrets.GITEE_TOKEN }}
-          static_list: "Documentation"
           force_update: true
           debug: true

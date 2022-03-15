@@ -1,6 +1,4 @@
-# Python-Scripts
-
-## 处理json格式和转义UTC时间
+# 处理json格式和转义UTC时间
 
 ```python
 #!/usr/bin/env python
@@ -68,7 +66,7 @@ if __name__ == '__main__':
 
 ```
 
-## 使用 Flask 实现一个 api 接口
+# 使用 Flask 实现一个 api 接口
 
 ```python
 import flask
@@ -99,7 +97,7 @@ if __name__ == '__main__':
 
 ```
 
-## python发邮件库 yagmail
+# python发邮件库 yagmail
 
 **一般发邮件方法**
 
@@ -141,7 +139,7 @@ smtp.quit()
 
 ​    邮箱服务器（SMTP.xxx.com/pop3.xxx.com）
 
-### yagmail 实现发邮件
+## yagmail 实现发邮件
 
 yagmail 可以更简单的来实现自动发邮件功能。
 
