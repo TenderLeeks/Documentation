@@ -7,6 +7,7 @@ CI-CD 工具
    :maxdepth: 3
 
    GitLab/gitlab
+   GitHub/index
    Jenkins/Jenkins
    GitOlite/gitolite
    SonarQube/SonarQube
