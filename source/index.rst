@@ -36,7 +36,7 @@ www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题�
    :caption: Linux 系统
    :maxdepth: 2
 
-   常用命令 <Linux/common/index>
+   Linux/base/index
    环境部署 <Linux/deploy-env/index>
    磁盘管理 <Linux/disk-management/index>
    系统优化 <Linux/系统优化/index>

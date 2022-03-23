@@ -1,9 +1,11 @@
-Linux 常用命令
+Linux 基础命令
 =====================================
 
 .. toctree::
    :maxdepth: 3
 
-   Linux常用命令 <Linux常用命令>
+   Common_commands
+   curl_get_post
+
 
 
