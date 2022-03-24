@@ -30,6 +30,8 @@ www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题�
    KVM虚拟化系统 <tools/kvm/index>
    Tomcat <tools/tomcat/index>
    性能测试 <tools/性能测试/index>
+   tools/other/index
+
 
 
 .. toctree::
@@ -65,6 +67,8 @@ www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题�
 
    Python_note/env/index
    Python_note/scripts/index
+   Python_note/Django/index
+   Python_note/Flask/index
 
 
 .. toctree::

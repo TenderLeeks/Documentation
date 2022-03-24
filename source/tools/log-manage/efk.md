@@ -2,13 +2,18 @@
 
 ## 环境说明
 
-| 名称             | 版本    | 主机名          | IP             |
-| ---------------- | ------- | --------------- | -------------- |
-| filebeat/fluentd | 7.16.2/ | filebeat-kibana | 192.168.66.239 |
-| kibana           | 7.16.2  | filebeat-kibana | 192.168.66.239 |
-| elasticsearch-1  | 7.16.2  | elasticsearch-1 | 192.168.66.43  |
-| elasticsearch-2  | 7.16.2  | elasticsearch-2 | 192.168.67.44  |
-| elasticsearch-3  | 7.16.2  | elasticsearch-3 | 192.168.66.40  |
+<table border="1" cellpadding="10" cellspacing="10">
+  <thead>
+    <tr><th>名称</th><th>版本</th><th>主机名</th><th>主机名</th></tr>
+  </thead>
+    <tbody>
+    <tr><td>filebeat/fluentd</td><td>7.16.2/</td><td>filebeat-kibana</td><td>192.168.66.239</td></tr>
+    <tr><td>kibana</td><td>7.16.2</td><td>filebeat-kibana</td><td>192.168.66.239</td></tr>
+    <tr><td>elasticsearch-1</td><td>7.16.2</td><td>elasticsearch-1</td><td>192.168.66.43</td></tr>
+    <tr><td>elasticsearch-2</td><td>7.16.2</td><td>elasticsearch-2</td><td>192.168.67.44</td></tr>
+    <tr><td>elasticsearch-3</td><td>7.16.2</td><td>elasticsearch-3</td><td>192.168.66.40</td></tr>
+  </tbody>
+</table>
 
 **注意：三个组件（elasticsearch，filebeat，kibana）版本必须一致，elasticsearch必须3台以上且总数量为单数。**
 
