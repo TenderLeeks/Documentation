@@ -1,10 +1,14 @@
-# Zabbix 服务端
+# Zabbix 服务端配置
 
-## 安装MySQL服务
+最新版本安装请参照[Zabbix官方文档](https://www.zabbix.com/documentation/current/zh/manual/installation)
 
-[参考文档](https://www.leeks.info/zh_CN/latest/Databases/MySQL/MySQL%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2.html#dockermysql)
+## CentOS 源码安装4.4.7版本
 
-## 源码安装 zabbix server
+### 安装MySQL服务
+
+请参考此[文档](https://www.leeks.info/zh_CN/latest/Databases/MySQL/MySQL%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2.html#dockermysql)
+
+### 安装前准备
 
 ```shell
 # zabbix官网下载源码 https://www.zabbix.com/download
@@ -67,9 +71,7 @@ $ sysctl -p
 # 修改完需要重启系统
 ```
 
-
-
-## 安装
+### 安装
 
 ```shell
 ### 安装依赖
@@ -127,11 +129,7 @@ DBUser=zabbix
 DBPassword=noZej3q2OBkN74B5
 #数据库端口，其实也不用开默认就是3306
 DBPort=3306
-
-
 ```
-
-
 
 ### 编写服务启动脚本
 
@@ -282,7 +280,7 @@ include ld.so.conf.d/*.conf
 /sbin/ldconfig -v 
 ```
 
-## 安装配置web前端
+### 安装配置web前端
 
 ```shell
 $ yum install -y httpd
@@ -312,7 +310,7 @@ systemctl enable httpd
 
 完成后可通过默认账户：Admin 密码：zabbix 登陆web管理界面
 
-## 配置中文
+### 配置中文
 
 进入用户管理可以将，web整体设置为中文，但部分图形会中文显示异常。需要上传本地系统字体，并修改web配置
 
@@ -330,7 +328,7 @@ $ systemctl restart httpd
 $ chmod 777 /var/www/html/zabbix/conf
 ```
 
-## 浏览器访问配置
+### 浏览器访问配置
 
 ![](img/1585050808443-esm.png)
 
@@ -350,7 +348,7 @@ $ chmod 777 /var/www/html/zabbix/conf
 
 ![](img/1585052162549-m45.png)
 
-## 配置https域名代理
+### 配置https域名代理
 
 此步骤是配置域名访问使用，可以略过此步骤。
 
