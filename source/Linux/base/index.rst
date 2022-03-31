@@ -6,6 +6,6 @@ Linux 基础命令
 
    Common_commands
    curl_get_post
-
+   netstat
 
 
