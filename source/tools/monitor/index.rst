@@ -6,8 +6,7 @@
 .. toctree::
    :maxdepth: 3
 
-   Zabbix/Zabbix_Server
-   Zabbix/Zabbix_Agent
+   Zabbix/Zabbix
    AmazonCloudWatch/dingding_AmazonCloudWatch
 
 
