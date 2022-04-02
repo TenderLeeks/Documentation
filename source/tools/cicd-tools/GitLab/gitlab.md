@@ -44,9 +44,11 @@ $ vim /etc/apt/sources.list.d/gitlab-ce.list
 # 将下面的内容粘贴进去
 deb https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/ubuntu bionic main
 
+$ apt-get update
 
 # 安装指定版本
 $ VERSION="14.4.2"
+# 老版本请在此链接查找 https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/ubuntu/pool/bionic/main/g/gitlab-ce
 $ cd /tmp && wget https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/ubuntu/pool/focal/main/g/gitlab-ce/gitlab-ce_${VERSION}-ce.0_amd64.deb
 # 安装软件
 $ dpkg -i gitlab-ce_${VERSION}-ce.0_amd64.deb
@@ -305,7 +307,7 @@ $ sudo find / -name gitlab | xargs rm -rf
 sudo apt-get remove gitlab-ce
 # 检查还有没有卸载的gitlab相关软件
 $ sudo dpkg --get-selections | grep gitlab
-$ sudo gitlab-ce deinstall
+gitlab-ce      deinstall
 # 再执行
 $ sudo apt-get --purge remove gitlab-ce
 ```

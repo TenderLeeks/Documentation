@@ -29,6 +29,7 @@ $ docker run -v /etc/localtime:/etc/localtime \
       -d zabbix/zabbix-java-gateway:ubuntu-6.0-latest
 
 # 启动 Zabbix server 实例，并将其关联到已创建的 MySQL server 实例
+$ docker volume create zabbix-server-volume
 $ docker run -v /etc/localtime:/etc/localtime \
       --name zabbix-server-mysql -t \
       -e DB_SERVER_HOST="mysql-server" \
@@ -37,7 +38,7 @@ $ docker run -v /etc/localtime:/etc/localtime \
       -e MYSQL_PASSWORD="zabbix_pwd" \
       -e MYSQL_ROOT_PASSWORD="root_pwd" \
       -e ZBX_JAVAGATEWAY="zabbix-java-gateway" \
-      -v /etc/zabbix/zabbix-server:/etc/zabbix \
+      -v zabbix-server-volume:/etc/zabbix \
       -v /usr/lib/zabbix/alertscripts:/usr/lib/zabbix/alertscripts \
       --network=zabbix-net \
       -p 10051:10051 \
@@ -59,11 +60,12 @@ $ docker run -v /etc/localtime:/etc/localtime \
       -d zabbix/zabbix-web-nginx-mysql:ubuntu-6.0-latest
 
 # 本地启动 zabbix agent2 服务
+$ docker volume create zabbix-agent2-volume
 $ docker run -v /etc/localtime:/etc/localtime \
       --name zabbix-agent2 \
+      -v zabbix-agent2-volume:/etc/zabbix \
       -e ZBX_HOSTNAME="zabbix-server" \
       -e ZBX_SERVER_HOST="zabbix-server-mysql" \
-      -v /etc/zabbix/zabbix-agent2:/etc/zabbix \
       -p 10050:10050 \
       -e ZBX_SERVER_PORT=10051 \
       --privileged \
@@ -83,19 +85,22 @@ $ chmod 644 DejaVuSans.ttf
 $ docker cp DejaVuSans.ttf zabbix-web-nginx-mysql:/usr/share/zabbix/assets/fonts
 
 # 其他主机安装 zabbix agent2 服务
-# 创建存储
 $ docker volume create zabbix-agent2-volume
-# 创建容器
 $ docker run -v /etc/localtime:/etc/localtime \
       --name zabbix-agent2 \
+      -v zabbix-agent2-volume:/etc/zabbix \
       -e ZBX_HOSTNAME="zabbix-agent-01" \
       -e ZBX_SERVER_HOST="192.168.66.40" \
-      -v zabbix-agent2-volume:/etc/zabbix \
       -p 10050:10050 \
       -e ZBX_SERVER_PORT=10051 \
+      --privileged \
       --restart unless-stopped \
       -d zabbix/zabbix-agent2:ubuntu-6.0-latest
-      
+
+# 查看 volume 信息
+$ docker volume ls
+$ docker volume inspect zabbix-agent2-volume
+
 # 安装 zabbix proxy 服务
 $ docker run --name zabbix-proxy-mysql \
       -e DB_SERVER_HOST="mysql-server" \
