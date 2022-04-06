@@ -292,6 +292,45 @@ $ gitlab-rake gitlab:backup:restore BACKUP=1642919929_2022_01_23_14.4.2
 $ gitlab-ctl restart
 ```
 
+## 更新版本
+
+GitLab跨大版本升级
+
+- gitlab的升级不能随意升级，需要根据官方文档的升级路线进行升级。
+
+- 查看官方升级路线请点击[此处](https://docs.gitlab.com/ee/update/index.html#upgrade-paths)
+
+- 本次版本为`12.8.0`需要升级到`14.6.2`版本，升级路线如下：
+
+  `12.8.0` -> `12.9.2` -> `12.10.14` -> `13.0.14` -> `13.1.11` -> `13.8.8` -> `13.12.15` -> `14.0.12` -> `14.6.2`
+
+更新前准备
+
+- 一定要备份当前正常运行的版本数据。
+- 每次版本install完成后，一定要执行reconfigure和restart命令，等待页面能正常访问后再继续更新。
+- 不需要停止整个gitlab服务，只需要停止几个通信的服务（不停止也可以，需要保证在更新期间无人使用）
+
+更新步骤
+
+```shell
+# 备份数据
+$ gitlab-rake gitlab:backup:create
+$ cp -a /etc/gitlab/gitlab.rb /opt/backup/gitlab/gitlab.rb.12.8.0
+$ cp -a /etc/gitlab/gitlab-secrets.json /opt/backup/gitlab/gitlab-secrets.json.12.8.0
+$ cat /opt/gitlab/embedded/service/gitlab-rails/VERSION
+12.8.0
+# 更新升级版本
+$ dpkg -i gitlab-ce_12.9.2-ce.0_amd64.deb
+$ dpkg -i gitlab-ce_12.10.14-ce.0_amd64.deb
+$ dpkg -i gitlab-ce_13.0.14-ce.0_amd64.deb
+$ dpkg -i gitlab-ce_13.1.11-ce.0_amd64.deb
+$ dpkg -i gitlab-ce_13.8.8-ce.0_amd64.deb
+$ dpkg -i gitlab-ce_13.12.15-ce.0_amd64.deb
+$ dpkg -i gitlab-ce_14.0.12-ce.0_amd64.deb
+$ dpkg -i gitlab-ce_14.6.2-ce.0_amd64.deb
+
+```
+
 
 
 ## 卸载 GitLab
@@ -343,6 +382,6 @@ sudo gitlab-ctl restart                      # 重启 GitLab
 sudo gitlab-ctl tail                         # 查看所有日志
 sudo gitlab-ctl tail nginx/gitlab_acces.log  # 查看 nginx 访问日志
 sudo gitlab-ctl tail postgresql              # 查看 postgresql 日志
-
+cat /opt/gitlab/embedded/service/gitlab-rails/VERSION    # 查看版本
 ```
 
