@@ -233,3 +233,453 @@ yag = yagmail.SMTP(user=from_user, password=from_pwd, host=from_host, port=from_
 yag.send(to_user, title, contents, file, c_user)
 ```
 
+
+
+# 启用多线程监控账号地址转账动作
+
+```python
+import os
+import threading
+import json
+import requests
+import time
+import hmac
+import hashlib
+import base64
+import urllib
+import datetime
+from urllib import parse
+
+
+class myThread(threading.Thread):
+    """开启多线程工作模式"""
+    def __init__(self, url, account, seq):
+        threading.Thread.__init__(self)
+        self.url = url
+        self.account = account
+        self.seq = seq
+
+    def run(self):
+        # print("开启线程： " + self.account)
+        sort_data(self.url, self.account, self.seq)
+
+
+def action_info(url, account, seq):
+    """账号动作信息"""
+    cmd = "cleos -u %s get actions %s %s 0 -j" % (url, account, seq)
+    run_cmd = os.popen(cmd)
+    read_cmd = run_cmd.read()
+    info_dict = json.loads(read_cmd)
+    data_list = info_dict['actions']
+
+    res_list = []
+    if data_list:
+        for line in data_list:
+            act_name = line['action_trace']['act']['name']  # 等于yrctransfer或者transfer为转账操作
+            receipt_receiver = line['action_trace']['receipt']['receiver']  # 等于account
+
+            if receipt_receiver == account and (act_name == "yrctransfer" or act_name == "transfer"):
+                account_action_seq = line['account_action_seq']  # 交易序号
+                block_time = line['block_time']  # 交易时间
+                local_time = utc2local(block_time, "%Y-%m-%dT%H:%M:%S.%f")
+                from_account = line['action_trace']['act']['data']['from']  # 转出账号
+                to_account = line['action_trace']['act']['data']['to']  # 转入账号
+                quantity = line['action_trace']['act']['data']['quantity']  # 转出数量
+                memo = line['action_trace']['act']['data']['memo']  # 备注信息
+
+                res_list = [account_action_seq, local_time, from_account, to_account, quantity, memo]
+    else:
+        time.sleep(60)
+
+    return res_list
+
+
+def last_seq(url, account):
+    """获取账号地址最后的信息"""
+    cmd = "cleos -u %s get actions %s -1 -1 -j" % (url, account)
+    run_cmd = os.popen(cmd)
+    read_cmd = run_cmd.read()
+    info_dict = json.loads(read_cmd)
+    data_list = info_dict['actions']
+
+    seq = None
+    if data_list:
+        for line in data_list:
+            seq = line['account_action_seq']  # 交易序号
+
+    return seq
+
+
+def sort_data(url, account, seq):
+    """使用无限循环实时检查账号动作"""
+    while True:
+        lastSeq = last_seq(url, account)
+        if lastSeq is None:
+            continue
+        if seq <= lastSeq:
+            data_list = action_info(url, account, seq)
+            if data_list:
+                print(data_list)
+                dingding(data_list)
+                phone_sms_alert(account, data_list)
+        else:
+            continue
+        seq += 1
+
+
+def send_msg(url, data):
+    headers = {'Content-Type': 'application/json;charset=utf-8'}
+    r = requests.post(url, data=json.dumps(data), headers=headers)
+    return r.text
+
+
+def utc2local(utc_st, utc_format):
+    """UTC时间转换成本地时间，格式化时间 utc2local(line, "%Y-%m-%dT%H:%M:%S.%f")"""
+    utc_times = datetime.datetime.strptime(utc_st, utc_format)
+    now_stamp = time.time()
+    local_time = datetime.datetime.fromtimestamp(now_stamp)
+    utc_time = datetime.datetime.utcfromtimestamp(now_stamp)
+    offset = local_time - utc_time
+    local_st = utc_times + offset
+    local_block_time = local_st.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+    return local_block_time
+
+
+def auth(secret):
+    timestamp = round(time.time() * 1000)
+    secret = secret  # 秘钥
+    secret_enc = bytes(secret.encode('utf-8'))
+    string_to_sign = '{}\n{}'.format(timestamp, secret)  # 把 timestamp+"\n"+密钥 当做签名字符串 string_to_sign
+    string_to_sign_enc = bytes(string_to_sign.encode('utf-8'))
+    hmac_code = hmac.new(secret_enc, string_to_sign_enc,
+                         digestmod=hashlib.sha256).digest()  # 使用HmacSHA256算法计算签名，得到 hmac_code
+    hmac_code_base64 = base64.b64encode(hmac_code)  # 将hmac_code进行Base64 encode
+    sign = urllib.parse.quote(hmac_code_base64)  # 进行urlEncode，得到最终的签名sign
+    auth_list = [timestamp, sign]
+    return auth_list
+
+
+def dingding(data_list):
+    """集成钉钉消息通知"""
+    dd_url = "https://oapi.dingtalk.com/robot/send"
+    dd_auth = "********"
+    dd_access_token = "*********"
+
+    content = "时间:%s\n转出账号:%s\n转入账号:%s\n数量:%s\nmemo:%s" % (
+        data_list[1], data_list[2], data_list[3], data_list[4], data_list[5])
+
+    data = {
+        "msgtype": "text",
+        "text": {
+            "content": content
+        },
+        "at": {
+            "atMobiles": [
+                "186********"
+            ],
+            "isAtAll": "true"
+        }
+    }
+
+    auth_list = auth(dd_auth)
+    url = "%s?access_token=%s&timestamp=%s&sign=%s" % (dd_url, dd_access_token, str(auth_list[0]), auth_list[1])
+    print(send_msg(url, data))
+
+
+def phone_sms_alert(account, data_list):
+    """增加电话,短信告警方式"""
+    url = "http://api.aiops.com/alert/api/event"
+    body = '''{"app": "******-6b73-411c-a709-******",
+         "eventId": "888888",
+         "eventType": "trigger",
+         "alarmName": "账号地址%s发生动作信息",
+         "priority": 3,
+         "alarmContent": {"发生时间":"%s","转出账号":"%s","转入账号":"%s","数量":"%s","memo":"%s"},
+         }''' % (account, data_list[1], data_list[2], data_list[3], data_list[4], data_list[5])
+
+    headers = {'Content-Type': "application/json"}
+    response = requests.post(url, data=body.encode(), headers=headers)
+    print(response.text)
+
+
+def main():
+    """main"""
+    account_info_list = [['ssssssyyyyyy', 406], ['1.bg', 15]]
+    url = 'https://history.xxxx.com'  # eos 类型链查询历史的地址
+
+    for account_list in account_info_list:
+        account = account_list[0]
+        seq = account_list[1]
+        thread = myThread(url, account, seq)  # 创建新线程
+        thread.start()  # 开启新线程
+
+
+if __name__ == '__main__':
+    main()
+
+```
+
+# 两数运算
+
+```python
+from decimal import Decimal, getcontext
+
+# 两数和
+def num_sum(num_list):
+    getcontext().prec = 4  # 设置精度,用于浮点数计算
+    sum = 0
+    for num in num_list:
+        sum = Decimal(str(sum)) + Decimal(str(num))
+    return sum
+
+# 两数差
+def num_difference(num1, num2):
+    # getcontext().prec = 4  # 设置精度,用于浮点数计算
+    sum_result = Decimal(str(num1)) - Decimal(str(num2))
+    return sum_result
+
+# 两数商
+def num_quotient(num1, num2):
+    getcontext().prec = 4  # 设置精度,用于浮点数计算
+    quotient_result = Decimal(str(num1)) / Decimal(str(num2))
+    return quotient_result
+
+# 两数乘积
+def num_product(num1, num2):
+    # getcontext().prec = 4  # 设置精度,用于浮点数计算
+    # product_result = Decimal(str(num1)) * Decimal(str(num2))
+    product_result = num1 * num2
+    return product_result
+
+# 百分率
+def num_rate(num1, num2):
+    getcontext().prec = 4  # 设置精度,用于浮点数计算
+    quotient_result = Decimal(str(num1)) / Decimal(str(num2)) * Decimal('100')
+    res = f'{quotient_result}%'
+    return res
+```
+
+# 日期
+
+```python
+import datetime
+
+# 根据间隔获取历史日期
+def interval_date(interval):
+    today = datetime.date.today()
+    one_day = datetime.timedelta(days=1)
+    interval_day = today - one_day * interval
+    return interval_day
+
+# 计算两个日期相差的天数
+def difference_days(day1, day2):
+    date1 = datetime.datetime.strptime(day1[0:10], "%Y-%m-%d")
+    date2 = datetime.datetime.strptime(day2[0:10], "%Y-%m-%d")
+    num = (date1 - date2).days
+    return num
+
+# 获取current_date日期后days天日期
+def rear_date(current_date, days):
+    one_day = datetime.timedelta(days=1)
+    interval_day = current_date + one_day * days
+    return interval_day
+
+# 获取current_date日期前days天日期
+def before_date(current_date, days):
+    one_day = datetime.timedelta(days=1)
+    interval_day = current_date - one_day * days
+    return interval_day
+```
+
+# xlsx表格操作
+
+```python
+import openpyxl
+import os
+
+# 添加新的sheet页和列名称
+def add_column(path, sheet_name, column_name):
+    if not os.path.exists(path):
+        write_excel_xlsx(path, sheet_name, column_name)
+    else:
+        workbook = openpyxl.load_workbook(path)
+        if sheet_name not in workbook.sheetnames:
+            workbook.create_sheet(sheet_name)
+            sheet = workbook[sheet_name]
+            rows = 0
+            for i in range(1, len(column_name) + 1):
+                for j in range(1, len(column_name[i - 1]) + 1):
+                    sheet.cell(rows + i, j).value = column_name[i - 1][j - 1]
+            workbook.save(path)
+
+
+def write_excel_xlsx(path, sheet_name, value):
+    index = len(value)
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    # sheet = workbook[sheet_name]
+    sheet.title = sheet_name
+    for i in range(0, index):
+        for j in range(0, len(value[i])):
+            sheet.cell(row=i + 1, column=j + 1, value=str(value[i][j]))
+    workbook.save(path)
+
+# 读取最后一行的内容
+def read_excel_xlsx(path, sheet_name):
+    workbook = openpyxl.load_workbook(path)
+    sheet = workbook[sheet_name]
+    rows = sheet.max_row  # 获得行数
+    return sheet.cell(row=rows, column=1).value
+
+# 追加数据
+def append_excel_xlsx(path, sheet_name, value):
+    workbook = openpyxl.load_workbook(path)
+    # last_content = str(read_excel_xlsx(path, sheet_name)).split()[0]
+    # if last_content != str(value[0][0]):
+    sheet = workbook[sheet_name]
+    rows = sheet.max_row  # 获得行数
+    for i in range(1, len(value) + 1):  # 注意行业列下标是从1开始的
+        for j in range(1, len(value[i - 1]) + 1):
+            sheet.cell(rows + i, j).value = value[i - 1][j - 1]
+    workbook.save(path)
+
+
+if __name__ == '__main__':
+    book_name_xlsx = 'xlsx格式测试工作簿.xlsx'
+    sheet_name_xlsx = 'xlsx格式测试表'
+    column_name = [["姓名", "性别", "年龄", "城市", "职业"]]
+    value3 = [["1112", "女", "66", "石家庄", "运维工程师"],
+              ["2223", "男", "55", "南京", "饭店老板"],
+              ["3334", "女", "27", "苏州", "保安"], ]
+    add_column(book_name_xlsx, sheet_name_xlsx, column_name)
+    append_excel_xlsx(book_name_xlsx, sheet_name_xlsx, value3)
+```
+
+# 检查GitHub代码库版本更新
+
+```yaml
+dingding:
+  url: "https://oapi.dingtalk.com/robot/send"
+  access_token: "*********"
+  auth: "*********"
+  headers:
+    Content-Type: 'application/json;charset=utf-8'
+chain:
+  BinanceSmartChain:
+    tags_url: 'https://api.github.com/repos/binance-chain/bsc/tags'
+    id: 83
+    local_url:
+      bj-prod-chain-eth-btc-01b: 'http://***.***.***.***:8645'
+      bj-prod-chain-01a: 'http://***.***.***.***:8645'
+    header:
+      User-Agent: 'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko'
+    headers:
+      Content-Type: 'application/json;charset=utf-8'
+
+  Ethereum:
+    tags_url: 'https://api.github.com/repos/ethereum/go-ethereum/tags'
+    id: 67
+    local_url:
+      bj-prod-chain-eth-btc-01b: 'http://***.***.***.***:6666'
+      bj-prod-chain-01a: 'http://***.***.***.***:6666'
+    header:
+      User-Agent: 'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko'
+    headers:
+      Content-Type: 'application/json;charset=utf-8'
+
+  HuobiECOChain:
+    tags_url: 'https://api.github.com/repos/HuobiGroup/huobi-eco-chain/tags'
+    id: 83
+    local_url:
+      bj-prod-chain-eth-btc-01b: 'http://***.***.***.***:8545'
+      bj-prod-chain-01a: 'http://***.***.***.***:8545'
+    header:
+      User-Agent: 'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko'
+    headers:
+      Content-Type: 'application/json;charset=utf-8'
+```
+
+```python
+"""
+检查节点版本是否有更新
+"""
+
+import requests
+import json
+import yaml
+import os
+import hmac
+import time
+import urllib
+import base64
+import hashlib
+
+def load_config():
+    path = os.path.dirname(os.path.abspath(__file__))
+    yaml_file = os.path.join(path, "CheckGitHubVersion.yaml")
+    file = open(yaml_file, 'r', encoding='utf-8')
+    data = yaml.load(file.read(), Loader=yaml.Loader)
+    file.close()
+    return data
+
+def init_service_port_conf():
+    config = load_config()
+    return config
+
+def auth():
+    timestamp = round(time.time() * 1000)
+    secret_enc = bytes(ding_conf['auth'].encode('utf-8'))
+    string_to_sign = '{}\n{}'.format(timestamp, ding_conf['auth'])  # 把 timestamp+"\n"+密钥 当做签名字符串 string_to_sign
+    string_to_sign_enc = bytes(string_to_sign.encode('utf-8'))
+    hmac_code = hmac.new(secret_enc, string_to_sign_enc,
+                         digestmod=hashlib.sha256).digest()  # 使用HmacSHA256算法计算签名，得到 hmac_code
+    hmac_code_base64 = base64.b64encode(hmac_code)  # 将hmac_code进行Base64 encode
+    sign = urllib.parse.quote(hmac_code_base64)  # 进行urlEncode，得到最终的签名sign
+    auth_list = [timestamp, sign]
+    return auth_list
+
+def send_msg(url, message):
+    r = requests.post(url, data=json.dumps(message), headers=ding_conf['headers'])
+    return r.text
+
+def msg(hostname, node_name, _latest, _local):
+    t = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+    content = f'警告时间: {t}\n主机信息:{hostname}\n节点名称: {node_name}\nGitHub最新版本: {_latest}\n本地节点版本: {_local}'
+    data_info = {
+        "msgtype": "text",
+        "text": {
+            "content": content
+        },
+        "at": {
+            "atMobiles": [],
+            "isAtAll": "False"
+        }
+    }
+    auth_list = auth()
+    url = f"{ding_conf['url']}?access_token={ding_conf['access_token']}&timestamp={str(auth_list[0])}&sign={str(auth_list[1])}"
+    send_msg(url, data_info)
+
+def latest_version(config_info):
+    all_info = requests.get(config_info['tags_url']).json()
+    return all_info[0]['name']
+
+def local_version(config_info, url):
+    params = {"jsonrpc": 2.0, "method": "web3_clientVersion", "params": [], "id": config_info['id']}
+    data_str = requests.post(url, data=json.dumps(params), headers=config_info['headers']).text
+    data_dict = json.loads(data_str)
+    result = data_dict['result']
+    version = result.split('/')[1].split('-')[0]
+    return version
+
+
+if __name__ == '__main__':
+    conf = init_service_port_conf()
+    ding_conf = conf['dingding']
+    for k, v in conf['chain'].items():
+        latest = latest_version(v)
+        for local_name, local_url in v['local_url'].items():
+            local = local_version(v, local_url)
+            if latest != local:
+                msg(local_name, k, latest, local)
+```
+
