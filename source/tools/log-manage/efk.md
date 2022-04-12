@@ -4,7 +4,7 @@
 
 <table border="1" cellpadding="10" cellspacing="10">
   <thead>
-    <tr><th>名称</th><th>版本</th><th>主机名</th><th>主机名</th></tr>
+    <tr><th>名称</th><th>版本</th><th>主机名</th><th>主机IP</th></tr>
   </thead>
     <tbody>
     <tr><td>filebeat/fluentd</td><td>7.16.2/</td><td>filebeat-kibana</td><td>192.168.66.239</td></tr>
@@ -14,6 +14,7 @@
     <tr><td>elasticsearch-3</td><td>7.16.2</td><td>elasticsearch-3</td><td>192.168.66.40</td></tr>
   </tbody>
 </table>
+
 
 **注意：三个组件（elasticsearch，filebeat，kibana）版本必须一致，elasticsearch必须3台以上且总数量为单数。**
 
