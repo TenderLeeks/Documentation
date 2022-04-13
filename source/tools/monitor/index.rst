@@ -7,6 +7,7 @@
    :maxdepth: 3
 
    Zabbix/Zabbix
+   Zabbix/Zabbix-Config
    AmazonCloudWatch/dingding_AmazonCloudWatch
 
 

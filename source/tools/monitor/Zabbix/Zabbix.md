@@ -1,4 +1,4 @@
-# Zabbix
+# Zabbix部署
 
 最新版本安装请参照[Zabbix官方文档](https://www.zabbix.com/documentation/current/zh/manual/installation)
 
