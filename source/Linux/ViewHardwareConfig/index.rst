@@ -1,9 +1,8 @@
-Ansible 使用
+查看服务器硬件配置
 =====================================
 
 .. toctree::
    :maxdepth: 3
 
-   ansible-config
-   ansible-playbook
+   ViewHardwareConfig
 

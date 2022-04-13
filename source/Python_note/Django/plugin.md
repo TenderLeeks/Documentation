@@ -1,4 +1,4 @@
-# 插件
+# 插件的使用
 
 ## django-grappelli
 

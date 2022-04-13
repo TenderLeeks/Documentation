@@ -3,8 +3,8 @@
 Tomcat支持三种接收请求的处理方式：BIO、NIO、APR 。
 
 - BIO由于每个请求都要创建一个线程来处理，线程开销比较大，不能再高并发的场景，性能也是最低的。
-2. NIO是一个基于缓冲区、并能提供非阻塞I/O操作的Java API，比传统的bio更好的并发性能。
-3. APR（Apache Portable Run-time libraries）简单理解，就是从操作系统级别解决异步IO问题，大幅度的提高服务器的处理和响应性能， 也是Tomcat运行高并发应用的首选模式。
+- NIO是一个基于缓冲区、并能提供非阻塞I/O操作的Java API，比传统的bio更好的并发性能。
+- APR（Apache Portable Run-time libraries）简单理解，就是从操作系统级别解决异步IO问题，大幅度的提高服务器的处理和响应性能， 也是Tomcat运行高并发应用的首选模式。
 
 所需软件下载[地址](https://mirrors.cnnic.cn/apache/apr/)    tomcat-native在tomcat的bin下
 

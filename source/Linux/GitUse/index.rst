@@ -1,8 +1,8 @@
-Linux 系统优化
+Git 使用
 =====================================
 
 .. toctree::
    :maxdepth: 3
 
-   系统优化 <Linux系统优化>
+   git-full-migration
 

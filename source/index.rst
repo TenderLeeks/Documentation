@@ -27,9 +27,9 @@ www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题�
    tools/net-tools/index
    tools/cicd-tools/index
    tools/config/index
-   KVM虚拟化系统 <tools/kvm/index>
+   tools/kvm/index
    Tomcat <tools/tomcat/index>
-   性能测试 <tools/性能测试/index>
+   tools/PerformanceTesting/index
    tools/other/index
 
 
@@ -41,13 +41,13 @@ www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题�
    Linux/base/index
    环境部署 <Linux/deploy-env/index>
    磁盘管理 <Linux/disk-management/index>
-   系统优化 <Linux/系统优化/index>
-   Git使用 <Linux/Git使用/index>
+   Linux/SystemOptimization/index
+   Linux/GitUse/index
    Shell脚本 <Linux/Shell-Scripts/index>
-   Ansible <Linux/Ansible/index>
-   logrotate日志轮替 <Linux/logrotate日志轮替/index>
-   CentOS7防火墙配置 <Linux/CentOS7防火墙配置/index>
-   查看服务器硬件配置 <Linux/查看服务器硬件配置/index>
+   Linux/Ansible/index
+   Linux/logrotate/index
+   Linux/CentOS7-firewall-config/index
+   Linux/ViewHardwareConfig/index
 
 
 .. toctree::
