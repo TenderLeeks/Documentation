@@ -1,6 +1,6 @@
 # Shell-Scripts
 
-## 配置MySQL用户信息及权限shell脚本
+## 配置MySQL用户信息及权限
 
 ```shell
 #!/bin/bash
@@ -367,7 +367,7 @@ EOF
 done
 ```
 
-# 管理tomcat服务shell脚本
+## 管理tomcat服务shell
 
 ```shell
 #!/bin/sh
@@ -545,7 +545,7 @@ else
 fi;
 ```
 
-## FTP用户初始化脚本
+## FTP用户初始化
 
 1. 添加用户
 
@@ -694,7 +694,7 @@ fi;
    yag.send(to_user, title, contents)
    ```
 
-## 模拟cpu占用100%脚本
+## 模拟cpu占用100%
 
 ```shell
 #! /bin/sh 
@@ -751,5 +751,114 @@ esac
 $ ./killcpu.sh 1
 # 停止
 $ killcpu.sh stop
+```
+
+## 备份 MySQL 数据库
+
+```shell
+#!/bin/bash
+
+DATE=$(date +%Y%m%d)
+DAYS=7
+BAK_DIR="/opt/backup/mysql"
+SHELL_LOGS="/opt/backup/logs/mysql/backup_mysql_${DATE}.log"
+PASSWD='1q2w3e4r!@#'
+
+shell_log(){
+  LOG_INFO=$1
+  echo "$(date +%Y-%m-%d_%H:%M:%S) ${LOG_INFO}" >> ${SHELL_LOGS}
+}
+
+
+mysql_backup(){
+
+  shell_log "cd ${BAK_DIR}"
+  cd ${BAK_DIR}
+  
+  ls -l ${BAK_DIR} >> ${SHELL_LOGS}
+  
+  shell_log "删除 ${DAYS} 天之前的压缩备份文件"
+  find ${BAK_DIR} -type f -name "*.tar.gz" -mtime +${DAYS} >> ${SHELL_LOGS}
+  find ${BAK_DIR} -type f -name "*.tar.gz" -mtime +${DAYS} -exec rm -f {} \;
+  
+  
+  shell_log "开始备份 mysql mh_1 数据库"
+  mysqldump -uroot -p${PASSWD} --single-transaction --routines mh_1 > "${BAK_DIR}/mh_1_${DATE}.sql"
+  shell_log "压缩 mh_1_${DATE}.sql 文件"
+  tar -zcvf mh_1_${DATE}.tar.gz mh_1_${DATE}.sql >> ${SHELL_LOGS}
+  shell_log "删除 mh_1_${DATE}.sql 文件"
+  rm -f mh_1_${DATE}.sql
+  shell_log "备份 mysql mh_1 数据库完成"
+  sleep 1
+
+
+  shell_log "开始备份 mysql mh_2 数据库"
+  mysqldump -uroot -p${PASSWD} --single-transaction --routines mh_2 > "${BAK_DIR}/mh_2_${DATE}.sql"
+  shell_log "压缩 mh_2_${DATE}.sql 文件"
+  tar -zcvf mh_2_${DATE}.tar.gz mh_2_${DATE}.sql >> ${SHELL_LOGS}
+  shell_log "删除 mh_2_${DATE}.sql 文件"
+  rm -f mh_2_${DATE}.sql
+  shell_log "备份 mysql mh_2 数据库完成"
+  sleep 1
+
+
+  shell_log "开始备份 mysql mh_3 数据库"
+  mysqldump -uroot -p${PASSWD} --single-transaction --routines mh_3 > "${BAK_DIR}/mh_3_${DATE}.sql"
+  shell_log "压缩 mh_3_${DATE}.sql 文件"
+  tar -zcvf mh_3_${DATE}.tar.gz mh_3_${DATE}.sql >> ${SHELL_LOGS}
+  shell_log "删除 mh_3_${DATE}.sql 文件"
+  rm -f mh_3_${DATE}.sql
+  shell_log "备份 mysql mh_3 数据库完成"
+  sleep 1
+
+
+  shell_log "开始备份 mysql plus 数据库"
+  mysqldump -uroot -p${PASSWD} --single-transaction --routines plus > "${BAK_DIR}/plus_${DATE}.sql"
+  shell_log "压缩 plus_${DATE}.sql 文件"
+  tar -zcvf plus_${DATE}.tar.gz plus_${DATE}.sql >> ${SHELL_LOGS}
+  shell_log "删除 plus_${DATE}.sql 文件"
+  rm -f plus_${DATE}.sql
+  shell_log "备份 mysql plus 数据库完成"
+  sleep 1
+
+
+  shell_log "开始备份 mysql sszg_0 数据库"
+  mysqldump -uroot -p${PASSWD} --single-transaction --routines sszg_0 > "${BAK_DIR}/sszg_0_${DATE}.sql"
+  shell_log "压缩 sszg_0_${DATE}.sql 文件"
+  tar -zcvf sszg_0_${DATE}.tar.gz sszg_0_${DATE}.sql >> ${SHELL_LOGS}
+  shell_log "删除 sszg_0_${DATE}.sql 文件"
+  rm -f sszg_0_${DATE}.sql
+  shell_log "备份 mysql sszg_0 数据库完成"
+  sleep 1
+
+
+  shell_log "完成"
+
+}
+
+mysql_backup
+```
+
+## 监听服务
+
+```shell
+#!/bin/bash
+
+function check_server () {
+  server_name=$1
+  server_dir=$2
+  server_user=$3
+  num=$(pgrep -c "${server_name}")
+  if [ "${num}" == 0 ]; then
+    time=$(date "+%Y-%m-%d %H:%M:%S")
+    echo "${time} server ${server_name} down." >> "/opt/scripts/check-server.log"
+    sudo -u "${server_user}" "${server_dir}"/init.sh restart
+  fi
+}
+
+check_server "mwd-api" "/opt/app/mwd-api" "guest"
+check_server "market-api" "/opt/app/market-api" "guest"
+check_server "gfanx-gateway" "/opt/app/gfanx-gateway" "deploy"
+check_server "gfanx-cron" "/opt/app/gfanx-cron" "deploy"
 ```
 

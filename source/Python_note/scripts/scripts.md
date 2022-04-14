@@ -683,3 +683,196 @@ if __name__ == '__main__':
                 msg(local_name, k, latest, local)
 ```
 
+# 监控区块链账号余额信息
+
+```python
+"""
+    监控heco地址余额信息
+"""
+
+import hashlib
+import base64
+import hmac
+import requests
+import json
+import time
+
+fs_conf = {
+    "url": "https://open.feishu.cn/open-apis/bot/v2/hook/72be0a78-******-456e-b994-******",
+    "secret": "******",
+    "headers": {'Content-Type': 'application/json;charset=utf-8'}
+}
+
+heco_chain_conf = {
+    "testnet_heco": {
+        "url": "https://http-testnet.hecochain.com",
+        "account": "******",
+        "warn": [1, 2],
+        "severe": [0.5, 1],
+        "disaster": [0, 0.5]
+    },
+    "mainnet_heco": {
+        "url": "https://http-mainnet.hecochain.com",
+        "account": "******",
+        "warn": [5, 10],
+        "severe": [1, 5],
+        "disaster": [0, 1]
+    }
+}
+
+
+def gen_sign(timestamp):
+    # 拼接timestamp和secret
+    string_to_sign = f'{timestamp}\n{fs_conf["secret"]}'
+    hmac_code = hmac.new(string_to_sign.encode("utf-8"), digestmod=hashlib.sha256).digest()
+    # 对结果进行base64处理
+    sign = base64.b64encode(hmac_code).decode('utf-8')
+    return sign
+
+
+def msg(timestamp, sign, warn_type, chain_type, warn_level, warn_info, other_info):
+    t = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+    content = f'警告时间: {t}\n警告类型: {warn_type}\n公链类型: {chain_type}\n警告级别: ' \
+              f'{warn_level}\n警告信息: {warn_info}\n其他信息: {other_info}'
+
+    message_content = {
+        "timestamp": timestamp,
+        "sign": sign,
+        "msg_type": "text",
+        "content": {
+            "text": content
+        }
+    }
+    response = requests.request("POST", fs_conf["url"], headers=fs_conf["headers"], data=json.dumps(message_content))
+    return response.text
+
+
+def heco_balance_info(timestamp, sign):
+    for key, value in heco_chain_conf.items():
+        try:
+            params = {"jsonrpc": 2.0, "method": "eth_getBalance", "params": [value["account"], "latest"], "id": 1}
+            data_str = requests.post(value['url'], data=json.dumps(params), headers=fs_conf["headers"]).text
+            result = json.loads(data_str)['result']
+            balance_base16 = result[2:]  # 十六进制
+            balance_base10 = int(balance_base16, 16)  # 转换为十进制
+            balance = round(balance_base10 / 1000000000000000000, 4)  # 1 HT = 1000000000000000000
+
+            warn_type = f'{value["account"]} 账号余额信息'
+            chain_type = key
+
+            if value["warn"][0] <= balance < value["warn"][1]:
+
+                warn_level = "警告"
+                warn_info = f'账号余额: {balance} 已不足 {value["warn"][1]}'
+                other_info = f'阈值范围: [{value["warn"][0]}, {value["warn"][1]}]'
+                msg(timestamp, sign, warn_type, chain_type, warn_level, warn_info, other_info)
+            elif value["severe"][0] <= balance < value["severe"][1]:
+                warn_level = "严重"
+                warn_info = f'账号余额: {balance} 已不足 {value["severe"][1]}'
+                other_info = f'阈值范围: [{value["severe"][0]}, {value["severe"][1]}]'
+                msg(timestamp, sign, warn_type, chain_type, warn_level, warn_info, other_info)
+            elif value["disaster"][0] <= balance < value["disaster"][1]:
+                warn_level = "灾难"
+                warn_info = f'账号余额: {balance} 已不足 {value["disaster"][1]}'
+                other_info = f'阈值范围: [{value["disaster"][0]}, {value["disaster"][1]}]'
+                msg(timestamp, sign, warn_type, chain_type, warn_level, warn_info, other_info)
+            else:
+                pass
+        except Exception as e:
+            print(e)
+            continue
+
+
+def main():
+    timestamp = str(round(time.time()))
+    sign = gen_sign(timestamp)
+    heco_balance_info(timestamp, sign)
+
+
+if __name__ == '__main__':
+    main()
+```
+
+# 监控错误日志
+
+```python
+import subprocess
+import os
+import hashlib
+import base64
+import hmac
+import requests
+import json
+import time
+import datetime
+
+fs_conf = {
+    "url": "https://open.feishu.cn/open-apis/bot/v2/hook/b33b73c7-******-48ac-a805-******",
+    "secret": "******",
+    "headers": {'Content-Type': 'application/json;charset=utf-8'}
+}
+
+
+def gen_sign(timestamp):
+    # 拼接timestamp和secret
+    string_to_sign = f'{timestamp}\n{fs_conf["secret"]}'
+    hmac_code = hmac.new(string_to_sign.encode("utf-8"), digestmod=hashlib.sha256).digest()
+    # 对结果进行base64处理
+    sign = base64.b64encode(hmac_code).decode('utf-8')
+    return sign
+
+
+def msg(timestamp, sign, error_log, front_log, later_log):
+    content = f'错误日志内容: \n{error_log}\n\n前10行内容:\n{front_log}\n后10行内容: \n{later_log}'
+
+    message_content = {
+        "timestamp": timestamp,
+        "sign": sign,
+        "msg_type": "text",
+        "content": {
+            "text": content
+        }
+    }
+    response = requests.request("POST", fs_conf["url"], headers=fs_conf["headers"], data=json.dumps(message_content))
+    return response.text
+
+
+def error_log_info(timestamp, sign):
+    error_log_file = '/opt/app/gfanx-cron/log/error.log'
+    nohup_log_file = '/opt/app/gfanx-cron/nohup_logs/nohup.out'
+
+    error_log_time = (datetime.datetime.now() - datetime.timedelta(minutes=1)).strftime("%Y-%m-%d %H:%M")
+    error_log = subprocess.Popen(f'grep "{error_log_time}" {error_log_file}', shell=True, stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE, encoding="utf-8")
+
+    output, error = error_log.communicate()
+
+    if len(output.split(os.linesep)) > 1:
+        for line in output.split(os.linesep):
+            try:
+                line_list = line.split(' ')
+
+                nohup_log_front = subprocess.Popen(
+                    f'tail -n 10000 {nohup_log_file} | grep -B 10 "{line_list[0]} {line_list[1]} \[{line_list[2].strip("[]")}\] \[{line_list[3].strip("[]")}\]"',
+                    shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
+
+                nohup_log_later = subprocess.Popen(
+                    f'tail -n 10000 {nohup_log_file} | grep -A 10 "{line_list[0]} {line_list[1]} \[{line_list[2].strip("[]")}\] \[{line_list[3].strip("[]")}\]"',
+                    shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
+
+                msg(timestamp, sign, line, nohup_log_front.communicate()[0], nohup_log_later.communicate()[0])
+
+            except Exception:
+                pass
+
+
+def main():
+    timestamp = str(round(time.time()))
+    sign = gen_sign(timestamp)
+    error_log_info(timestamp, sign)
+
+
+if __name__ == '__main__':
+    main()
+```
+
