@@ -1,5 +1,3 @@
-
-
 # GItHub CICD 配置示例
 
 1. 在项目根目录创建 `.github/workflows/` 文件夹

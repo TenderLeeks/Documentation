@@ -35,8 +35,8 @@ jobs:
         with:
           user: root
           host_port: |
-            34.210.76.125:11235
-            13.251.77.200:11235
+            xxx.xxx.xxx.xxx:22222
+            xxx.xxx.xxx.xxx
           pass: ""
           port: 22
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -233,8 +233,6 @@ if __name__ == '__main__':
 ```tex
 paramiko==2.9.2
 ```
-
-
 
 [参考文档](https://github.com/cross-the-world/ssh-pipeline)
 
