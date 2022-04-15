@@ -236,3 +236,5 @@ paramiko==2.9.2
 
 [参考文档](https://github.com/cross-the-world/ssh-pipeline)
 
+## 同步GitHub和Gitee仓库
+

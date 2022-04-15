@@ -19,11 +19,11 @@ jobs:
         uses: Yikun/hub-mirror-action@master
         if: env.dst_key && env.dst_token && env.gitee_user
         with:
-          src: 'github/${{ github.repository_owner }}'
-          dst: 'gitee/${{ secrets.GITEE_USER }}'
+          src: github/TenderLeeks
+          dst: gitee/ken200930
           dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
           dst_token: ${{ secrets.GITEE_TOKEN }}
           account_type: org
-          static_list: ${{ github.event.repository.name }}
+          static_list: Documentation
           force_update: true
           debug: true
