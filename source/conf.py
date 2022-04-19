@@ -31,7 +31,7 @@ copyright = '2022, Leeks'
 author = 'Leeks'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.0'
+release = ""
 
 # -- General configuration ---------------------------------------------------
 
@@ -77,10 +77,10 @@ todo_include_todos = False
 # a list of builtin themes.
 #
 # html_theme = 'alabaster'
-# html_theme = "sphinx_rtd_theme"
+html_theme = "sphinx_rtd_theme"
 # html_theme = "sphinx_book_theme"
-html_theme = "furo"
-# html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+# html_theme = "furo"
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 
 # Add any paths that contain custom static files (such as style sheets) here,
