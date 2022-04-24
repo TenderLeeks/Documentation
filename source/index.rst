@@ -56,7 +56,7 @@ www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题�
 
    MySQL服务 <Databases/MySQL/index>
    Redis服务 <Databases/Redis/index>
-   RabbitMQ服务 <Databases/RabbitMQ/index>
+   Databases/RabbitMQ/index
    Oracle服务 <Databases/Oracle/index>
    Databases/Archery
 

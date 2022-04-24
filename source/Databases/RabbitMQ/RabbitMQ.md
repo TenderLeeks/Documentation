@@ -211,8 +211,6 @@ RabbitMQ 是由 LShift 提供的一个 Advanced Message Queuing Protocol (AMQP) 
 
   
 
-
-
 # 安装Erlang环境
 
 Erlang 是一种多用途编程语言，主要用于开发并发和分布式系统。它最初是一种专有的编程语言，Ericsson 使用它来开发电话和通信应用程序。
