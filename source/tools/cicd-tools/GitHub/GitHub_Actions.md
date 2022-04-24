@@ -428,6 +428,8 @@ on:
      job1:
      job2:
        needs: job1
+     job3:
+       needs: [job1, job2]
    ```
 
    此时`job2`会在`job1`成功完成后才会开始执行。

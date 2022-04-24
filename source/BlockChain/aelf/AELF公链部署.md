@@ -15,26 +15,26 @@ $ cd /tmp && wget --no-check-certificate https://github.com/ideawu/ssdb/archive/
 $ unzip master && cd ssdb-master
 $ make && sudo make install
 
-$ sudo cp -a /usr/local/ssdb /opt/ssdb-chain
-$ sudo cp -a /usr/local/ssdb /opt/ssdb-state
+$ sudo cp -a /usr/local/ssdb /opt/ssdb8881
+$ sudo cp -a /usr/local/ssdb /opt/ssdb8882
 
 $ vim ssdb-chain/ssdb.conf
-ip: 192.168.66.65
-port: 8888
+ip: 0.0.0.0
+port: 8881
 
 $ vim ssdb-state/ssdb.conf
-ip: 192.168.66.65
-port: 9999
+ip: 0.0.0.0
+port: 8882
 
 # 启动
-$ /opt/ssdb-chain/ssdb-server -d /opt/ssdb-chain/ssdb.conf -s start
-$ /opt/ssdb-state/ssdb-server -d /opt/ssdb-state/ssdb.conf -s start
+$ /opt/ssdb8881/ssdb-server -d /opt/ssdb8881/ssdb.conf -s start
+$ /opt/ssdb8882/ssdb-server -d /opt/ssdb8882/ssdb.conf -s start
 # 停止
-$ /opt/ssdb-chain/ssdb-server -d /opt/ssdb-chain/ssdb.conf -s stop
-$ /opt/ssdb-state/ssdb-server -d /opt/ssdb-state/ssdb.conf -s stop
+$ /opt/ssdb8881/ssdb-server -d /opt/ssdb8881/ssdb.conf -s stop
+$ /opt/ssdb8882/ssdb-server -d /opt/ssdb8882/ssdb.conf -s stop
 # 重启
-$ /opt/ssdb-chain/ssdb-server -d /opt/ssdb-chain/ssdb.conf -s restart
-$ /opt/ssdb-state/ssdb-server -d /opt/ssdb-state/ssdb.conf -s restart
+$ /opt/ssdb8881/ssdb-server -d /opt/ssdb8881/ssdb.conf -s restart
+$ /opt/ssdb8882/ssdb-server -d /opt/ssdb8882/ssdb.conf -s restart
 ```
 
 ## AELF 主网主链

@@ -8,6 +8,15 @@ mysql > set password for root@localhost = password('password');
 # 设置 root 远程连接密码
 mysql > GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' identified by 'password' WITH GRANT OPTION;
 
+# mysql 8.0 版本
+mysql > use mysql;
+mysql > update user set authentication_string='' where user='root';  # 将root密码设置为空
+mysql > alter user 'root'@'localhost' identified by 'newpassword';  # 设置新的root密码
+mysql > flush privileges;
+mysql > update user set host = '%' where user = 'root';
+mysql > alter user 'root'@'%' identified by 'root123456' password expire never; # 设置远程密码
+mysql > flush privileges;
+
 # 创建数据库
 mysql > CREATE DATABASE IF NOT EXISTS `db_name` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 

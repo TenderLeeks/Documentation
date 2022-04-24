@@ -394,3 +394,30 @@ $ docker exec -it mysql-latest /bin/bash
 $ docker cp mysql-name:/var/lib/mysql/ /my/own/datadir
 ```
 
+查看日志
+
+```shell
+$ docker logs -f 7b57af435c9e
+```
+
+遇到错误：
+
+```tex
+2022-04-22T06:30:53.788315Z 0 [ERROR] [MY-010095] [Server] Failed to access directory for --secure-file-priv. Please make sure that directory exists and is accessible by MySQL Server. Supplied value : /var/lib/mysql-files
+2022-04-22 06:30:53+00:00 [ERROR] [Entrypoint]: Unable to start server.
+```
+
+解决：
+
+```shell
+$ mkdir -p ${MYSQL_HOME}/mysql-files
+$ docker rm <7b57af435c9e>
+$ docker run -itd -p ${MYSQL_PORT}:3306 --name ${MYSQL_NAME} \
+-v ${MYSQL_HOME}/conf/my.cnf:/etc/mysql/my.cnf \
+-v ${MYSQL_HOME}/logs:/var/log/mysql \
+-v ${MYSQL_HOME}/data:/var/lib/mysql \
+-v ${MYSQL_HOME}/mysql-files:/var/lib/mysql-files \
+-v /etc/localtime:/etc/localtime \
+-e MYSQL_ROOT_PASSWORD=root123456 mysql
+```
+
