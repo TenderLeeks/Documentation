@@ -1,42 +1,5 @@
 # AELF 公链
 
-## 环境准备
-
-```shell
-# 安装依赖包
-$ sudo apt-get update
-$ sudo apt install -y git-all unzip make autoconf build-essential docker.io
-
-# 安装nodejs环境
-# 参考：https://www.leeks.info/zh_CN/latest/Linux/环境部署/deploy-env.html#node
-
-# 安装ssdb数据库
-$ cd /tmp && wget --no-check-certificate https://github.com/ideawu/ssdb/archive/master.zip
-$ unzip master && cd ssdb-master
-$ make && sudo make install
-
-$ sudo cp -a /usr/local/ssdb /opt/ssdb8881
-$ sudo cp -a /usr/local/ssdb /opt/ssdb8882
-
-$ vim ssdb-chain/ssdb.conf
-ip: 0.0.0.0
-port: 8881
-
-$ vim ssdb-state/ssdb.conf
-ip: 0.0.0.0
-port: 8882
-
-# 启动
-$ /opt/ssdb8881/ssdb-server -d /opt/ssdb8881/ssdb.conf -s start
-$ /opt/ssdb8882/ssdb-server -d /opt/ssdb8882/ssdb.conf -s start
-# 停止
-$ /opt/ssdb8881/ssdb-server -d /opt/ssdb8881/ssdb.conf -s stop
-$ /opt/ssdb8882/ssdb-server -d /opt/ssdb8882/ssdb.conf -s stop
-# 重启
-$ /opt/ssdb8881/ssdb-server -d /opt/ssdb8881/ssdb.conf -s restart
-$ /opt/ssdb8882/ssdb-server -d /opt/ssdb8882/ssdb.conf -s restart
-```
-
 ## AELF 主网主链
 
 ### 区块链数据
@@ -175,7 +138,7 @@ $ /opt/ssdb8882/ssdb-server -d /opt/ssdb8882/ssdb.conf -s restart
 1. 使用 Docker 运行完整节点，
 
    ```shell
-   $ docker pull aelf/node:mainnet-v1.0.0
+   $ docker pull aelf/node:mainnet-v1.1.0
    $ cd /opt/aelf-node
    # 启动服务
    $ sh aelf-node.sh start aelf/node:mainnet-v1.0.0
@@ -214,6 +177,8 @@ $ /opt/ssdb8882/ssdb-server -d /opt/ssdb8882/ssdb.conf -s restart
 ```shell
 $ aelf-command get-blk-height -e http://your node ip address:port
 ```
+
+
 
 ## AELF 主网侧链
 

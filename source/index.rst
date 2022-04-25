@@ -76,7 +76,7 @@ www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题�
    :maxdepth: 2
 
    polygon <BlockChain/polygon/index>
-   aelf <BlockChain/aelf/index>
+   BlockChain/aelf/index
    Okx <BlockChain/OKChain/index>
    节点部署文档 <BlockChain/index>
 
