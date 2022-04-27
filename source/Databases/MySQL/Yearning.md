@@ -1,4 +1,4 @@
-# MySQL SQL语句审核平台
+# MySQL ß审核平台
 
 安装使用Yearning请参考[官方文档](https://guide.yearning.io/)
 

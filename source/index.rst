@@ -51,13 +51,13 @@ www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题�
 
 
 .. toctree::
-   :caption: 数据库系统
+   :caption: 数据库、消息中间件
    :maxdepth: 2
 
-   MySQL服务 <Databases/MySQL/index>
-   Redis服务 <Databases/Redis/index>
+   Databases/MySQL/index
+   Databases/Redis/index
    Databases/RabbitMQ/index
-   Oracle服务 <Databases/Oracle/index>
+   Databases/Oracle/index
    Databases/Archery
 
 

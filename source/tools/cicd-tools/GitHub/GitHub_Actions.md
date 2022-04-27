@@ -630,3 +630,174 @@ GitHub Actions官方文档：https://docs.github.com/en/actions
 - https://github.com/actions
 
  本文摘自：[Github-Actions总结](https://jasonkayzk.github.io/2020/08/28/Github-Actions%E6%80%BB%E7%BB%93/)
+
+## 本人案例一
+
+```yaml
+name: dotnet package
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  job1:
+    name: Build DbMigrator
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: dotnet build
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: create NuGet.Config
+        run: |
+          mkdir -p ~/.nuget/NuGet
+          cp -a .github/NuGet.Config ~/.nuget/NuGet/
+
+      - name: dotnet publish SinodacServer.DbMigrator
+        run: |
+          dotnet publish src/SinodacServer.DbMigrator/SinodacServer.DbMigrator.csproj --configuration Release -o build/DbMigrator
+          docker build -t dbmigrator -f .github/DbMigrator .
+          docker tag dbmigrator hoopoxtest/sinodacserver_dbmigrator
+          docker login -u ${{ secrets.DOCKER_TEST_USER }} -p ${{ secrets.DOCKER_TEST_PASSWORD }}
+          docker push hoopoxtest/sinodacserver_dbmigrator
+
+  job2:
+    name: Build IdentityServer
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: dotnet build
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: create NuGet.Config
+        run: |
+          mkdir -p ~/.nuget/NuGet
+          cp -a .github/NuGet.Config ~/.nuget/NuGet/
+
+      - name: dotnet publish SinodacServer.IdentityServer
+        run: |
+          dotnet publish src/SinodacServer.IdentityServer/SinodacServer.IdentityServer.csproj --configuration Release -o build/IdentityServer
+          docker build -t identityserver -f .github/IdentityServer .
+          docker tag identityserver hoopoxtest/sinodacserver_identityserver
+          docker login -u ${{ secrets.DOCKER_TEST_USER }} -p ${{ secrets.DOCKER_TEST_PASSWORD }}
+          docker push hoopoxtest/sinodacserver_identityserver
+
+  job3:
+    name: Build Worker
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: dotnet build
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: create NuGet.Config
+        run: |
+          mkdir -p ~/.nuget/NuGet
+          cp -a .github/NuGet.Config ~/.nuget/NuGet/
+
+      - name: dotnet publish SinodacServer.Worker
+        run: |
+          dotnet publish src/SinodacServer.Worker/SinodacServer.Worker.csproj --configuration Release -o build/Worker
+          docker build -t worker -f .github/Worker .
+          docker tag worker hoopoxtest/sinodacserver_worker
+          docker login -u ${{ secrets.DOCKER_TEST_USER }} -p ${{ secrets.DOCKER_TEST_PASSWORD }}
+          docker push hoopoxtest/sinodacserver_worker
+
+  job4:
+    name: Build ContractEventHandler
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: dotnet build
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: create NuGet.Config
+        run: |
+          mkdir -p ~/.nuget/NuGet
+          cp -a .github/NuGet.Config ~/.nuget/NuGet/
+
+      - name: dotnet publish SinodacServer.ContractEventHandler
+        run: |
+          dotnet publish src/SinodacServer.ContractEventHandler/SinodacServer.ContractEventHandler.csproj --configuration Release -o build/ContractEventHandler
+          docker build -t contracteventhandler -f .github/ContractEventHandler .
+          docker tag contracteventhandler hoopoxtest/sinodacserver_contracteventhandler
+          docker login -u ${{ secrets.DOCKER_TEST_USER }} -p ${{ secrets.DOCKER_TEST_PASSWORD }}
+          docker push hoopoxtest/sinodacserver_contracteventhandler
+
+  job5:
+    name: Build EntityHandler
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: dotnet build
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: create NuGet.Config
+        run: |
+          mkdir -p ~/.nuget/NuGet
+          cp -a .github/NuGet.Config ~/.nuget/NuGet/
+
+      - name: dotnet publish SinodacServer.EntityHandler
+        run: |
+          dotnet publish src/SinodacServer.EntityHandler/SinodacServer.EntityHandler.csproj --configuration Release -o build/EntityHandler
+          docker build -t entityhandler -f .github/EntityHandler .
+          docker tag entityhandler hoopoxtest/sinodacserver_entityhandler
+          docker login -u ${{ secrets.DOCKER_TEST_USER }} -p ${{ secrets.DOCKER_TEST_PASSWORD }}
+          docker push hoopoxtest/sinodacserver_entityhandler
+
+  job6:
+    name: Build HttpApi.Host
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: dotnet build
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: create NuGet.Config
+        run: |
+          mkdir -p ~/.nuget/NuGet
+          cp -a .github/NuGet.Config ~/.nuget/NuGet/
+
+      - name: dotnet publish SinodacServer.HttpApi.Host
+        run: |
+          dotnet publish src/SinodacServer.HttpApi.Host/SinodacServer.HttpApi.Host.csproj --configuration Release -o build/HttpApiHost
+          docker build -t httpapihost -f .github/HttpApiHost .
+          docker tag httpapihost hoopoxtest/sinodacserver_httpapihost
+          docker login -u ${{ secrets.DOCKER_TEST_USER }} -p ${{ secrets.DOCKER_TEST_PASSWORD }}
+          docker push hoopoxtest/sinodacserver_httpapihost
+
+  job7:
+    name: Deploy
+    needs: [job1, job2, job3, job4, job5, job6]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: dotnet build
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+      - name: deploy server
+        run: echo 'aabbcc'
+#        run: curl ${{ secrets.DEPLOY_TEST_SERVER_URL }}
+```
+

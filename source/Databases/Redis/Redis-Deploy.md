@@ -1,4 +1,4 @@
-# 部署Redis服务
+# Redis服务部署
 
 ```shell
 # 下载地址：https://download.redis.io/releases/
