@@ -131,14 +131,18 @@ $ xtrabackup --prepare --target-dir=/opt/backup/
 为方便起见，xtrabackup 二进制文件有一个`xtrabackup –copy-back` 选项，它将备份复制到服务器的datadir：
 
 ```shell
-$ xtrabackup --copy-back --target-dir=/opt/backup --datadir=/opt/mysql-5.7.28/data
+$ xtrabackup --copy-back --target-dir=/opt/backup \
+  --datadir=/opt/mysql-5.7.28/data
+  
 $ chown -R mysql.mysql /opt/mysql-5.7.28/data
 ```
 
 如果不想保存备份，可以使用`xtrabackup –move-back`选项将备份的数据移动到datadir。
 
 ```shell
-$ xtrabackup --move-back --target-dir=/opt/backup/ --datadir=/opt/mysql-5.7.28/data
+$ xtrabackup --move-back --target-dir=/opt/backup/ \
+  --datadir=/opt/mysql-5.7.28/data
+  
 $ chown -R mysql.mysql /opt/mysql-5.7.28/data
 ```
 
