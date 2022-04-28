@@ -1,6 +1,6 @@
 # MySQL 服务部署
 
-## 二进制方式部署服务端
+## 二进制方式部署MySQL 5.7
 
 查看其他版本请点击官方[地址](https://dev.mysql.com/downloads/mysql/ )
 
@@ -132,7 +132,7 @@ $ apt-get install -y libncurses5-dev libncurses5
 
 
 
-## 部署 MySQL 从库
+## 部署 MySQL 从库 MySQL 5.7
 
 ### 了解主从
 
@@ -299,6 +299,8 @@ mysql> show master status \G
 
 ## MySQL客户端
 
+### ContOS
+
 ```shell
 # 添加RPM源
 $ rpm -ivh https://repo.mysql.com/mysql57-community-release-el7-11.noarch.rpm
@@ -310,7 +312,7 @@ $ yum install mysql-community-client.x86_64
 
 
 
-## docker安装MySQL
+## docker安装 MySQL 5.7
 
 [docker mysql 镜像仓库](https://hub.docker.com/_/mysql?tab=tags&page=1&ordering=last_updated)
 
@@ -421,3 +423,213 @@ $ docker run -itd -p ${MYSQL_PORT}:3306 --name ${MYSQL_NAME} \
 -e MYSQL_ROOT_PASSWORD=root123456 mysql
 ```
 
+
+
+## 二进制方式部署MySQL 8.0
+
+### 安装依赖
+
+```shell
+$ sudo apt-get update -y
+$ sudo apt-get upgrade -y
+$ apt-get install libncurses5 libaio1 -y
+```
+
+### 下载二进制包
+
+```shell
+$ export UNZIP_DIR="/opt" && export MYSQL_VERSION="mysql-8.0.29"
+
+$ wget https://cdn.mysql.com//Downloads/MySQL-8.0/"${MYSQL_VERSION}"-linux-glibc2.12-x86_64.tar.xz
+
+$ tar -xf "${MYSQL_VERSION}"-linux-glibc2.12-x86_64.tar.xz -C "${UNZIP_DIR}"
+$ mv "${UNZIP_DIR}"/"${MYSQL_VERSION}"-linux-glibc2.12-x86_64 "${UNZIP_DIR}"/"${MYSQL_VERSION}"
+$ cd "${UNZIP_DIR}"/"${MYSQL_VERSION}"
+$ mkdir -p "${UNZIP_DIR}"/"${MYSQL_VERSION}"/{data,conf,tmp,var}
+```
+
+### 配置文件
+
+请使用此[链接](https://imysql.com/my-cnf-wizard.html)来生成`my.cnf`配置文件
+
+```shell
+$ tee "${UNZIP_DIR}"/"${MYSQL_VERSION}"/conf/my.cnf << EOF
+[client]
+port = 3306
+socket = ${UNZIP_DIR}/${MYSQL_VERSION}/var/mysql.sock
+
+[mysql]
+no_auto_rehash
+
+[mysqld]
+user = mysql
+port = 3306
+server_id = 1
+basedir = ${UNZIP_DIR}/${MYSQL_VERSION}
+datadir = ${UNZIP_DIR}/${MYSQL_VERSION}/data
+socket = ${UNZIP_DIR}/${MYSQL_VERSION}/var/mysql.sock
+pid_file = ${UNZIP_DIR}/${MYSQL_VERSION}/tmp/mysql.pid
+character_set_server = UTF8MB4
+skip_name_resolve = 1
+default_time_zone = "+8:00"
+admin_address = '127.0.0.1'
+admin_port = 33062
+
+# 性能设置 8G内存
+lock_wait_timeout = 3600
+open_files_limit = 65535
+back_log = 1024
+max_connections = 1024
+max_connect_errors = 1000000
+table_open_cache = 1024
+table_definition_cache = 1024
+thread_stack = 512K
+sort_buffer_size = 4M
+join_buffer_size = 4M
+read_buffer_size = 8M
+read_rnd_buffer_size = 4M
+bulk_insert_buffer_size = 64M
+thread_cache_size = 1536
+interactive_timeout = 600
+wait_timeout = 600
+tmp_table_size = 32M
+max_heap_table_size = 32M
+
+# log settings
+log_timestamps = SYSTEM
+log_error = ${UNZIP_DIR}/${MYSQL_VERSION}/data/error.log
+log_error_verbosity = 3
+slow_query_log = 1
+log_slow_extra = 1
+slow_query_log_file = ${UNZIP_DIR}/${MYSQL_VERSION}/data/slow.log
+long_query_time = 0.1
+log_queries_not_using_indexes = 1
+log_throttle_queries_not_using_indexes = 60
+min_examined_row_limit = 100
+log_slow_admin_statements = 1
+log_slow_slave_statements = 1
+log_bin = ${UNZIP_DIR}/${MYSQL_VERSION}/data/mybinlog
+binlog_format = ROW
+sync_binlog = 1 # MGR环境中由其他节点提供容错性，可不设置双1以提高本地节点性能
+binlog_cache_size = 4M
+max_binlog_cache_size = 2G
+max_binlog_size = 1G
+binlog_rows_query_log_events = 1
+binlog_expire_logs_seconds = 604800
+# MySQL 8.0.22前，想启用MGR的话，需要设置binlog_checksum=NONE才行
+binlog_checksum = CRC32
+gtid_mode = ON
+enforce_gtid_consistency = TRUE
+
+# myisam settings
+key_buffer_size = 32M
+myisam_sort_buffer_size = 128M
+
+# replication settings
+relay_log_recovery = 1
+slave_parallel_type = LOGICAL_CLOCK
+slave_parallel_workers = 4 # 可以设置为逻辑CPU数量的2倍
+binlog_transaction_dependency_tracking = WRITESET
+slave_preserve_commit_order = 1
+slave_checkpoint_period = 2
+
+# innodb settings
+transaction_isolation = REPEATABLE-READ
+innodb_buffer_pool_size = 5734M
+innodb_buffer_pool_instances = 4
+innodb_data_file_path = ibdata1:12M:autoextend
+innodb_flush_log_at_trx_commit = 1 # MGR环境中由其他节点提供容错性，可不设置双1以提高本地节点性能
+innodb_log_buffer_size = 32M
+innodb_log_file_size = 1G # 如果线上环境的TPS较高，建议加大至1G以上，如果压力不大可以调小
+innodb_log_files_in_group = 3
+innodb_max_undo_log_size = 4G
+# 根据您的服务器IOPS能力适当调整
+# 一般配普通SSD盘的话，可以调整到 10000 - 20000
+# 配置高端PCIe SSD卡的话，则可以调整的更高，比如 50000 - 80000
+innodb_io_capacity = 4000
+innodb_io_capacity_max = 8000
+innodb_open_files = 65535
+innodb_flush_method = O_DIRECT
+innodb_lru_scan_depth = 4000
+innodb_lock_wait_timeout = 10
+innodb_rollback_on_timeout = 1
+innodb_print_all_deadlocks = 1
+innodb_online_alter_log_max_size = 4G
+innodb_print_ddl_logs = 1
+innodb_status_file = 1
+
+[mysqldump]
+quick
+EOF
+```
+
+
+
+```shell
+$ groupadd mysql && useradd -r -g mysql -s /sbin/nologin -M mysql
+$ chown -R mysql.mysql "${UNZIP_DIR}"/"${MYSQL_VERSION}"
+
+# 初始化带密码的方法
+$ "${UNZIP_DIR}"/"${MYSQL_VERSION}"/bin/mysqld \
+  --defaults-file="${UNZIP_DIR}"/"${MYSQL_VERSION}"/conf/my.cnf \
+  --initialize
+
+# 初始化不带密码的方法
+$ "${UNZIP_DIR}"/"${MYSQL_VERSION}"/bin/mysqld \
+  --defaults-file="${UNZIP_DIR}"/"${MYSQL_VERSION}"/conf/my.cnf \
+  --initialize-insecure
+
+# 启动
+$ "${UNZIP_DIR}"/"${MYSQL_VERSION}"/bin/mysqld \
+  --defaults-file="${UNZIP_DIR}"/"${MYSQL_VERSION}"/conf/my.cnf &
+    
+# 连接
+$ "${UNZIP_DIR}"/"${MYSQL_VERSION}"/bin/mysql -S \
+  "${UNZIP_DIR}"/"${MYSQL_VERSION}"/var/mysql.sock -p
+  
+# 修改root密码
+mysql> use mysql;
+mysql> alter user 'root'@'localhost' identified by 'Root_password';
+# 设置远程密码
+mysql> update user set host = '%' where user = 'root';
+mysql> alter user 'root'@'%' identified by 'Root_password' password expire never;
+mysql> flush privileges;
+```
+
+### 连接 MySQL
+
+在Linux平台环境下主要有两种连接方式：一种是TCP/IP连接方式，另一种就是Socket连接（Unix domain socket）。
+
+1. TCP/IP连接是网络中用的最多的一种方式。一般情况下客户端在一台服务器上，而MySQL实例在另一台服务器上，两台机器通过一个TCP/IP网络连接。
+
+   `mysql -uusername -ppassword -Pport -hIP`
+
+   ```shell
+   $ mysql -hlocalhost -uroot -P3306 -p
+   ```
+
+   通过TCP/IP连接MySQL实例时，MySQL先会检查一张权限表，用来判断发起请求的客户端IP是否允许连接到MySQL实例。该表就是MySQL库下面user表。
+
+2. unix socket连接方式其实不是一个网络协议，所以只能在MySQL客户端和数据库实例在同一台服务器上的情况下使用。可以在配置文件中指定套接字文件的路径，如：`socket=/tmp/mysql.sock`
+
+   `mysql -uusername -p -S /tmp/mysql.sock`
+
+   ```shell
+   $ mysql -S /tmp/mysql3306.sock -uroot -p
+   ```
+
+### 关闭 MySQL
+
+1. shutdown
+
+   ```mysql
+   mysql> shutdown;
+   ```
+
+2. mysqladmin
+
+   ```shell
+   $ mysqladmin -S /tmp/mysql3306.sock -p shutdown
+   ```
+
+   
