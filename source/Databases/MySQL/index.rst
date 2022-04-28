@@ -7,6 +7,7 @@ MySQL
    MySQL-Server-Deploy
    MySQL-CMD
    Common-Problem
-   PerconaXtraBackup
+   PerconaXtraBackup2.4
+   PerconaXtraBackup8.0
    Yearning
 

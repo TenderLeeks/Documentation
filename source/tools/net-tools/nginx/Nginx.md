@@ -76,6 +76,8 @@ $ sudo apt-get install -y zlib1g-dev
 # 安装OpenSSL 库，OpenSSL 是一个强大的安全套接字层密码库，囊括主要的密码算法、常用的密钥和证书封装管理功能及 SSL 协议，并提供丰富的应用程序供测试或其它目的使用。安装 OpenSSL 主要是为了让 Tengine 支持 HTTPS 的访问请求。
 $ sudo apt-get install -y openssl libssl-dev
 
+$ sudo apt-get install -y build-essential
+
 # 生成makefile，这里选择了编译 HTTP/2 需要的 ngx_http_v2_module 模块。Tengine 默认将安装在 `/usr/local/nginx` 目录。你可以用 `--prefix` 来指定你想要的安装目录。
 $ cd tengine-2.3.3
 $ sudo ./configure --prefix=/opt/nginx --with-http_v2_module \
@@ -111,7 +113,7 @@ $ sudo make
 $ sudo make install
 
 # 开机自启动
-$ sudo vim /lib/systemd/system/nginx.service  # nginx.service 文件内添加以下内容
+$ sudo tee /lib/systemd/system/nginx.service << EOF
 Description=nginx - high performance web server
 After=network.target remote-fs.target nss-lookup.target
 [Service]
@@ -121,12 +123,12 @@ ExecReload=/opt/nginx/sbin/nginx -s reload
 ExecStop=/opt/nginx/sbin/nginx -s stop
 [Install]
 WantedBy=multi-user.target
+EOF
 
 # 使配置生效
 $ sudo systemctl daemon-reload
 # 设置开机启动
 $ sudo systemctl enable nginx.service
-Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service → /lib/systemd/system/nginx.service.
 
 # 启动
 $ sudo /opt/nginx/sbin/nginx

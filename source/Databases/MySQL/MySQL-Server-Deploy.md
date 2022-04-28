@@ -615,7 +615,7 @@ mysql> flush privileges;
    `mysql -uusername -p -S /tmp/mysql.sock`
 
    ```shell
-   $ mysql -S /tmp/mysql3306.sock -uroot -p
+   $ mysql -S "${UNZIP_DIR}"/"${MYSQL_VERSION}"/var/mysql.sock -uroot -p
    ```
 
 ### 关闭 MySQL
@@ -629,7 +629,7 @@ mysql> flush privileges;
 2. mysqladmin
 
    ```shell
-   $ mysqladmin -S /tmp/mysql3306.sock -p shutdown
+   $ mysqladmin -S "${UNZIP_DIR}"/"${MYSQL_VERSION}"/var/mysql.sock -p shutdown
    ```
 
    
