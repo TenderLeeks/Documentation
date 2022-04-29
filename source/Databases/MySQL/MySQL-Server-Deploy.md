@@ -589,10 +589,11 @@ $ "${UNZIP_DIR}"/"${MYSQL_VERSION}"/bin/mysql -S \
   
 # 修改root密码
 mysql> use mysql;
-mysql> alter user 'root'@'localhost' identified by 'Root_password';
+mysql> alter user 'root'@'localhost' identified by 'root_password';
 # 设置远程密码
 mysql> update user set host = '%' where user = 'root';
-mysql> alter user 'root'@'%' identified by 'Root_password' password expire never;
+mysql> use mysql;
+mysql> alter user 'root'@'%' identified by 'root_password' password expire never;
 mysql> flush privileges;
 ```
 

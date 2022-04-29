@@ -116,6 +116,18 @@ mysql> FLUSH PRIVILEGES;
 
 ## 完整备份
 
+### 创建备份
+
+要创建备份，请使用xtrabackup –backup选项运行xtrabackup 。您还需要指定xtrabackup –target-dir 选项，这是存储备份的位置，如果*InnoDB*数据或日志文件未存储在同一目录中，您可能还需要指定它们的位置。如果目标目录不存在，xtrabackup 会创建它。如果该目录确实存在并且为空，则 xtrabackup 将成功。xtrabackup 不会覆盖现有文件。
+
+```shell
+$ xtrabackup --host=127.0.0.1 --user=root \
+  --password=root_password --backup \
+  --target-dir=/opt/backup/
+```
+
+### 准备备份
+
 使用`xtrabackup –backup`选项进行备份后，您首先需要对其进行准备以恢复它。数据文件在准备好之前不是时间点一致的，因为它们在程序运行时在不同时间被复制，并且在发生这种情况时它们可能已经被更改。如果您尝试使用这些数据文件启动 InnoDB，它将检测损坏并自行崩溃以防止您在损坏的数据上运行。xtrabackup –prepare步骤使文件在单个时刻完全一致，因此您可以在它们上运行*InnoDB*。
 
 ```shell
@@ -126,7 +138,7 @@ $ xtrabackup --prepare --target-dir=/opt/backup/
 
 如果打算将备份作为进一步增量备份的基础，则应在准备备份时使用`xtrabackup –apply-log-only`选项，否则您将无法对其应用增量备份。
 
-## 恢复备份
+### 恢复备份
 
 为方便起见，xtrabackup 二进制文件有一个`xtrabackup –copy-back` 选项，它将备份复制到服务器的datadir：
 
