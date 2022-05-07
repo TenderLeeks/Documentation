@@ -166,6 +166,7 @@ $ sudo apt install -y git-all unzip make autoconf build-essential docker.io
 5. 修改`appsetting.json` 配置文件
 
    ```shell
+   # 配置文件优先级 
    # 此处填写的账号密码为上面创建主网账号时填写的信息
    $ sed -i 's#"NodeAccount": ""#"NodeAccount": "N9PeS5pCJDwncm4AmZgrd3LY1GB9gCKRLPLp6LSb11eyvaT6y"#g' /opt/aelf-node/appsettings.json
    $ sed -i 's#"NodeAccountPassword": ""#"NodeAccountPassword": "aelf2022"#g' /opt/aelf-node/appsettings.json
@@ -175,6 +176,8 @@ $ sudo apt install -y git-all unzip make autoconf build-essential docker.io
    ```
 
    注意：如果您的基础设施在防火墙后面，您需要打开节点的 P2P 侦听端口`6801`
+
+   **注意：配置文件优先级 `appsettings.Development.json > appsettings.Production.json > appsettings.json`，如果目录中存在 `appsettings.Production.json`和`appsettings.Production.json`文件，此时会覆盖`appsettings.json`配置文件内容。**
 
 6. `appsettings.MainChain.MainNet.json` 配置文件
 
