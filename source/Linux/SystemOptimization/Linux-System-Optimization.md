@@ -1,6 +1,6 @@
-## 3.8 系统资源限制优化
+## 系统资源限制优化
 
-编辑/etc/security/limits.conf
+编辑`/etc/security/limits.conf`文件
 
 ```shell
 root  soft  core      unlimited
@@ -27,9 +27,9 @@ root  hard  msgqueue  8192000
 
 ```
 
-## 3.9 内核参数优化
+## 内核参数优化
 
-编辑/etc/sysctl.conf
+编辑`/etc/sysctl.conf`文件
 
 ```shell
 # 1：开启严格的反向路径校验。对每个进来的数据包，校验其反向路径是否是最佳路径。如果反向路径不是最佳路径，则直接丢弃该数据包。
@@ -129,12 +129,5 @@ fs.nr_open=52706963
 
 ```
 
-
-
-```shell
-此参数确定了TCP连接中已完成队列(完成三次握手之后)的长度， 当然此值必须不大于Linux系统定义的/proc/sys/net/core/somaxconn值，默认是511，而Linux的默认参数值是128。当系统并发量大并且客户端速度缓慢的时候，可以将这二个参数一起参考设定。该内核参数默认值一般是128，对于负载很大的服务程序来说大大的不够。一般会将它修改为2048或者更大。在/etc/sysctl.conf中加:net.core.somaxconn = 2048，然后在终端中执行sysctl -p
-
-
-
-```
+此参数确定了TCP连接中已完成队列(完成三次握手之后)的长度， 当然此值必须不大于Linux系统定义的`/proc/sys/net/core/somaxconn`值，默认是511，而Linux的默认参数值是128。当系统并发量大并且客户端速度缓慢的时候，可以将这二个参数一起参考设定。该内核参数默认值一般是128，对于负载很大的服务程序来说大大的不够。一般会将它修改为2048或者更大。在`/etc/sysctl.conf`中加:`net.core.somaxconn = 2048`，然后在终端中执行`sysctl -p`
 
