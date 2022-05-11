@@ -862,3 +862,42 @@ check_server "gfanx-gateway" "/opt/app/gfanx-gateway" "deploy"
 check_server "gfanx-cron" "/opt/app/gfanx-cron" "deploy"
 ```
 
+## 日志模块编写
+
+```shell
+#!/bin/bash
+
+function log() {
+  [ -d "${backupDir}/logs" ] || mkdir -p ${backupDir}/logs
+
+  if [[ $# -eq 1 ]];then
+    msg=$1
+    echo -e "$(date +"%Y-%m-%d %H:%M:%S") \033[32m[INFO]\033[0m ${msg}" >> ${backupDir}/logs/shell.log
+  elif [[ $# -eq 2 ]];then
+    param=$1
+    msg=$2
+    if [[ ${param} = "-w" ]];then
+      echo -e "$(date +"%Y-%m-%d %H:%M:%S") \033[34m[WARNING]\033[0m ${msg}" >> ${backupDir}/logs/shell.log
+    elif [[ ${param} = "-e" ]];then
+      echo -e "$(date +"%Y-%m-%d %H:%M:%S") \033[31m[ERROR]\033[0m ${msg}" >> ${backupDir}/logs/shell.log
+      exit 1
+    elif [[ ${param} = "-d" ]];then
+      echo "$(date +"%Y-%m-%d %H:%M:%S") [DEBUG] ${msg}" >> ${backupDir}/logs/shell.log
+      if [[ ${DEBUG_FLAG} = 1 ]];then
+        set -x
+      fi
+    fi
+  fi
+}
+
+function main() {
+   DEBUG_FLAG=0
+   log "this is INFO"
+   log -w "this is WARNING"
+   log -d "this is DEBUG"
+   log -e "this is ERROR"
+}
+
+main
+```
+
