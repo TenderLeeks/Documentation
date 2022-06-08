@@ -1,10 +1,10 @@
-Linux 磁盘分区管理
+Linux 磁盘管理
 =====================================
 
 .. toctree::
    :maxdepth: 3
 
-   LVM + XFS 格式分区系统 <LVM-XFS格式分区系统>
-   Redhat7 ZFS 使用 <Redhat7ZFS使用>
-   Ubuntu部署NFS服务 <Ubuntu部署NFS服务>
-   swap交换空间 <swap交换空间>
+   LVM_XFS_disk_partition
+   Redhat7-ZFS
+   Ubuntu-NFS
+   SWAP

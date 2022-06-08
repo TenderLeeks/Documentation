@@ -1,4 +1,4 @@
-# Redhat7 ZFS 使用
+# Redhat7 配置 ZFS
 
 ## 介绍
 

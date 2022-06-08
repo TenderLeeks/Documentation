@@ -1,4 +1,4 @@
-Linux Shell Scripts
+Shell Scripts
 =====================================
 
 .. toctree::

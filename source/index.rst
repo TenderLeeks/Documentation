@@ -23,11 +23,11 @@ www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题�
    :maxdepth: 2
 
    Linux/base/index
-   环境部署 <Linux/deploy-env/index>
-   磁盘管理 <Linux/disk-management/index>
+   Linux/deploy-env/index
+   Linux/disk-management/index
    Linux/SystemOptimization/index
    Linux/GitUse/index
-   Shell脚本 <Linux/Shell-Scripts/index>
+   Linux/Shell-Scripts/index
    Linux/Ansible/index
    Linux/logrotate/index
    Linux/CentOS7-firewall-config/index
