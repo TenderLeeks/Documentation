@@ -6,13 +6,19 @@
 
 ```shell
 $ yum update -y
-$ pvcreate /dev/vdb  # 创建PV，将新添加的磁盘创建为物理卷
-$ vgcreate data /dev/vdb  # 创建VG，在新创建的物理卷上创建名称为data的卷组，‘data’可以跟随需求自定义名称
-# 创建LV，在data的卷组上创建名称为mydata的逻辑卷,并使用卷组的所有空间，‘mydata’可以跟随需求自定义名称
+# 创建PV，将新添加的磁盘创建为物理卷
+$ pvcreate /dev/vdb
+# 创建VG，在新创建的物理卷上创建名称为data的卷组，‘data’可以跟随需求自定义名称
+$ vgcreate data /dev/vdb
+# 创建LV，在data的卷组上创建名称为mydata的逻辑卷，并使用卷组的所有空间，
+# ‘mydata’可以跟随需求自定义名称
 $ lvcreate -l 100%VG -n mydata data
-$ mkfs.xfs /dev/data/mydata  # 格式化逻辑卷，将名称为mydata的逻辑卷格式化为xfs格式
-$ blkid /dev/data/mydata  # 挂载逻辑卷，查询新分区的uuid
-# 将新创建的文件系统以noatime及nodiratime的模式进行挂载，并写入/etc/fstab文件中，以便开机实现自动挂载
+# 格式化逻辑卷，将名称为mydata的逻辑卷格式化为xfs格式
+$ mkfs.xfs /dev/data/mydata
+# 挂载逻辑卷，查询新分区的 uuid
+$ blkid /dev/data/mydata
+# 将新创建的文件系统以noatime及nodiratime的模式进行挂载，
+# 并写入/etc/fstab文件中，以便开机实现自动挂载
 # 需替换下面命令中UUID内容
 $ echo "UUID=ea4b86d4-f2b9-4906-b00d-9fe66551f8cc /opt xfs noatime,nodiratime,inode64 0 0" >> /etc/fstab
 $ mount -a
@@ -150,7 +156,8 @@ $ df -h
    要卸载对应卷组VG的所有逻辑卷LV。从上面的信息可以看出对应的卷组 omni 只有 /dev/omni/data 这个逻辑卷LV
 
    ```shell
-   $ umount /dev/omni/data  # 如果还用进程在使用对应逻辑卷的文件，就必须强制卸载挂接点。
+   # 如果还用进程在使用对应逻辑卷的文件，就必须强制卸载挂接点。
+   $ umount /dev/omni/data
    ```
 
 4. 删除逻辑卷LV

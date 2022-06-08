@@ -25,9 +25,9 @@ $ sudo apt-get install -y libaio1
 
 ```shell
 $ export UNZIP_DIR="/opt" && export NAME="mysql-5.7.28"
-$ cd /tmp && wget https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.28-linux-glibc2.12-x86_64.tar.gz
-$ tar -zxf mysql-5.7.28-linux-glibc2.12-x86_64.tar.gz -C ${UNZIP_DIR} && cd ${UNZIP_DIR}
-$ mv mysql-5.7.28-linux-glibc2.12-x86_64/ ${NAME}
+$ wget https://cdn.mysql.com/archives/mysql-5.7/${NAME}-linux-glibc2.12-x86_64.tar.gz -P /tmp
+$ tar -zxf /tmp/${NAME}-linux-glibc2.12-x86_64.tar.gz -C ${UNZIP_DIR}
+$ mv ${UNZIP_DIR}/${NAME}-linux-glibc2.12-x86_64/ ${UNZIP_DIR}/${NAME}
 ```
 
 ### 环境配置
@@ -41,7 +41,10 @@ $ touch ${UNZIP_DIR}/${NAME}/log/mysql_error.log
 # 修改所属主和所属组
 $ chown -R mysql.mysql ${UNZIP_DIR}/${NAME}
 # 初始化，basedir是程序安装的目录，datadir是mysql数据存放的目录
-$ ${UNZIP_DIR}/${NAME}/bin/mysqld --initialize --user=mysql --basedir=${UNZIP_DIR}/${NAME} --datadir=${UNZIP_DIR}/${NAME}/data
+$ ${UNZIP_DIR}/${NAME}/bin/mysqld \
+  --initialize --user=mysql \
+  --basedir=${UNZIP_DIR}/${NAME} \
+  --datadir=${UNZIP_DIR}/${NAME}/data
 ```
 
 初始化输出日志内容中最后一行 `root@localhost: 8sMfT?Be&?no` 是root用户的初始密码，如下：

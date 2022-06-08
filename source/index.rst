@@ -8,7 +8,7 @@
 
 介绍
 `````````````
-www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题和技术只是。
+www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题和技术知识。
 
 
 .. toctree::
@@ -19,23 +19,7 @@ www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题�
 
 
 .. toctree::
-   :caption: 相关工具使用
-   :maxdepth: 2
-
-   tools/monitor/index
-   tools/log-manage/index
-   tools/net-tools/index
-   tools/cicd-tools/index
-   tools/config/index
-   tools/kvm/index
-   Tomcat <tools/tomcat/index>
-   tools/PerformanceTesting/index
-   tools/other/index
-
-
-
-.. toctree::
-   :caption: Linux 系统
+   :caption: Linux 系统相关
    :maxdepth: 2
 
    Linux/base/index
@@ -48,6 +32,15 @@ www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题�
    Linux/logrotate/index
    Linux/CentOS7-firewall-config/index
    Linux/ViewHardwareConfig/index
+   tools/monitor/index
+   tools/log-manage/index
+   tools/net-tools/index
+   tools/cicd-tools/index
+   tools/config/index
+   tools/kvm/index
+   Tomcat <tools/tomcat/index>
+   tools/PerformanceTesting/index
+   tools/other/index
 
 
 .. toctree::
