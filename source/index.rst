@@ -44,7 +44,7 @@ www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题�
 
 
 .. toctree::
-   :caption: 数据库、消息中间件
+   :caption: 数据库、消息队列
    :maxdepth: 2
 
    Databases/MySQL/index
