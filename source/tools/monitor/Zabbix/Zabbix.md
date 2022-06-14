@@ -187,7 +187,7 @@ $ docker run -v /etc/localtime:/etc/localtime \
 # 下载楷体字库
 $ wget https://raw.githubusercontent.com/TenderLeeks/Documentation/main/source/tools/monitor/Zabbix/fonts/simkai.ttf
 
-# 下载黑体字库
+# 下载黑体字库(建议使用此种字体)
 $ wget https://raw.githubusercontent.com/TenderLeeks/Documentation/main/source/tools/monitor/Zabbix/fonts/msyh.ttf
 
 $ mv simkai.ttf DejaVuSans.ttf
@@ -216,8 +216,6 @@ $ docker run --name zabbix-proxy-mysql \
 $ docker volume ls
 $ docker volume inspect zabbix-agent2-volume
 ```
-
-
 
 
 
