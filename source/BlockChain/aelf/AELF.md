@@ -12,8 +12,8 @@ $ sudo apt install -y git-all unzip make autoconf build-essential docker.io
 1. 下载和编译安装ssdb数据库
 
    ```shell
-   $ cd /tmp && wget --no-check-certificate https://github.com/ideawu/ssdb/archive/master.zip
-   $ unzip master.zip && cd ssdb-master
+   $ wget --no-check-certificate https://github.com/ideawu/ssdb/archive/master.zip -P /tmp
+   $ cd /tmp && unzip master.zip && cd ssdb-master
    $ make && sudo make install
    ```
 
@@ -22,15 +22,15 @@ $ sudo apt install -y git-all unzip make autoconf build-essential docker.io
    ```shell
    $ mkdir -p /opt/{ssdb8881/var,ssdb8882/var}
    
-   $ cp -a /usr/local/ssdb/ssdb.conf /opt/ssdb8881/ssdb.conf
-   $ sed -i "s#ip: 127.0.0.1#ip: 0.0.0.0#g" /opt/ssdb8881/ssdb.conf
-   $ sed -i "s#port: 8888#port: 8881#g" /opt/ssdb8881/ssdb.conf
-   $ sed -i "s#level: debug#level: error#g" /opt/ssdb8881/ssdb.conf
+   $ cp -a /usr/local/ssdb/ssdb.conf /opt/ssdb8881/ssdb.conf \
+   && sed -i "s#ip: 127.0.0.1#ip: 0.0.0.0#g" /opt/ssdb8881/ssdb.conf \
+   && sed -i "s#port: 8888#port: 8881#g" /opt/ssdb8881/ssdb.conf \
+   && sed -i "s#level: debug#level: error#g" /opt/ssdb8881/ssdb.conf
    
-   $ cp -a /usr/local/ssdb/ssdb.conf /opt/ssdb8882/ssdb.conf
-   $ sed -i "s#ip: 127.0.0.1#ip: 0.0.0.0#g" /opt/ssdb8882/ssdb.conf
-   $ sed -i "s#port: 8888#port: 8882#g" /opt/ssdb8882/ssdb.conf
-   $ sed -i "s#level: debug#level: error#g" /opt/ssdb8882/ssdb.conf
+   $ cp -a /usr/local/ssdb/ssdb.conf /opt/ssdb8882/ssdb.conf \
+   && sed -i "s#ip: 127.0.0.1#ip: 0.0.0.0#g" /opt/ssdb8882/ssdb.conf \
+   && sed -i "s#port: 8888#port: 8882#g" /opt/ssdb8882/ssdb.conf \
+   && sed -i "s#level: debug#level: error#g" /opt/ssdb8882/ssdb.conf
    ```
 
 3. 创建服务启动脚本
@@ -152,15 +152,18 @@ $ sudo apt install -y git-all unzip make autoconf build-essential docker.io
 3. 下载主网节点配置文件
 
    ```shell
-   $ cd /tmp && wget https://github.com/AElfProject/AElf/releases/download/v1.1.0/aelf-mainnet-mainchain.zip
-   $ unzip aelf-mainnet-mainchain.zip -d /opt
+   $ AELF_VERSION="v1.2.0"
+   $ wget https://github.com/AElfProject/AElf/releases/download/${AELF_VERSION}/aelf-mainnet-mainchain.zip -P /tmp
+   
+   $ cd /tmp && unzip aelf-mainnet-mainchain.zip -d /opt
    $ mv /opt/aelf-mainnet-mainchain /opt/aelf-node
    ```
 
 4. 拷贝账户文件
 
    ```shell
-   $ cp -a /root/.local/share/aelf/keys/N9PeS5pCJDwncm4AmZgrd3LY1GB9gCKRLPLp6LSb11eyvaT6y.json /opt/aelf-node/keys
+   $ mkdir -p /opt/aelf-node/keys
+   $ cp -a /root/.local/share/aelf/keys/*.json /opt/aelf-node/keys
    ```
 
 5. 修改`appsetting.json` 配置文件
@@ -168,11 +171,11 @@ $ sudo apt install -y git-all unzip make autoconf build-essential docker.io
    ```shell
    # 配置文件优先级 
    # 此处填写的账号密码为上面创建主网账号时填写的信息
-   $ sed -i 's#"NodeAccount": ""#"NodeAccount": "N9PeS5pCJDwncm4AmZgrd3LY1GB9gCKRLPLp6LSb11eyvaT6y"#g' /opt/aelf-node/appsettings.json
-   $ sed -i 's#"NodeAccountPassword": ""#"NodeAccountPassword": "aelf2022"#g' /opt/aelf-node/appsettings.json
+   $ sed -i 's#"NodeAccount": ""#"NodeAccount": "w38rsUfGxf4e8qvqYjZPFLSfsTYLXfx3k8qzY27QBMLAydffG"#g' /opt/aelf-node/appsettings.json
+   $ sed -i 's#"NodeAccountPassword": ""#"NodeAccountPassword": "12345678"#g' /opt/aelf-node/appsettings.json
    
-   $ sed -i 's#"BlockchainDb": ""#"BlockchainDb": "redis://192.168.67.38:8881"#g' /opt/aelf-node/appsettings.json
-   $ sed -i 's#"StateDb": ""#"StateDb": "redis://192.168.67.38:8882"#g' /opt/aelf-node/appsettings.json
+   $ sed -i 's#"BlockchainDb": ""#"BlockchainDb": "redis://192.168.67.158:8881"#g' /opt/aelf-node/appsettings.json
+   $ sed -i 's#"StateDb": ""#"StateDb": "redis://192.168.67.158:8882"#g' /opt/aelf-node/appsettings.json
    ```
 
    注意：如果您的基础设施在防火墙后面，您需要打开节点的 P2P 侦听端口`6801`
@@ -210,10 +213,10 @@ $ sudo apt install -y git-all unzip make autoconf build-essential docker.io
 使用docker运行完整节点
 
 ```shell
-$ docker pull aelf/node:mainnet-v1.1.0
+$ docker pull aelf/node:mainnet-${AELF_VERSION}
 $ cd /opt/aelf-node
 # 启动服务
-$ sh aelf-node.sh start aelf/node:mainnet-v1.1.0
+$ sh aelf-node.sh start aelf/node:mainnet-${AELF_VERSION}
 
 # 停止服务
 $ sh aelf-node.sh stop
@@ -306,8 +309,10 @@ $ /opt/ssdb8882/ssdb.sh start
 ### 修改节点配置
 
 ```shell
-$ cd /tmp && wget https://github.com/AElfProject/AElf/releases/download/v1.1.0/aelf-mainnet-sidechain1.zip
-$ unzip aelf-mainnet-sidechain1.zip -d /opt
+$ AELF_VERSION="v1.2.0"
+
+$ wget https://github.com/AElfProject/AElf/releases/download/${AELF_VERSION}/aelf-mainnet-sidechain1.zip -P /tmp
+$ cd /tmp && unzip aelf-mainnet-sidechain1.zip -d /opt
 $ mv /opt/aelf-mainnet-sidechain1 /opt/aelf-node
 ```
 
@@ -315,7 +320,7 @@ $ mv /opt/aelf-mainnet-sidechain1 /opt/aelf-node
 
 ```shell
 # "ParentChainServerIp": "" 需要填写主链服务IP地址
-$ sed -i 's#"ParentChainServerIp": ""#"ParentChainServerIp": "192.168.67.38"#g' /opt/aelf-node/appsettings.SideChain.MainNet.json
+$ sed -i 's#"ParentChainServerIp": ""#"ParentChainServerIp": "192.168.67.158"#g' /opt/aelf-node/appsettings.SideChain.MainNet.json
 ```
 
 修改后的文件内容如下：
@@ -340,13 +345,13 @@ $ sed -i 's#"ParentChainServerIp": ""#"ParentChainServerIp": "192.168.67.38"#g' 
 配置文件`appsettings.json`修改信息，需要注意的是此节点的6801端口也需要对`18.134.154.80`IP开发。
 
 ```shell
-$ sed -i 's#"NodeAccount": ""#"NodeAccount": "N9PeS5pCJDwncm4AmZgrd3LY1GB9gCKRLPLp6LSb11eyvaT6y"#g' /opt/aelf-node/appsettings.json
+$ sed -i 's#"NodeAccount": ""#"NodeAccount": "gUwmgYse4EHfAXxh78HrTaXzUXXNng5bP3E5Qn4z2t3gRkCxf"#g' /opt/aelf-node/appsettings.json
 
-$ sed -i 's#"NodeAccountPassword": ""#"NodeAccountPassword": "aelf2022"#g' /opt/aelf-node/appsettings.json
+$ sed -i 's#"NodeAccountPassword": ""#"NodeAccountPassword": "12345678"#g' /opt/aelf-node/appsettings.json
 
-$ sed -i 's#"BlockchainDb": ""#"BlockchainDb": "redis://192.168.67.39:8881"#g' /opt/aelf-node/appsettings.json
+$ sed -i 's#"BlockchainDb": ""#"BlockchainDb": "redis://192.168.67.21:8881"#g' /opt/aelf-node/appsettings.json
 
-$ sed -i 's#"StateDb": ""#"StateDb": "redis://192.168.67.39:8882"#g' /opt/aelf-node/appsettings.json
+$ sed -i 's#"StateDb": ""#"StateDb": "redis://192.168.67.21:8882"#g' /opt/aelf-node/appsettings.json
 
 $ sed -i 's#"BootNodes": \[\]#"BootNodes": \["18.134.154.80:6801"\]#g' /opt/aelf-node/appsettings.json
 
@@ -369,7 +374,7 @@ $ sed -i 's#"Password": ""#"Password": "66666666"#g' /opt/aelf-node/appsettings.
     "StateDb": "redis://192.168.67.39:8882"
   },
   "Account": {
-    "NodeAccount": "N9PeS5pCJDwncm4AmZgrd3LY1GB9gCKRLPLp6LSb11eyvaT6y",
+    "NodeAccount": "gUwmgYse4EHfAXxh78HrTaXzUXXNng5bP3E5Qn4z2t3gRkCxf",
     "NodeAccountPassword": "aelf2022"
   },
   "Network": {
@@ -407,12 +412,12 @@ $ sed -i 's#"Password": ""#"Password": "66666666"#g' /opt/aelf-node/appsettings.
 ```shell
 $ mkdir -p /opt/aelf-node/keys
 # 把主链配置账号的json文件复制到keys中
-$ cp -a /root/.local/share/aelf/keys/N9PeS5pCJDwncm4AmZgrd3LY1GB9gCKRLPLp6LSb11eyvaT6y.json /opt/aelf-node/keys
+$ cp -a /root/.local/share/aelf/keys/gUwmgYse4EHfAXxh78HrTaXzUXXNng5bP3E5Qn4z2t3gRkCxf.json /opt/aelf-node/keys
 
 # 拉取主网侧链镜像
-$ docker pull aelf/node:mainnet-v1.1.0
+$ docker pull aelf/node:mainnet-${AELF_VERSION}
 
 # 启动节点服务
-$ sh aelf-node.sh start aelf/node:mainnet-v1.1.0
+$ sh aelf-node.sh start aelf/node:mainnet-${AELF_VERSION}
 ```
 
