@@ -12,7 +12,7 @@ $ zabbix_pwd="3ZBTY4UjYXxb8J9j" && \
   zabbix_server_name="Hoopox Zabbix Server" && \
   server_dir="/opt/zabbix" && \
   mkdir -p ${server_dir}/server/{alertscripts,externalscripts,modules} && \
-  mkdir -p ${server_dir}/agent2/{zabbix_agentd.d,modules}
+  mkdir -p ${server_dir}/agent2/modules
 ```
 
 
