@@ -5,4 +5,5 @@ Git 使用
    :maxdepth: 3
 
    git-full-migration
+   Git-Command
 
