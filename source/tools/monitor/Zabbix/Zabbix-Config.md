@@ -1,3 +1,98 @@
+# Zabbix Webhook 集成飞书机器人
+
+管理 --> 报警媒介类型 --> 创建媒介类型
+
+类型选择`Webhook`
+
+参数：
+
+- Message：`{ALERT.MESSAGE}`
+
+- URL：飞书机器人地址
+
+- 脚本：
+
+  ```javascript
+  var feishu = {
+      params: {},
+      proxy: null,
+      setParams: function (params) {
+          if (typeof params !== 'object') {
+              return;
+          }
+          feishu.params = params; 
+      },
+      request: function () {
+          var data = {
+            msg_type: "text",
+            content: {
+              // text: "## 通知:\n " + feishu.params.Message,
+              text: feishu.params.Message,
+            },
+          },
+          response,
+          url = feishu.params.URL,
+          request = new HttpRequest();
+          request.addHeader('Content-Type: application/json');
+          if (typeof feishu.HTTPProxy !== 'undefined' && feishu.HTTPProxy !== '') {
+              request.setProxy(feishu.HTTPProxy);
+          }
+          if (typeof data !== 'undefined') {
+              data = JSON.stringify(data);
+          }
+          Zabbix.Log(4, "[ feishu Webhook ] message is: " + data);
+          response = request.post(url, data);
+          Zabbix.log(4, '[ feishu Webhook ] Received response with status code ' +
+              request.getStatus() + '\n' + response);
+          if (response !== null) {
+              try {
+                  response = JSON.parse(response);
+              }
+              catch (error) {
+                  Zabbix.log(4, '[ feishu Webhook ] Failed to parse response received from feishu');
+                  response = null;
+              }
+          }
+          if (request.getStatus() !== 200 || response.StatusCode !== 0) {
+              var message = 'Request failed with status code '+request.getStatus();
+              if (response !== null && typeof response.errmsg !== 'undefined') {
+                  message += ': '+ JSON.stringify(response.errmsg) ;
+              }
+              throw message + '. Check debug log for more information.';
+          }
+          return response;
+      },
+  };
+  try {
+      var params = JSON.parse(value);
+  
+      if (typeof params.URL !== 'undefined' 
+           && typeof params.Message !== 'undefined') {
+             Zabbix.log(4, '[ feishu Webhook ] webhookURL "' + params.URL )+'"';
+          } 
+          else {
+            throw 'Missing parameter. URL, message, to parameter is required'
+          }
+      if (params.HTTPProxy) {
+          feishu.proxy = params.HTTPProxy;
+      } 
+      feishu.setParams(params);
+      feishu.request();
+      return 'OK';
+  }catch (error) {
+      Zabbix.log(3, '[ feishu Webhook ] ERROR: ' + error);
+      throw 'Sending failed: ' + error;
+  }
+  ```
+
+  
+
+![](img/feishu-webhook.png)
+
+
+
+
+
 # 自动注册服务检查端口
 
 ## 配置文件
