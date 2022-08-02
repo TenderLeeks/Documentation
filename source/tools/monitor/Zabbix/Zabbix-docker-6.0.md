@@ -50,6 +50,21 @@ $ docker run -v /etc/localtime:/etc/localtime \
       -d zabbix/zabbix-java-gateway:ubuntu-6.0-latest
 ```
 
+## 启动 Zabbix Web Service 服务
+
+[参考文档](https://github.com/zabbix/zabbix-docker/tree/6.2/Dockerfiles/web-service/ubuntu)
+
+```shell
+$ docker run -v /etc/localtime:/etc/localtime \
+      --name zabbix-web-service -t \
+      -e ZBX_ALLOWEDIP="zabbix-server-mysql" \
+      -v /opt/zabbix/web-service:/etc/zabbix \
+      --cap-add=SYS_ADMIN --network=zabbix-net \
+      -d zabbix/zabbix-web-service:ubuntu-6.0-latest
+```
+
+
+
 ## 启动 Zabbix server 实例
 
 启动`Zabbix server`实例，并将其关联到已创建的`MySQL server`实例
@@ -59,12 +74,15 @@ $ docker run -v /etc/localtime:/etc/localtime \
 $ docker volume create zabbix-server-volume
 $ docker run -v /etc/localtime:/etc/localtime \
       --name zabbix-server-mysql -t \
+      --link zabbix-web-service:zabbix-web-service \
       -e DB_SERVER_HOST="mysql-server" \
       -e MYSQL_DATABASE="zabbix" \
       -e MYSQL_USER="zabbix" \
       -e MYSQL_PASSWORD=${zabbix_pwd} \
       -e MYSQL_ROOT_PASSWORD=${root_pwd} \
       -e ZBX_JAVAGATEWAY="zabbix-java-gateway" \
+      -e ZBX_STARTREPORTWRITERS="2" \
+      -e ZBX_WEBSERVICEURL="http://zabbix-web-service:10053/report" \
       -v zabbix-server-volume:/etc/zabbix \
       -v ${server_dir}/server/alertscripts:/usr/lib/zabbix/alertscripts \
       -v ${server_dir}/server/externalscripts:/usr/lib/zabbix/externalscripts \
@@ -74,6 +92,31 @@ $ docker run -v /etc/localtime:/etc/localtime \
       --restart unless-stopped \
       -d zabbix/zabbix-server-mysql:ubuntu-6.0-latest
 ```
+
+```shell
+# 使用以下命令查看docker参数信息
+$ docker inspect zabbix-server-mysql
+$ cp -a /var/lib/docker/volumes/zabbix-server-volume/_data/zabbix_server.conf /opt/zabbix/server/etc/zabbix_server.conf
+$ docker run -v /etc/localtime:/etc/localtime \
+      --name zabbix-server-mysql -t \
+      -e DB_SERVER_HOST="mysql-server" \
+      -e MYSQL_DATABASE="zabbix" \
+      -e MYSQL_USER="zabbix" \
+      -e MYSQL_PASSWORD=********* \
+      -e MYSQL_ROOT_PASSWORD=********* \
+      -e ZBX_JAVAGATEWAY="zabbix-java-gateway" \
+      -v /opt/zabbix/server/etc/zabbix_server.conf:/etc/zabbix/zabbix_server.conf \
+      -v /opt/zabbix/server/alertscripts:/usr/lib/zabbix/alertscripts \
+      -v /opt/zabbix/server/externalscripts:/usr/lib/zabbix/externalscripts \
+      -v /opt/zabbix/server/modules:/usr/lib/zabbix/modules \
+      --network=zabbix-net \
+      -p 10051:10051 \
+      --restart unless-stopped \
+      -d zabbix/zabbix-server-mysql:ubuntu-6.0-latest
+
+```
+
+
 
 <table border="1" cellpadding="10" cellspacing="10">
   <thead>
@@ -122,6 +165,7 @@ $ docker run -v /etc/localtime:/etc/localtime \
     <tr><td>/etc/ssl/nginx</td><td>允许为 Zabbix Web 接口启用 HTTPS。这个 volume 必须包含为 Nginx SSL 连接装备的 ssl.crt 和 ssl.key 两个文件。</td></tr>
   </tbody>
 </table>
+
 
 ## 启动 Zabbix agent2 服务
 

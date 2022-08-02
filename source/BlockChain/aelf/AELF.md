@@ -235,6 +235,8 @@ $ curl http://127.0.0.1:8000/api/blockchain/chainStatus
 
 ```shell
 $ aelf-command get-blk-height -e http://127.0.0.1:8000
+
+$ curl http://127.0.0.1:8000/api/blockChain/blockHeight
 ```
 
 ### 使用快照数据启动
