@@ -326,23 +326,23 @@ $ chmod 777 /var/www/html/zabbix/conf
 
 ## 浏览器访问配置
 
-![](/Users/yushuai/Library/Mobile Documents/com~apple~CloudDocs/pythonProject/ReadtheDocs/source/tools/monitor/Zabbix/img/1585050808443-esm.png)
+![](img/1585050808443-esm.png)
 
-![](/Users/yushuai/Library/Mobile Documents/com~apple~CloudDocs/pythonProject/ReadtheDocs/source/tools/monitor/Zabbix/img/1585050885820-60m.png)
+![](img/1585050885820-60m.png)
 
-![](/Users/yushuai/Library/Mobile Documents/com~apple~CloudDocs/pythonProject/ReadtheDocs/source/tools/monitor/Zabbix/img/1585050982574-u0t.png)
+![](img/1585050982574-u0t.png)
 
-![](/Users/yushuai/Library/Mobile Documents/com~apple~CloudDocs/pythonProject/ReadtheDocs/source/tools/monitor/Zabbix/img/1585051683456-dzh.png)
+![](img/1585051683456-dzh.png)
 
-![](/Users/yushuai/Library/Mobile Documents/com~apple~CloudDocs/pythonProject/ReadtheDocs/source/tools/monitor/Zabbix/img/1585051701602-sgz.png)
+![](img/1585051701602-sgz.png)
 
-![](/Users/yushuai/Library/Mobile Documents/com~apple~CloudDocs/pythonProject/ReadtheDocs/source/tools/monitor/Zabbix/img/1585052024866-vog.png)
+![](img/1585052024866-vog.png)
 
-![](/Users/yushuai/Library/Mobile Documents/com~apple~CloudDocs/pythonProject/ReadtheDocs/source/tools/monitor/Zabbix/img/1585052068171-xvc.png)
+![](img/1585052068171-xvc.png)
 
-![](/Users/yushuai/Library/Mobile Documents/com~apple~CloudDocs/pythonProject/ReadtheDocs/source/tools/monitor/Zabbix/img/1585052083833-bxq.png)
+![](img/1585052083833-bxq.png)
 
-![](/Users/yushuai/Library/Mobile Documents/com~apple~CloudDocs/pythonProject/ReadtheDocs/source/tools/monitor/Zabbix/img/1585052162549-m45.png)
+![](img/1585052162549-m45.png)
 
 ## 配置https域名代理
 
