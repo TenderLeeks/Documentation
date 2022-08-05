@@ -10,7 +10,7 @@
 $ wget https://github.com/getsentry/self-hosted/archive/refs/tags/22.7.0.tar.gz -P /tmp
 ```
 
-## 安装配置
+## 安装
 
 ```shell
 # 安装 docker
@@ -98,5 +98,28 @@ Sentry 默认绑定到端口`9000`。
 
 ![](img/welcome.png)
 
+## 配置
 
+1. `sentry/config.yml`：包含大部分（如果不是全部）要调整的配置选项。这个文件是在安装时从 `sentry/config.example.yml` 生成的。文件本身将最常见的配置选项记录为代码注释。此文件中的一些流行设置包括：
+   - `system.url-prefix`：安装后我们会提示您在欢迎屏幕上进行设置。
+   - `mail.*`：提供了一个基本的 SMTP 服务器。
+   - GitHub、Slack 等的集成。
+2. `sentry/sentry.conf.py`：包含更高级的配置。这个文件是在安装期间从 `sentry/sentry.conf.example.py` 生成的。
+3. `sentry/enhance-image.sh`：要安装插件及其依赖项或对 Sentry 基础映像进行其他修改，请将 `sentry/enhance-image.example.sh` 复制到 `sentry/enhance-image.sh` 并在其中添加必要的步骤。例如，可以使用 apt-get 安装依赖项并使用 pip 安装插件。对 `sentry/enhance-image.sh` 进行修改后，再次运行 `./install.sh` 应用配置。
+4. **环境变量**：可用键在 .env 中定义。如果需要覆盖其中任何一个，请使用一些与系统相关的方法来设置环境变量。为避免 Git 更改，只需创建一个名为 `.env.custom` 的文件并在其中插入与系统相关的环境变量。为了使用它，请使用 `docker-compose --env-file /path/to/.env.custom up -d`。
+5. **Geolocation**：使用自定义配置文件以符合底层技术。
+
+可以在[开发人员文档](https://develop.sentry.dev/config/)的配置部分找到有关配置 Sentry 的更多信息。
+
+更改配置后，需要通过运行 `docker-compose restart web worker cron sentry-cleanup` （或仅 `docker-compose restart` 重新启动所有内容）来重新启动所有 Sentry 服务。
+
+## 升级版本
+
+查看[最新版本](https://github.com/getsentry/self-hosted/releases/latest)
+
+关于版本更新请查看[官方文档](https://develop.sentry.dev/self-hosted/releases/)
+
+## 备份和恢复
+
+[官方文档](https://develop.sentry.dev/self-hosted/backup/)
 

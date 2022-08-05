@@ -10,6 +10,12 @@
 `````````````
 www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题和技术知识。
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Linux 笔记
+
+   Linux_Notes/index
+
 
 .. toctree::
    :maxdepth: 1
