@@ -132,7 +132,3 @@ lengthn=${#array_name[n]}
 ```
 
 
-
-参考：
-
--  http://c.biancheng.net/cpp/shell/

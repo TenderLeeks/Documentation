@@ -1,6 +1,15 @@
-> confd的源码参考：https://github.com/kelseyhightower/confd
+# confd
 
-# 1. confd的部署
+[confd的源码](https://github.com/kelseyhightower/confd)
+
+使用来自 etcd 或 consul 的模板和数据管理本地应用程序配置文件。
+
+`confd`是一个轻量级的配置管理工具，专注于：
+
+- 使用存储在[etcd](https://github.com/coreos/etcd)、 [consul](http://consul.io/)、[dynamodb](http://aws.amazon.com/dynamodb/)、[redis](http://redis.io/)、 [vault](https://vaultproject.io/)、[zookeeper](https://zookeeper.apache.org/)、[aws ssm 参数存储](https://aws.amazon.com/ec2/systems-manager/)或环境变量中的数据以及处理[模板资源](https://github.com/kelseyhightower/confd/blob/master/docs/template-resources.md)，使本地配置文件保持最新。
+- 重新加载应用程序以获取新的配置文件更改
+
+## confd的部署
 
 以下Linux系统为例。
 
@@ -8,21 +17,21 @@
 
 ```bash
 # Download the binary
-wget https://github.com/kelseyhightower/confd/releases/download/v0.16.0/confd-0.16.0-linux-amd64
+$ wget https://github.com/kelseyhightower/confd/releases/download/v0.16.0/confd-0.16.0-linux-amd64
 
 # 重命名二进制文件，并移动到PATH的目录下
-mv confd-0.16.0-linux-amd64 /usr/local/bin/confd
-chmod +x /usr/local/bin/confd
+$ mv confd-0.16.0-linux-amd64 /usr/local/bin/confd
+$ chmod +x /usr/local/bin/confd
 
 # 验证是否安装成功
-confd --help
+$ confd --help
 ```
 
-# 2. confd的配置
+## confd的配置
 
 `Confd`通过读取后端存储的配置信息来动态更新对应的配置文件，对应的后端存储可以是`etcd`，`redis`等，其中etcd的v3版本对应的存储后端为`etcdv3`。
 
-## 2.1. confd.toml
+### confd.toml
 
 `confd.toml`为confd服务本身的配置文件，主要记录了使用的存储后端、协议、confdir等参数。
 
@@ -30,7 +39,7 @@ confd --help
 
 - 存储后端`etcdv3`：
 
-```
+```shell
 backend = "etcdv3"
 confdir = "/etc/confd"
 log-level = "debug"
@@ -46,7 +55,7 @@ watch = true
 
 - 存储后端为`redis`
 
-```
+```shell
 backend = "redis"
 confdir = "/etc/confd"
 log-level = "debug"
@@ -68,7 +77,7 @@ publish的命令格式如下:
 publish __keyspace@0__:{prefix}/{key} set(or del)
 ```
 
-## 2.2. 创建confdir
+### 创建confdir
 
 confdir底下包含两个目录:
 
@@ -76,10 +85,10 @@ confdir底下包含两个目录:
 - `templates`:配置模板Template，即基于不同组件的配置，修改为符合 [Golang text templates](http://golang.org/pkg/text/template/#pkg-overview)的模板文件。
 
 ```bash
-sudo mkdir -p /etc/confd/{conf.d,templates}
+$ sudo mkdir -p /etc/confd/{conf.d,templates}
 ```
 
-### 2.2.1. Template Resources
+#### Template Resources
 
 模板源配置文件是`TOML`格式的文件，主要包含配置的生成逻辑，例如模板源，后端存储对应的keys，命令执行等。默认目录在`/etc/confd/conf.d`。
 
@@ -104,7 +113,7 @@ sudo mkdir -p /etc/confd/{conf.d,templates}
 
 例如：`/etc/confd/conf.d/myapp-nginx.toml`
 
-```
+```shell
 [template]
 prefix = "/myapp"
 src = "nginx.tmpl"
@@ -118,17 +127,17 @@ check_cmd = "/usr/sbin/nginx -t -c {{.src}}"
 reload_cmd = "/usr/sbin/service nginx reload"
 ```
 
-### 2.2.2. Template
+#### Template
 
 `Template`定义了单一应用配置的模板，默认存储在`/etc/confd/templates`目录下，模板文件符合Go的[`text/template`](http://golang.org/pkg/text/template/)格式。
 
-模板文件常用函数有`base`，`get`，`gets`，`lsdir`，`json`等。具体可参考https://github.com/kelseyhightower/confd/blob/master/docs/templates.md。
+模板文件常用函数有`base`，`get`，`gets`，`lsdir`，`json`等。具体可参考[文档](https://github.com/kelseyhightower/confd/blob/master/docs/templates.md)。
 
 例子：
 
 `/etc/confd/templates/nginx.tmpl`
 
-```
+```shell
 {{range $dir := lsdir "/services/web"}}
 upstream {{base $dir}} {
     {{$custdir := printf "/services/web/%s/*" $dir}}{{range gets $custdir}}
@@ -145,38 +154,38 @@ server {
 {{end}}
 ```
 
-# 3. 创建后端存储的配置数据
+## 创建后端存储的配置数据
 
 以`etcdv3`存储为例，在etcd中创建以下数据。
 
 ```bash
-etcdctl --endpoints=$endpoints put /services/web/cust1/2 '{"IP": "10.0.0.2"}'
-etcdctl --endpoints=$endpoints put /services/web/cust2/2 '{"IP": "10.0.0.4"}'
-etcdctl --endpoints=$endpoints put /services/web/cust2/1 '{"IP": "10.0.0.3"}'
-etcdctl --endpoints=$endpoints put /services/web/cust1/1 '{"IP": "10.0.0.1"}'
+$ etcdctl --endpoints=$endpoints put /services/web/cust1/2 '{"IP": "10.0.0.2"}'
+$ etcdctl --endpoints=$endpoints put /services/web/cust2/2 '{"IP": "10.0.0.4"}'
+$ etcdctl --endpoints=$endpoints put /services/web/cust2/1 '{"IP": "10.0.0.3"}'
+$ etcdctl --endpoints=$endpoints put /services/web/cust1/1 '{"IP": "10.0.0.1"}'
 ```
 
-# 4. 启动confd的服务
+## 启动confd的服务
 
 confd支持以`daemon`或者`onetime`两种模式运行，当以`daemon`模式运行时，confd会监听后端存储的配置变化，并根据配置模板动态生成目标配置文件。
 
 confd可以使用`-config-file`参数来指定confd的配置文件，而将其他参数写在配置文件中。
 
 ```bash
-/usr/local/bin/confd -config-file /etc/confd/conf/confd.toml
+$ /usr/local/bin/confd -config-file /etc/confd/conf/confd.toml
 ```
 
 如果以`daemon`模式运行，在命令后面添加`&`符号，例如：
 
 ```bash
-confd -watch -backend etcdv3 -node http://172.16.5.4:12379 &
+$ confd -watch -backend etcdv3 -node http://172.16.5.4:12379 &
 ```
 
 以下以`onetime`模式运行为例。其中对应的后端存储类型是`etcdv3`。
 
 ```bash
 # 执行命令
-confd -onetime -backend etcdv3 -node http://172.16.5.4:12379
+$ confd -onetime -backend etcdv3 -node http://172.16.5.4:12379
 
 # output
 2018-05-11T18:04:59+08:00 k8s-dbg-master-1 confd[35808]: INFO Backend set to etcdv3
@@ -187,12 +196,12 @@ confd -onetime -backend etcdv3 -node http://172.16.5.4:12379
 2018-05-11T18:04:59+08:00 k8s-dbg-master-1 confd[35808]: INFO Target config /root/myapp/twemproxy/conf/twemproxy.conf has been updated
 ```
 
-# 5. 查看生成的配置文件
+## 查看生成的配置文件
 
 在`/etc/confd/conf.d/myapp-nginx.toml`中定义的配置文件的生成路径为`/tmp/myapp.conf`。
 
 ```bash
-[root@k8s-dbg-master-1 dest]# cat myapp.conf
+$ cat myapp.conf
 upstream cust1 {
     server 10.0.0.1:80;
     server 10.0.0.2:80;
@@ -218,13 +227,13 @@ server {
 }
 ```
 
-# 6. confd动态更新twemproxy
+## confd动态更新twemproxy
 
-## 6.1. twemproxy.toml
+### twemproxy.toml
 
-confd的模板源文件配置：/etc/confd/conf.d/twemproxy.toml
+confd的模板源文件配置：`/etc/confd/conf.d/twemproxy.toml`
 
-```
+```shell
 [template]
 src = "twemproxy.tmpl"
 dest = "/root/myapp/twemproxy/conf/twemproxy.conf"
@@ -235,9 +244,9 @@ check_cmd = "/usr/local/bin/nutcracker -t -c /root/myapp/twemproxy/conf/twemprox
 reload_cmd = "bash /root/myapp/twemproxy/reload.sh"
 ```
 
-## 6.2. twemproxy.tmpl
+### twemproxy.tmpl
 
-模板文件：/etc/confd/templates/twemproxy.tmpl
+模板文件：`/etc/confd/templates/twemproxy.tmpl`
 
 ```yaml
 global:
@@ -266,7 +275,7 @@ pools: {{range gets "/twemproxy/pool/*"}}
 {{end}}
 ```
 
-## 6.3. etcd中的配置格式
+### etcd中的配置格式
 
 `etcd`中的配置通过一个map来定义为完整的配置内容。其中`key`是`twemproxy`中`pool`的名称，`value`是`pool`的所有内容。
 
@@ -315,7 +324,7 @@ type Server struct {
 }
 ```
 
-## 6.4. 生成`twemproxy`配置文件
+### 生成`twemproxy`配置文件
 
 ```bash
 global:
@@ -361,7 +370,7 @@ pools:
      - 10.233.111.21:6379:1
 ```
 
-# 7. confd的命令
+## confd的命令
 
 ```bash
 $ confd --help
@@ -438,14 +447,4 @@ Usage of confd:
 
 
 
-
-
-参考文章：
-
-https://github.com/kelseyhightower/confd/blob/master/docs/installation.md
-
-https://github.com/kelseyhightower/confd/blob/master/docs/quick-start-guide.md
-
-https://github.com/kelseyhightower/confd/blob/master/docs/template-resources.md
-
-https://github.com/kelseyhightower/confd/blob/master/docs/templates.md
+[参考文章](https://github.com/kelseyhightower/confd/blob/master/docs)

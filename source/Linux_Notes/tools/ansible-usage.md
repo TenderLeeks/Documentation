@@ -1,318 +1,415 @@
-# 1. 安装
+# ansible 使用
 
-以centos为例。
+## Ansible 特点
 
-```bash
-yum install -y ansible
+- 部署简单，只需在主控端部署 Ansible 环境，被控端无需做任何操作。
+- 默认使用 SSH（Secure Shell）协议对设备进行管理。
+- 主从集中化管理。
+- 配置简单、功能强大、扩展性强。
+- 支持 API 及自定义模块，可通过 Python 轻松扩展。
+- 通过 Playbooks 来定制强大的配置、状态管理。
+- 对云计算平台、大数据都有很好的支持。
+- 提供一个功能强大、操作性强的 Web 管理界面和 REST API 接口 ---- AWX 平台。
+
+## 配置 ansible
+
+```shell
+$ yum -y install ansible
+$ ls /etc/ansible/
+ansible.cfg hosts roles
+#ansible.cfg       是 Ansible 工具的配置文件。
+#hosts             用来配置被管理的机器。
+#roles             是一个目录，playbook 将使用它
 ```
 
-# 2. 配置
+### SSH秘钥认证
 
-默认配置目录在`/etc/ansible/`，主要有以下两个配置：
-
-- ansible.cfg：ansible的配置文件
-- hosts：配置ansible所连接的机器IP信息
-
-## 2.1. ansible.cfg
-
-## 2.2. hosts
-
-```bash
-# This is the default ansible 'hosts' file.
-#
-# It should live in /etc/ansible/hosts
-#
-#   - Comments begin with the '#' character
-#   - Blank lines are ignored
-#   - Groups of hosts are delimited by [header] elements
-#   - You can enter hostnames or ip addresses
-#   - A hostname/ip can be a member of multiple groups
-
-# Ex 1: Ungrouped hosts, specify before any group headers.
-
-# green.example.com
-# blue.example.com
-# 192.168.100.1
-# 192.168.100.10
-
-# Ex 2: A collection of hosts belonging to the 'webservers' group
-
-# [webservers]
-# alpha.example.org
-# beta.example.org
-# 192.168.1.100
-# 192.168.1.110
-
-# If you have multiple hosts following a pattern you can specify
-# them like this:
-
-# www[001:006].example.com
-
-# Ex 3: A collection of database servers in the 'dbservers' group
-
-# [dbservers]
-#
-# db01.intranet.mydomain.net
-# db02.intranet.mydomain.net
-# 10.25.1.56
-# 10.25.1.57
-
-# Here's another example of host ranges, this time there are no
-# leading 0s:
-
-# db-[99:101]-node.example.com
-
-[k8s]
-192.168.201.52
-192.168.201.53
-192.168.201.54
-192.168.201.55
-192.168.201.56
-192.168.201.57
-
-# password setting
-[all:vars]
-ansible_connection=ssh
-ansible_ssh_user=root
-ansible_ssh_pass=xxx
+```shell
+$ ssh-keygen -t rsa -C "Leeks"
+$ ssh-copy-id root@10.0.7.164
+$ ssh-copy-id root@10.0.7.166
 ```
 
-# 3. ansible的命令
+### 添加被管理主机 
 
-命令格式为：ansible <host-pattern> [options]
-
-- `host-pattern`：即hosts文件中配置的集群名称
-- `options`：命令操作符
-
-例如：ansible k8s -a 'uname -r'
-
-```bash
-[root@k8s-master ansible]# ansible k8s -a 'uname -r'
-172.16.201.56 | SUCCESS | rc=0 >>
-4.16.11-1.el7.elrepo.x86_64
-
-172.16.201.55 | SUCCESS | rc=0 >>
-4.16.11-1.el7.elrepo.x86_64
-
-172.16.201.54 | SUCCESS | rc=0 >>
-4.16.11-1.el7.elrepo.x86_64
-
-172.16.201.53 | SUCCESS | rc=0 >>
-4.16.11-1.el7.elrepo.x86_64
-
-172.16.201.52 | SUCCESS | rc=0 >>
-4.16.11-1.el7.elrepo.x86_64
-
-172.16.201.57 | SUCCESS | rc=0 >>
-4.16.11-1.el7.elrepo.x86_64
+```shell
+$ cat /etc/hosts
+10.0.7.164 centos-01
+10.0.7.166 centos-03
+$ vim /etc/ansible/hosts
+[Client]
+centos-01
+centos-03
 ```
 
-具体的命令信息：
+### 测试ansible
 
-```bash
-Usage: ansible <host-pattern> [options]
+操作 Client 组 ( all 为操作 hosts 文件中所有主机 )，-m 指定执行 ping 模块，下面是返回结果
 
-Define and run a single task 'playbook' against a set of hosts
-
-Options:
-  -a MODULE_ARGS, --args=MODULE_ARGS
-                        module arguments
-  --ask-vault-pass      ask for vault password
-  -B SECONDS, --background=SECONDS
-                        run asynchronously, failing after X seconds
-                        (default=N/A)
-  -C, --check           don't make any changes; instead, try to predict some
-                        of the changes that may occur
-  -D, --diff            when changing (small) files and templates, show the
-                        differences in those files; works great with --check
-  -e EXTRA_VARS, --extra-vars=EXTRA_VARS
-                        set additional variables as key=value or YAML/JSON, if
-                        filename prepend with @
-  -f FORKS, --forks=FORKS
-                        specify number of parallel processes to use
-                        (default=5)
-  -h, --help            show this help message and exit
-  -i INVENTORY, --inventory=INVENTORY, --inventory-file=INVENTORY
-                        specify inventory host path or comma separated host
-                        list. --inventory-file is deprecated
-  -l SUBSET, --limit=SUBSET
-                        further limit selected hosts to an additional pattern
-  --list-hosts          outputs a list of matching hosts; does not execute
-                        anything else
-  -m MODULE_NAME, --module-name=MODULE_NAME
-                        module name to execute (default=command)
-  -M MODULE_PATH, --module-path=MODULE_PATH
-                        prepend colon-separated path(s) to module library
-                        (default=[u'/root/.ansible/plugins/modules',
-                        u'/usr/share/ansible/plugins/modules'])
-  -o, --one-line        condense output
-  --playbook-dir=BASEDIR
-                        Since this tool does not use playbooks, use this as a
-                        subsitute playbook directory.This sets the relative
-                        path for many features including roles/ group_vars/
-                        etc.
-  -P POLL_INTERVAL, --poll=POLL_INTERVAL
-                        set the poll interval if using -B (default=15)
-  --syntax-check        perform a syntax check on the playbook, but do not
-                        execute it
-  -t TREE, --tree=TREE  log output to this directory
-  --vault-id=VAULT_IDS  the vault identity to use
-  --vault-password-file=VAULT_PASSWORD_FILES
-                        vault password file
-  -v, --verbose         verbose mode (-vvv for more, -vvvv to enable
-                        connection debugging)
-  --version             show program's version number and exit
-
-  Connection Options:
-    control as whom and how to connect to hosts
-
-    -k, --ask-pass      ask for connection password
-    --private-key=PRIVATE_KEY_FILE, --key-file=PRIVATE_KEY_FILE
-                        use this file to authenticate the connection
-    -u REMOTE_USER, --user=REMOTE_USER
-                        connect as this user (default=None)
-    -c CONNECTION, --connection=CONNECTION
-                        connection type to use (default=smart)
-    -T TIMEOUT, --timeout=TIMEOUT
-                        override the connection timeout in seconds
-                        (default=10)
-    --ssh-common-args=SSH_COMMON_ARGS
-                        specify common arguments to pass to sftp/scp/ssh (e.g.
-                        ProxyCommand)
-    --sftp-extra-args=SFTP_EXTRA_ARGS
-                        specify extra arguments to pass to sftp only (e.g. -f,
-                        -l)
-    --scp-extra-args=SCP_EXTRA_ARGS
-                        specify extra arguments to pass to scp only (e.g. -l)
-    --ssh-extra-args=SSH_EXTRA_ARGS
-                        specify extra arguments to pass to ssh only (e.g. -R)
-
-  Privilege Escalation Options:
-    control how and which user you become as on target hosts
-
-    -s, --sudo          run operations with sudo (nopasswd) (deprecated, use
-                        become)
-    -U SUDO_USER, --sudo-user=SUDO_USER
-                        desired sudo user (default=root) (deprecated, use
-                        become)
-    -S, --su            run operations with su (deprecated, use become)
-    -R SU_USER, --su-user=SU_USER
-                        run operations with su as this user (default=None)
-                        (deprecated, use become)
-    -b, --become        run operations with become (does not imply password
-                        prompting)
-    --become-method=BECOME_METHOD
-                        privilege escalation method to use (default=sudo),
-                        valid choices: [ sudo | su | pbrun | pfexec | doas |
-                        dzdo | ksu | runas | pmrun | enable ]
-    --become-user=BECOME_USER
-                        run operations as this user (default=root)
-    --ask-sudo-pass     ask for sudo password (deprecated, use become)
-    --ask-su-pass       ask for su password (deprecated, use become)
-    -K, --ask-become-pass
-                        ask for privilege escalation password
-
-Some modules do not make sense in Ad-Hoc (include, meta, etc)
+```shell
+$ ansible Client -m ping
+centos-03 | SUCCESS => {
+    "changed": false, 
+    "ping": "pong"
+}
+centos-01 | SUCCESS => {
+    "changed": false, 
+    "ping": "pong"
+}
+# -i       指定 hosts 文件位置
+# -u       username 指定 SSH 连接的用户名
+# -k       指定远程用户密码
+# -f       指定并发数
+# -s       如需要 root 权限执行时使用 ( 连接用户不是 root 时 )
+# -K       -s 时，-K 输入 root 密码
 ```
 
-# 4. ansible-playbook
+## hosts主机文件
 
-```bash
-Usage: ansible-playbook [options] playbook.yml [playbook2 ...]
-
-Runs Ansible playbooks, executing the defined tasks on the targeted hosts.
-
-Options:
-  --ask-vault-pass      ask for vault password
-  -C, --check           don't make any changes; instead, try to predict some
-                        of the changes that may occur
-  -D, --diff            when changing (small) files and templates, show the
-                        differences in those files; works great with --check
-  -e EXTRA_VARS, --extra-vars=EXTRA_VARS
-                        set additional variables as key=value or YAML/JSON, if
-                        filename prepend with @
-  --flush-cache         clear the fact cache for every host in inventory
-  --force-handlers      run handlers even if a task fails
-  -f FORKS, --forks=FORKS
-                        specify number of parallel processes to use
-                        (default=5)
-  -h, --help            show this help message and exit
-  -i INVENTORY, --inventory=INVENTORY, --inventory-file=INVENTORY
-                        specify inventory host path or comma separated host
-                        list. --inventory-file is deprecated
-  -l SUBSET, --limit=SUBSET
-                        further limit selected hosts to an additional pattern
-  --list-hosts          outputs a list of matching hosts; does not execute
-                        anything else
-  --list-tags           list all available tags
-  --list-tasks          list all tasks that would be executed
-  -M MODULE_PATH, --module-path=MODULE_PATH
-                        prepend colon-separated path(s) to module library
-                        (default=[u'/root/.ansible/plugins/modules',
-                        u'/usr/share/ansible/plugins/modules'])
-  --skip-tags=SKIP_TAGS
-                        only run plays and tasks whose tags do not match these
-                        values
-  --start-at-task=START_AT_TASK
-                        start the playbook at the task matching this name
-  --step                one-step-at-a-time: confirm each task before running
-  --syntax-check        perform a syntax check on the playbook, but do not
-                        execute it
-  -t TAGS, --tags=TAGS  only run plays and tasks tagged with these values
-  --vault-id=VAULT_IDS  the vault identity to use
-  --vault-password-file=VAULT_PASSWORD_FILES
-                        vault password file
-  -v, --verbose         verbose mode (-vvv for more, -vvvv to enable
-                        connection debugging)
-  --version             show program's version number and exit
-
-  Connection Options:
-    control as whom and how to connect to hosts
-
-    -k, --ask-pass      ask for connection password
-    --private-key=PRIVATE_KEY_FILE, --key-file=PRIVATE_KEY_FILE
-                        use this file to authenticate the connection
-    -u REMOTE_USER, --user=REMOTE_USER
-                        connect as this user (default=None)
-    -c CONNECTION, --connection=CONNECTION
-                        connection type to use (default=smart)
-    -T TIMEOUT, --timeout=TIMEOUT
-                        override the connection timeout in seconds
-                        (default=10)
-    --ssh-common-args=SSH_COMMON_ARGS
-                        specify common arguments to pass to sftp/scp/ssh (e.g.
-                        ProxyCommand)
-    --sftp-extra-args=SFTP_EXTRA_ARGS
-                        specify extra arguments to pass to sftp only (e.g. -f,
-                        -l)
-    --scp-extra-args=SCP_EXTRA_ARGS
-                        specify extra arguments to pass to scp only (e.g. -l)
-    --ssh-extra-args=SSH_EXTRA_ARGS
-                        specify extra arguments to pass to ssh only (e.g. -R)
-
-  Privilege Escalation Options:
-    control how and which user you become as on target hosts
-
-    -s, --sudo          run operations with sudo (nopasswd) (deprecated, use
-                        become)
-    -U SUDO_USER, --sudo-user=SUDO_USER
-                        desired sudo user (default=root) (deprecated, use
-                        become)
-    -S, --su            run operations with su (deprecated, use become)
-    -R SU_USER, --su-user=SU_USER
-                        run operations with su as this user (default=None)
-                        (deprecated, use become)
-    -b, --become        run operations with become (does not imply password
-                        prompting)
-    --become-method=BECOME_METHOD
-                        privilege escalation method to use (default=sudo),
-                        valid choices: [ sudo | su | pbrun | pfexec | doas |
-                        dzdo | ksu | runas | pmrun | enable ]
-    --become-user=BECOME_USER
-                        run operations as this user (default=root)
-    --ask-sudo-pass     ask for sudo password (deprecated, use become)
-    --ask-su-pass       ask for su password (deprecated, use become)
-    -K, --ask-become-pass
-                        ask for privilege escalation password
+```shell
+$ cat /etc/ansible/hosts
+www.abc.com              # 定义域名
+192.168.1.100            # 定义 IP
+192.168.1.150:37268      # 指定端口号
+[WebServer]              # 定义分组
+10.0.7.160
+10.0.7.161
+10.0.7.162
+[DBServer]               # 定义多个分组
+10.0.7.163
+10.0.7.164
+Monitor ansible_ssh_port=12378 ansible_ssh_host=192.168.1.200          # 定义别名
+# ansible_ssh_host                    连接目标主机的地址
+# ansible_ssh_port                    连接目标主机的端口，默认 22 时无需指定
+# ansible_ssh_user                    连接目标主机默认用户
+# ansible_ssh_pass                    连接目标主机默认用户密码
+# ansible_ssh_connection              目标主机连接类型，可以是 local 、ssh 或 paramiko
+# ansible_ssh_private_key_file        连接目标主机的ssh私钥
+# ansible_*_interpreter               指定采用非Python的其他脚本语言，如 Ruby 、Perl 或其他类似 ansible_python_interpreter 解释器
+[webservers]              # 主机名支持正则描述
+www[01:50].example.com
+[dbservers]
+db-[a:f].example.com
 ```
 
+## ansible常用模块
+
+```shell
+# 列出 Ansible 支持的模块
+$ ansible-doc -l
+
+# 查看该模块帮助信息
+$ ansible-doc ping
+```
+
+### 远程命令模块（command / script / shell）
+
+1. command
+
+   command 作为 Ansible 的默认模块，可以运行远程权限范围所有的 shell 命令，不支持管道符。
+
+   **查看 Client 分组主机内存使用情况**
+
+   ```shell
+   $ ansible Client -m command -a "free -m"
+   centos-03 | SUCCESS | rc=0 >>
+                 total        used        free      shared  buff/cache   available
+   Mem:           7982         151        7729           8         100        7642
+   Swap:          3071           0        3071
+   centos-01 | SUCCESS | rc=0 >>
+                 total        used        free      shared  buff/cache   available
+   Mem:           7982        4442         357         101        3181        3138
+   Swap:          3071           1        3070
+   ```
+
+2. script
+
+   script 的功能是在远程主机执行主控端存储的 shell 脚本文件，相当于 scp + shell 组合。
+
+   **远程执行本地脚本**
+
+   ```shell
+   $ ansible Client -m script -a "/root/test.sh aa bb"    
+   centos-03 | SUCCESS => {
+       "changed": true, 
+       "rc": 0, 
+       "stderr": "Shared connection to centos-03 closed.\r\n", 
+       "stdout": "", 
+       "stdout_lines": []
+   }
+   centos-01 | SUCCESS => {
+       "changed": true, 
+       "rc": 0, 
+       "stderr": "Shared connection to centos-01 closed.\r\n", 
+       "stdout": "", 
+       "stdout_lines": []
+   }
+   ```
+
+3. shell
+
+   shell模块基本和 command 相同，但是 shell 支持管道符
+
+   **执行远程脚本**
+
+   ```shell
+   $ ansible Client -m shell -a "ps -ef|grep nginx"  
+   centos-01 | SUCCESS | rc=0 >>
+   root     10453 10452  0 05:26 pts/0    00:00:00 /bin/sh -c ps -ef|grep nginx
+   root     10455 10453  0 05:26 pts/0    00:00:00 grep nginx
+   centos-03 | SUCCESS | rc=0 >>
+   root     10453 10452  0 05:26 pts/0    00:00:00 /bin/sh -c ps -ef|grep nginx
+   root     10455 10453  0 05:26 pts/0    00:00:00 grep nginx
+   ```
+
+   
+
+### copy模块
+
+实现主控端向目标主机拷贝文件，类似于 scp 功能
+
+**向 Client 组中主机拷贝 test.sh 到 /tmp 下，属主、组为 root ，权限为 0755**
+
+```shell
+$ ansible Client -m copy -a "src=/root/test.sh dest=/tmp/ owner=root group=root mode=0755" 
+centos-03 | SUCCESS => {
+    "changed": true, 
+    "checksum": "6a6a052e339186d5057c8eb184d694c2384b16eb", 
+    "dest": "/tmp/test.sh", 
+    "gid": 0, 
+    "group": "root", 
+    "md5sum": "48cc15d62eb9843112afae4911f50323", 
+    "mode": "0755", 
+    "owner": "root", 
+    "size": 21, 
+    "src": "/root/.ansible/tmp/ansible-tmp-1571909317.6-280606834236702/source", 
+    "state": "file", 
+    "uid": 0
+}
+centos-01 | SUCCESS => {
+    "changed": true, 
+    "checksum": "6a6a052e339186d5057c8eb184d694c2384b16eb", 
+    "dest": "/tmp/test.sh", 
+    "gid": 0, 
+    "group": "root", 
+    "md5sum": "48cc15d62eb9843112afae4911f50323", 
+    "mode": "0755", 
+    "owner": "root", 
+    "secontext": "unconfined_u:object_r:admin_home_t:s0", 
+    "size": 21, 
+    "src": "/root/.ansible/tmp/ansible-tmp-1571909317.59-110536292508777/source", 
+    "state": "file", 
+    "uid": 0
+}
+```
+
+### stat模块
+
+**获取远程文件状态信息，atime/ctime/mtime/md5/uid/gid 等信息**
+
+```shell
+$ ansible Client -m stat -a "path=/etc/syctl.conf"
+centos-03 | SUCCESS => {
+    "changed": false, 
+    "stat": {
+        "exists": false
+    }
+}
+centos-01 | SUCCESS => {
+    "changed": false, 
+    "stat": {
+        "exists": false
+    }
+}
+```
+
+### get_url
+
+**实现在远程主机下载指定 URL 到本地，支持 sha256sum 文件校验**
+
+```shell
+$ ansible Client -m get_url -a "url=http://www.baidu.com dest=/tmp/index.html mode=0440 force=yes"
+centos-03 | SUCCESS => {
+    "changed": true, 
+    "checksum_dest": null, 
+    "checksum_src": "c0eaf9fbbde1b7eb8566b0daa4d7a9f0c7de6172", 
+    "dest": "/tmp/index.html", 
+    "gid": 0, 
+    "group": "root", 
+    "md5sum": "c4bcd35f0a2cbbe34f80fc6a1f1f2f10", 
+    "mode": "0440", 
+    "msg": "OK (unknown bytes)", 
+    "owner": "root", 
+    "size": 156058, 
+    "src": "/tmp/tmp3PULcQ", 
+    "state": "file", 
+    "status_code": 200, 
+    "uid": 0, 
+    "url": "http://www.baidu.com"
+}
+centos-01 | SUCCESS => {
+    "changed": true, 
+    "checksum_dest": null, 
+    "checksum_src": "5f72f185e45406201fc2af14ca28c0c35fead887", 
+    "dest": "/tmp/index.html", 
+    "gid": 0, 
+    "group": "root", 
+    "md5sum": "49d11681e549810d052edb6797ece805", 
+    "mode": "0440", 
+    "msg": "OK (unknown bytes)", 
+    "owner": "root", 
+    "secontext": "unconfined_u:object_r:user_tmp_t:s0", 
+    "size": 156082, 
+    "src": "/tmp/tmp2ceW5B", 
+    "state": "file", 
+    "status_code": 200, 
+    "uid": 0, 
+    "url": "http://www.baidu.com"
+}
+```
+
+### yum
+
+**软件包管理**
+
+```shell
+$ ansible Client -m yum -a "name=curl state=latest"
+centos-01 | SUCCESS => {
+    "changed": false, 
+    "msg": "", 
+    "rc": 0, 
+    "results": [
+        "All packages providing curl are up to date", 
+        ""
+    ]
+}
+centos-03 | SUCCESS => {
+    "changed": false, 
+    "msg": "", 
+    "rc": 0, 
+    "results": [
+        "All packages providing curl are up to date", 
+        ""
+    ]
+}
+```
+
+### corn
+
+**远程主机 crontab 配置** 
+
+```shell
+$ ansible Client -m cron -a "name='check dirs' hour='5,2' job='ls -alh > /dev/null'"
+centos-03 | SUCCESS => {
+    "changed": true, 
+    "envs": [], 
+    "jobs": [
+        "check dirs"
+    ]
+}
+centos-01 | SUCCESS => {
+    "changed": true, 
+    "envs": [], 
+    "jobs": [
+        "check dirs"
+    ]
+}
+```
+
+**效果**
+
+```shell
+$ crontab -l
+#Ansible: check dirs
+* 5,2 * * * ls -alh > /dev/null
+```
+
+### mount
+
+**远程主机分区挂载**
+
+```shell
+$ ansible Client -m mount -a "name=/mnt/data src=/dev/sd0 fstype=ext4 opts=ro state=present"
+centos-03 | SUCCESS => {
+    "changed": true, 
+    "dump": "0", 
+    "fstab": "/etc/fstab", 
+    "fstype": "ext4", 
+    "name": "/mnt/data", 
+    "opts": "ro", 
+    "passno": "0", 
+    "src": "/dev/sd0"
+}
+centos-01 | SUCCESS => {
+    "changed": true, 
+    "dump": "0", 
+    "fstab": "/etc/fstab", 
+    "fstype": "ext4", 
+    "name": "/mnt/data", 
+    "opts": "ro", 
+    "passno": "0", 
+    "src": "/dev/sd0"
+}
+```
+
+### service
+
+**远程主机系统服务管理**
+
+```shell
+$ ansible Client -m service -a "name=nginx state=stoped"
+$ ansible Client -m service -a "name=nginx state=restarted"
+$ ansible Client -m service -a "name=nginx state=reloaded"
+```
+
+### user
+
+**远程主机用户管理**
+
+```shell
+$ ansible Client -m user -a "name=wang comment='user wang'"
+centos-03 | SUCCESS => {
+    "changed": true, 
+    "comment": "user wang", 
+    "createhome": true, 
+    "group": 1000, 
+    "home": "/home/wang", 
+    "name": "wang", 
+    "shell": "/bin/bash", 
+    "state": "present", 
+    "system": false, 
+    "uid": 1000
+}
+centos-01 | SUCCESS => {
+    "changed": true, 
+    "comment": "user wang", 
+    "createhome": true, 
+    "group": 1003, 
+    "home": "/home/wang", 
+    "name": "wang", 
+    "shell": "/bin/bash", 
+    "state": "present", 
+    "system": false, 
+    "uid": 1003
+}
+```
+
+**添加删除用户**
+
+```shell
+$ ansible Client -m user -a "name=wang state=absent remove=yes"
+centos-03 | SUCCESS => {
+    "changed": true, 
+    "force": false, 
+    "name": "wang", 
+    "remove": true, 
+    "state": "absent"
+}
+centos-01 | SUCCESS => {
+    "changed": true, 
+    "force": false, 
+    "name": "wang", 
+    "remove": true, 
+    "state": "absent"
+}
+```

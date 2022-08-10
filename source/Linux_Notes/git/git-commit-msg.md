@@ -1,6 +1,6 @@
-# 1. Git commit规范
+# Git commit规范
 
-## 1.1. 格式
+## 格式
 
 ```bash
 <type>(<scope>): <subject>
@@ -12,26 +12,31 @@
 fix(ngRepeat): fix trackBy function being invoked with incorrect scope
 ```
 
-## 1.2. type
+## type
 
 主要的提交类型如下：
 
-| Type       | 说明                                             | 备注         |
-| ---------- | ------------------------------------------------ | ------------ |
-| `feat`     | 提交新功能                                       | 常用         |
-| `fix`      | 修复bug                                          | 常用         |
-| `docs`     | 修改文档                                         |              |
-| `style`    | 修改格式，例如格式化代码，空格，拼写错误等       |              |
-| `refactor` | 重构代码，没有添加新功能也没有修复bug            |              |
-| `test`     | 添加或修改测试用例                               |              |
-| `perf`     | 代码性能调优                                     |              |
-| `chore`    | 修改构建工具、构建流程、更新依赖库、文档生成逻辑 | 例如vendor包 |
+<table border="1" cellpadding="10" cellspacing="10">
+  <thead>
+    <tr><th>Type</th><th>说明</th><th>备注</th></tr>
+  </thead>
+    <tbody>
+      <tr><td>feat</td><td>提交新功能</td><td>常用</td></tr>
+      <tr><td>fix</td><td>修复bug</td><td>常用</td></tr>
+      <tr><td>docs</td><td>修改文档</td><td></td></tr>
+      <tr><td>style</td><td>修改格式，例如格式化代码，空格，拼写错误等</td><td></td></tr>
+      <tr><td>refactor</td><td>重构代码，没有添加新功能也没有修复bug</td><td></td></tr>
+      <tr><td>test</td><td>添加或修改测试用例</td><td></td></tr>
+      <tr><td>perf</td><td>代码性能调优</td><td></td></tr>
+      <tr><td>chore</td><td>修改构建工具、构建流程、更新依赖库、文档生成逻辑</td><td>例如vendor包</td></tr>
+  </tbody>
+</table>
 
-## 1.3. scope
+## scope
 
 表示此次commit涉及的文件范围，可以使用`*`来表示涉及多个范围。
 
-## 1.4. subject
+## subject
 
 描述此次commit涉及的修改内容。
 
@@ -39,13 +44,13 @@ fix(ngRepeat): fix trackBy function being invoked with incorrect scope
 - 第一个字母不要大写。
 - 不要以`.`句号结尾。
 
-# 2. Git commit工具
+## Git commit工具
 
 安装`commitizen`和`cz-conventional-changelog`。
 
 ```bash
-npm install -g commitizen cz-conventional-changelog
-echo '{ "path": "cz-conventional-changelog" }' > ~/.czrc
+$ npm install -g commitizen cz-conventional-changelog
+$ echo '{ "path": "cz-conventional-changelog" }' > ~/.czrc
 ```
 
 使用cz-cli
@@ -64,14 +69,3 @@ cz-cli@4.0.3, cz-conventional-changelog@3.0.1
   test:     Adding missing tests or correcting existing tests
 (Move up and down to reveal more choices)
 ```
-
-
-
-
-
-参考：
-
-- https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines
-- https://juejin.im/post/5afc5242f265da0b7f44bee4
-- [commitizen/cz-cli](https://link.juejin.im/?target=https%3A%2F%2Flink.zhihu.com%2F%3Ftarget%3Dhttps%3A%2F%2Fgithub.com%2Fcommitizen%2Fcz-cli)
-- [commitizen/cz-conventional-changelog](https://link.juejin.im/?target=https%3A%2F%2Flink.zhihu.com%2F%3Ftarget%3Dhttps%3A%2F%2Fgithub.com%2Fcommitizen%2Fcz-conventional-changelog)

@@ -1,40 +1,44 @@
-# 1. Supervisor简介
+# Supervisor
+
+[官方文档](http://supervisord.org)
+
+## Supervisor简介
 
 Supervisord 是用 Python 实现的一款的进程管理工具，supervisord 要求管理的程序是非 daemon 程序，supervisord 会帮你把它转成 daemon 程序，因此如果用 supervisord 来管理进程，进程需要以非daemon的方式启动。  
 
 例如：管理nginx 的话，必须在 nginx 的配置文件里添加一行设置 daemon off 让 nginx 以非 daemon 方式启动。
 
-# 2. Supervisor安装
+## Supervisor安装
 
 以centos系统为例，以下两种方式选择其一。
 
 ```bash
 # yum install 的方式
-yum install -y supervisor
+$ yum install -y supervisor
 
 # easy_install的方式
-yum install -y python-setuptools
-easy_install supervisor
-echo_supervisord_conf >/etc/supervisord.conf
+$ yum install -y python-setuptools
+$ easy_install supervisor
+$ echo_supervisord_conf >/etc/supervisord.conf
 ```
 
-# 3. Supervisor的配置
+## Supervisor的配置
 
-## 3.1. supervisord.conf的配置
+### supervisord.conf的配置
 
 如果使用`yum install -y supervisor`的命令安装，会生成默认配置`/etc/supervisord.conf`和目录`/etc/supervisord.d`，如果没有则自行创建。
 
 在`/etc/supervisord.d`的目录下创建`conf`和`log`两个目录，`conf`用于存放管理进程的配置，`log`用于存放管理进程的日志。
 
 ```bash
-cd /etc/supervisord.d
-mkdir conf log
+$ cd /etc/supervisord.d
+$ mkdir conf log
 ```
 
 修改`/etc/supervisord.conf`的`[include]`部分，即载入`/etc/supervisord.d/conf`目录下的所有配置。
 
 ```bash
-vi /etc/supervisord.conf
+$ vim /etc/supervisord.conf
 ...
 [include]
 files = supervisord.d/conf/*.conf
@@ -44,7 +48,7 @@ files = supervisord.d/conf/*.conf
 也可以修改supervisor应用日志的目录，默认日志路径为`/var/log/supervisor/supervisord.log`。
 
 ```bash
-vi /etc/supervisord.conf
+$ vim /etc/supervisord.conf
 ...
 [supervisord]
 logfile=/var/log/supervisor/supervisord.log  ; (main log file;default $CWD/supervisord.log)
@@ -55,7 +59,7 @@ pidfile=/var/run/supervisord.pid ; (supervisord pidfile;default supervisord.pid)
 ...
 ```
 
-## 3.2. 管理应用的配置
+### 管理应用的配置
 
 进入到`/etc/supervisord.d/conf`目录，创建管理应用的配置，可以创建多个应用配置。
 
@@ -79,18 +83,18 @@ stdout_logfile = /etc/supervisord.d/log/confd.log  ;日志统一放在log目录�
 ; environment=PYTHONPATH=$PYTHONPATH:/path/to/somewhere
 ```
 
-# 4. Surpervisor的启动
+## Surpervisor的启动
 
 ```bash
 # supervisord二进制启动
-supervisord -c /etc/supervisord.conf
+$ supervisord -c /etc/supervisord.conf
 # 检查进程
-ps aux | grep supervisord
+$ ps aux | grep supervisord
 ```
 
 或者以systemd的方式管理
 
-vi /etc/rc.d/init.d/supervisord
+`vim /etc/rc.d/init.d/supervisord`
 
 ```bash
 #!/bin/sh
@@ -160,17 +164,17 @@ esac
 设置开机启动及systemd方式启动。
 
 ```bash
-sudo chmod +x /etc/rc.d/init.d/supervisord
-sudo chkconfig --add supervisord
-sudo chkconfig supervisord on
-sudo service supervisord start
+$ sudo chmod +x /etc/rc.d/init.d/supervisord
+$ sudo chkconfig --add supervisord
+$ sudo chkconfig supervisord on
+$ sudo service supervisord start
 ```
 
-# 5. supervisorctl&supervisord
+## supervisorctl&supervisord
 
 Supervisord 安装完成后有两个可用的命令行 `supervisord` 和 `supervisorctl`，命令使用解释如下：
 
-## 5.1. supervisorctl
+### supervisorctl
 
 - `supervisorctl stop programxxx`，停止某一个进程(programxxx)，programxxx 为 [program:beepkg] 里配置的值，这个示例就是 beepkg。
 - `supervisorctl start programxxx`，启动某个进程。
@@ -210,12 +214,12 @@ actions.
 例如：
 
 ```bash
-# supervisorctl status
+$ supervisorctl status
 confd                            RUNNING   pid 31256, uptime 0:11:24
 twemproxy                        RUNNING   pid 31255, uptime 0:11:24
 ```
 
-## 5.2. supervisord
+### supervisord
 
 - supervisord，初始启动 Supervisord，启动、管理配置中设置的进程。
 
@@ -251,7 +255,7 @@ Options:
                              e.g. 'cumulative,callers')
 ```
 
-# 6. Supervisor控制台
+## Supervisor控制台
 
 在`/etc/supervisord.conf`中修改`[inet_http_server] `的参数，具体如下：
 
@@ -266,11 +270,11 @@ password=xxxx               ; default is no password (open server)
 
 具体如下：
 
-![supervisor](http://res.cloudinary.com/dqxtn0ick/image/upload/v1528457482/article/linux/supervisor.png)
+![](img/supervisor.png)
 
-# 7. supervisor.conf详细配置
+## supervisor.conf详细配置
 
-cat /etc/supervisord.conf
+`cat /etc/supervisord.conf`
 
 ```bash
 ; Sample supervisor config file.
@@ -404,9 +408,4 @@ serverurl=unix:///var/run/supervisor/supervisor.sock ; use a unix:// URL  for a 
 files = supervisord.d/conf/*.conf
 ```
 
-
-
-参考：
-
-http://supervisord.org/
 

@@ -135,9 +135,3 @@ $ printf "%d %s\n" 1 "abc"
 ```
 
 注意，根据POSIX标准，浮点格式%e、%E、%f、%g与%G是“不需要被支持”。这是因为awk支持浮点预算，且有它自己的printf语句。这样Shell程序中需要将浮点数值进行格式化的打印时，可使用小型的awk程序实现。然而，内建于bash、ksh93和zsh中的printf命令都支持浮点格式。
-
-
-
-参考：
-
-- http://c.biancheng.net/cpp/shell/

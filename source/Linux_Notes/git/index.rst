@@ -1,13 +1,13 @@
-GIT 管理
-=====================================
 
 .. toctree::
    :maxdepth: 3
 
    git
-   git-alias-zsh
+   git-common-cmd
+   git-command
    git-commands
    git-commit-msg
-   git-common-cmd
+   git-alias-zsh
+   git-full-migration
 
 

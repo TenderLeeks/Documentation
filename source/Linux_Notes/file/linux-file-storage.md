@@ -29,7 +29,7 @@ inode包含文件的元信息，具体来说有以下内容：
 可以用stat命令，查看某个文件的inode信息：
 
 ```bash
-stat demo.txt
+$ stat demo.txt
 ```
 
 总之，除了文件名以外的所有文件信息，都存在inode之中。
@@ -38,7 +38,7 @@ stat demo.txt
 
 请看文件存储结构示意图：
 
-![img](../img/linux-storage.png)
+![](img/linux-storage.png)
 
 ### inode的大小
 
@@ -51,7 +51,7 @@ inode也会消耗硬盘空间，所以硬盘格式化的时候，操作系统自
 查看每个inode节点的大小，可以用如下命令：
 
 ```bash
-sudo dumpe2fs -h /dev/hda | grep "Inode size"
+$ sudo dumpe2fs -h /dev/hda | grep "Inode size"
 ```
 
 
@@ -67,7 +67,7 @@ Linux系统内部不使用文件名，而使用inode号码来识别文件。对�
 使用ls -i命令，可以看到文件名对应的inode号码，例如：
 
 ```bash
-ls -i demo.txt
+$ ls -i demo.txt
 ```
 
 ## 目录项
@@ -79,19 +79,19 @@ Linux系统中，目录（directory）也是一种文件。打开目录，实际
 ls命令只列出目录文件中的所有文件名：
 
 ```bash
-ls /etc
+$ ls /etc
 ```
 
 ls -i命令列出整个目录文件，即文件名和inode号码：
 
 ```bash
-ls -i /etc
+$ ls -i /etc
 ```
 
 如果要查看文件的详细信息，就必须根据inode号码，访问inode节点，读取信息。ls -l命令列出文件的详细信息。
 
 ```bash
-ls -l /etc
+$ ls -l /etc
 ```
 
 ## 硬链接和软链接
@@ -105,7 +105,7 @@ ls -l /etc
 ln命令可以创建硬链接
 
 ```bash
-ln source_file target_file
+$ ln source_file target_file
 ```
 
 运行上面这条命令以后，源文件与目标文件的inode号码相同，都指向同一个inode。inode信息中有一项叫做"链接数"，记录指向该inode的文件名总数，这时就会增加1。反过来，删除一个文件名，就会使得inode节点中的"链接数"减1。当这个值减到0，表明没有文件名指向这个inode，系统就会回收这个inode号码，以及其所对应block区域。
@@ -122,11 +122,7 @@ ln source_file target_file
 ln -s命令可以创建软链接
 
 ```bash
-ln -s source_file target_file
+$ ln -s source_file target_file
 ```
 
  
-
-参考：
-
-- http://c.biancheng.net/cpp/linux/

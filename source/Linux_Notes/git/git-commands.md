@@ -1,16 +1,17 @@
 # Git 命令详解
 
-# 1. 示意图
+## 示意图
 
-![这里写图片描述](https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578830/article/git/git-arch.png)
+![](img/git-arch.png)
 
 - Workspace：工作区
 - Index / Stage：暂存区
 - Repository：仓库区（或本地仓库）
 - Remote：远程仓库
 
-# 2. Git 命令分类
-## 2.1. 新建代码库
+## Git 命令分类
+
+### 新建代码库
 
 ```bash
 # 在当前目录新建一个Git代码库
@@ -21,7 +22,7 @@ $ git init [project-name]
 $ git clone [url]
 ```
 
-## 2.2. 配置
+### 配置
 
 Git的设置文件为.gitconfig，它可以在用户主目录下（全局配置），也可以在项目目录下（项目配置）。
 
@@ -35,7 +36,7 @@ $ git config [--global] user.name "[name]"
 $ git config [--global] user.email "[email address]"
 ```
 
-## 2.3. 增加/删除文件
+### 增加/删除文件
 
 ```bash
 # 添加指定文件到暂存区
@@ -55,7 +56,7 @@ $ git rm --cached [file]
 $ git mv [file-original] [file-renamed]
 ```
 
-## 2.4. 代码提交
+### 代码提交
 
 ```bash
 # 提交暂存区到仓库区
@@ -73,7 +74,7 @@ $ git commit --amend -m [message]
 $ git commit --amend [file1] [file2] ...
 ```
 
-## 2.5. 分支
+### 分支
 
 ```bash
 # 列出所有本地分支
@@ -107,7 +108,7 @@ $ git push origin --delete [branch-name]
 $ git branch -dr [remote/branch]
 ```
 
-## 2.6. 标签
+### 标签
 
 ```bash
 # 列出所有tag
@@ -130,7 +131,7 @@ $ git push [remote] --tags
 $ git checkout -b [branch] [tag]
 ```
 
-## 2.7. 查看信息
+### 查看信息
 
 ```bash
 # 显示有变更的文件
@@ -176,7 +177,7 @@ $ git show [commit]:[filename]
 $ git reflog
 ```
 
-## 2.8. 远程同步
+### 远程同步
 
 ```bash
 # 下载远程仓库的所有变动
@@ -197,7 +198,7 @@ $ git push [remote] --force
 $ git push [remote] --all
 ```
 
-## 2.9. 撤销
+### 撤销
 
 ```bash
 # 恢复暂存区的指定文件到工作区
@@ -224,7 +225,7 @@ $ git stash
 $ git stash pop
 ```
 
-## 2.10. 其他
+### 其他
 
 ```bash
 # 生成一个可供发布的压缩包
@@ -234,7 +235,3 @@ git config --global core.autocrlf false
 #拒绝提交包含混合换行符的文件
 git config --global core.safecrlf true
 ```
-
-参考文章：
-
-- http://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html

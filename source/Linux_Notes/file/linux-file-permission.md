@@ -30,27 +30,18 @@ Linux 与外部设备（例如光驱，打印机，终端，modern等）是通�
 可以使用`ls -al`来查看当前目录下的所有文件列表。
 
 ```bash
-[root@www ~]# ls -al
-total 156
-drwxr-x---   4    root   root     4096   Sep  8 14:06 .   # 当前目录
-drwxr-xr-x  23    root   root     4096   Sep  8 14:21 ..  # 父目录
--rw-------   1    root   root     1474   Sep  4 18:27 anaconda-ks.cfg
--rw-------   1    root   root      199   Sep  8 17:14 .bash_history
--rw-r--r--   1    root   root       24   Jan  6  2007 .bash_logout
--rw-r--r--   1    root   root      191   Jan  6  2007 .bash_profile
--rw-r--r--   1    root   root      176   Jan  6  2007 .bashrc
--rw-r--r--   1    root   root      100   Jan  6  2007 .cshrc
-drwx------   3    root   root     4096   Sep  5 10:37 .gconf      
-drwx------   2    root   root     4096   Sep  5 14:09 .gconfd
--rw-r--r--   1    root   root    42304   Sep  4 18:26 install.log
--rw-r--r--   1    root   root     5661   Sep  4 18:25 install.log.syslog
-[    1   ] [ 2 ][   3  ][  4 ]  [  5   ] [    6     ] [       7          ]
-[  权限   ][文件数][所有者] [用户组][文件容量][ 修改日期   ] [      文件名      ]
+$ ls -al
+total 20
+drwx------  3 root root 4096 Aug  8 03:55 .
+drwxr-xr-x 23 root root 4096 Aug  9 06:36 ..
+-rw-r--r--  1 root root 3106 Apr  9  2018 .bashrc
+-rw-r--r--  1 root root  148 Aug 17  2015 .profile
+drwx------  2 root root 4096 Aug  8 03:55 .ssh
 ```
 
 每列含义说明：
 
-- 第一列：文件类型。
+- 第一列：文件类型和权限信息。
 - 第二列：表示文件个数。如果是文件，那么就是1；如果是目录，那么就是该目录中文件的数目。
 - 第三列：文件的所有者，即文件的创建者。
 - 第四列：文件所有者所在的用户组。在Linux中，每个用户都隶属于一个用户组。
@@ -60,37 +51,47 @@ drwx------   2    root   root     4096   Sep  5 14:09 .gconfd
 
 **文件类型字符**
 
-| 前缀 | 描述                                                         |
-| ---- | ------------------------------------------------------------ |
-| -    | 普通文件。如文本文件、二进制可执行文件、源代码等。           |
-| b    | 块设备文件。硬盘可以使用块设备文件。                         |
-| c    | 字符设备文件。硬盘也可以使用字符设备文件。                   |
-| d    | 目录文件。目录可以包含文件和其他目录。                       |
-| l    | 符号链接（软链接）。可以链接任何普通文件，类似于 Windows 中的快捷方式。 |
-| p    | 具名管道。管道是进程间的一种通信机制。                       |
-| s    | 用于进程间通信的套接字。                                     |
+<table border="1" cellpadding="10" cellspacing="10">
+  <thead>
+    <tr><th>前缀</th><th>描述</th></tr>
+  </thead>
+    <tbody>
+      <tr><td>-</td><td>普通文件。如文本文件、二进制可执行文件、源代码等。</td></tr>
+      <tr><td>b</td><td>块设备文件。硬盘可以使用块设备文件。</td></tr>
+      <tr><td>c</td><td>字符设备文件。硬盘也可以使用字符设备文件。</td></tr>
+      <tr><td>d</td><td>目录文件。目录可以包含文件和其他目录。</td></tr>
+      <tr><td>l</td><td>符号链接（软链接）。可以链接任何普通文件，类似于 Windows 中的快捷方式。</td></tr>
+      <tr><td>p</td><td>具名管道。管道是进程间的一种通信机制。</td></tr>
+      <tr><td>s</td><td>用于进程间通信的套接字。</td></tr>
+  </tbody>
+</table>
 
 **隐藏文件**
 
 隐藏文件的第一个字符为英文句号或点号(.)，Linux程序（包括Shell）通常使用隐藏文件来保存配置信息。可以通过`ls -a`来查看所有文件，即包含隐藏文件。
 
 常见的隐藏文件：
-.profile：Bourne shell (sh) 初始化脚本
-.kshrc：Korn shell (ksh) 初始化脚本
-.cshrc：C shell (csh) 初始化脚本
-.rhosts：Remote shell (rsh) 配置文件
+`.profile`：Bourne shell (sh) 初始化脚本
+`.kshrc`：Korn shell (ksh) 初始化脚本
+`.cshrc`：C shell (csh) 初始化脚本
+`.rhosts`：Remote shell (rsh) 配置文件
 
 ### 文件的操作
 
-| 操作     | 命令                  |
-| -------- | --------------------- |
-| 创建     | touch filename        |
-| 编辑     | vi filename           |
-| 查看     | cat filename          |
-| 复制     | cp filename copyfile  |
-| 重命名   | mv filename newfile   |
-| 删除     | rm filename filename2 |
-| 统计词数 | wc filename           |
+<table border="1" cellpadding="10" cellspacing="10">
+  <thead>
+    <tr><th>操作</th><th>命令</th></tr>
+  </thead>
+    <tbody>
+      <tr><td>创建</td><td>touch filename</td></tr>
+      <tr><td>编辑</td><td>vi filename 或者 vim filename</td></tr>
+      <tr><td>查看</td><td>cat filename</td></tr>
+      <tr><td>复制</td><td>cp filename copyfile</td></tr>
+      <tr><td>重命名</td><td>mv filename newfile</td></tr>
+      <tr><td>删除</td><td>rm filename filename2</td></tr>
+      <tr><td>统计词数</td><td>wc filename</td></tr>
+  </tbody>
+</table>
 
 ### 标准的Linux流
 
@@ -113,9 +114,17 @@ Linux每个文件都有三类权限：
 通过`ls -l`的命令可以查看文件权限信息。
 
 ```bash
-$ls -l /home/amrood
--rwxr-xr--  1 amrood   users 1024  Nov 2 00:10  myfile
-drwxr-xr--- 1 amrood   users 1024  Nov 2 00:10  mydir
+$ ls -al /home/ubuntu/
+total 32
+drwxr-xr-x 5 ubuntu ubuntu 4096 Aug  8 06:08 .
+drwxr-xr-x 3 root   root   4096 Aug  8 03:55 ..
+-rw-r--r-- 1 ubuntu ubuntu  220 Apr  4  2018 .bash_logout
+-rw-r--r-- 1 ubuntu ubuntu 3771 Apr  4  2018 .bashrc
+drwx------ 2 ubuntu ubuntu 4096 Aug  8 06:08 .cache
+drwx------ 3 ubuntu ubuntu 4096 Aug  8 06:08 .gnupg
+-rw-r--r-- 1 ubuntu ubuntu  807 Apr  4  2018 .profile
+drwx------ 2 ubuntu ubuntu 4096 Aug  8 03:55 .ssh
+-rw-r--r-- 1 ubuntu ubuntu    0 Aug  8 06:08 .sudo_as_admin_successful
 ```
 
 第一列`-rwxr-xr-- `包含了文件或目录的权限。
@@ -132,16 +141,21 @@ drwxr-xr--- 1 amrood   users 1024  Nov 2 00:10  mydir
 
 使用数字表示权限：
 
-| 数字 | 说明                                         | 权限 |
-| ---- | -------------------------------------------- | ---- |
-| 0    | 没有任何权限                                 | ---  |
-| 1    | 执行权限                                     | --x  |
-| 2    | 写入权限                                     | -w-  |
-| 3    | 执行权限和写入权限：1 (执行) + 2 (写入) = 3  | -wx  |
-| 4    | 读取权限                                     | r--  |
-| 5    | 读取和执行权限：4 (读取) + 1 (执行) = 5      | r-x  |
-| 6    | 读取和写入权限：4 (读取) + 2 (写入) = 6      | rw-  |
-| 7    | 所有权限: 4 (读取) + 2 (写入) + 1 (执行) = 7 | rwx  |
+<table border="1" cellpadding="10" cellspacing="10">
+  <thead>
+    <tr><th>数字</th><th>说明</th><th>权限</th></tr>
+  </thead>
+    <tbody>
+      <tr><td>0</td><td>没有任何权限</td><td>---</td></tr>
+      <tr><td>1</td><td>执行权限</td><td>--x</td></tr>
+      <tr><td>2</td><td>写入权限</td><td>-w-</td></tr>
+      <tr><td>3</td><td>执行权限和写入权限：1 (执行) + 2 (写入) = 3</td><td>-wx</td></tr>
+      <tr><td>4</td><td>读取权限</td><td>r--</td></tr>
+      <tr><td>5</td><td>读取和执行权限：4 (读取) + 1 (执行) = 5</td><td>r-x</td></tr>
+      <tr><td>6</td><td>读取和写入权限：4 (读取) + 2 (写入) = 6</td><td>rw-</td></tr>
+      <tr><td>7</td><td>所有权限: 4 (读取) + 2 (写入) + 1 (执行) = 7</td><td>rwx</td></tr>
+  </tbody>
+</table>
 
 ### 访问模式
 
@@ -177,33 +191,38 @@ drwxr-xr--- 1 amrood   users 1024  Nov 2 00:10  mydir
 - g(group)：所属用户组权限
 - o(other)：其他用户权限
 
-| 符号 | 说明                 |
-| ---- | -------------------- |
-| +    | 为文件或目录增加权限 |
-| -    | 删除文件或目录的权限 |
-| =    | 设置指定的权限       |
+<table border="1" cellpadding="10" cellspacing="10">
+  <thead>
+    <tr><th>符号</th><th>说明</th></tr>
+  </thead>
+    <tbody>
+      <tr><td>+</td><td>为文件或目录增加权限</td></tr>
+      <tr><td>-</td><td>删除文件或目录的权限</td></tr>
+      <tr><td>=</td><td>设置指定的权限</td></tr>
+  </tbody>
+</table>
 
 示例
 
 ```bash
 # 查看权限
-$ls -l testfile
+$ ls -l testfile
 -rwxrwxr--  1 amrood   users 1024  Nov 2 00:10  testfile
 # 增加权限
-$chmod o+wx testfile
-$ls -l testfile
+$ chmod o+wx testfile
+$ ls -l testfile
 -rwxrwxrwx  1 amrood   users 1024  Nov 2 00:10  testfile
 # 删除权限
-$chmod u-x testfile
-$ls -l testfile
+$ chmod u-x testfile
+$ ls -l testfile
 -rw-rwxrwx  1 amrood   users 1024  Nov 2 00:10  testfile
 # 指定权限
-$chmod g=rx testfile
-$ls -l testfile
+$ chmod g=rx testfile
+$ ls -l testfile
 -rw-r-xrwx  1 amrood   users 1024  Nov 2 00:10  testfile
 # 同时使用多个符号
-$chmod o+wx,u-x,g=rx testfile
-$ls -l testfile
+$ chmod o+wx,u-x,g=rx testfile
+$ ls -l testfile
 -rw-r-xrwx  1 amrood   users 1024  Nov 2 00:10  testfile
 ```
 
@@ -214,10 +233,10 @@ $ls -l testfile
 示例
 
 ```bash
-$ls -l testfile
+$ ls -l testfile
 -rwxrwxr--  1 amrood   users 1024  Nov 2 00:10  testfile
 $ chmod 755 testfile
-$ls -l testfile
+$ ls -l testfile
 -rwxr-xr-x  1 amrood   users 1024  Nov 2 00:10  testfile
 ```
 
@@ -232,7 +251,7 @@ $ chown user filelist
 $ chown amrood testfile
 ```
 
-> 超级用户 root 可以不受限制的更改文件的所有者和用户组，但是普通用户只能更改所有者是自己的文件或目录。
+*超级用户 root 可以不受限制的更改文件的所有者和用户组，但是普通用户只能更改所有者是自己的文件或目录。*
 
 #### chgrp
 
@@ -260,7 +279,7 @@ $ ls -l /usr/bin/passwd
 
 上面第一列第四个字符不是'x'或'-'，而是's'，说明 /usr/bin/passwd 文件设置了SUID位，这时普通用户会以root用户的权限来执行passwd程序。
 
-> 小写字母's'说明文件所有者有执行权限(x)，大写字母'S'说明程序所有者没有执行权限(x)。
+*小写字母's'说明文件所有者有执行权限(x)，大写字母'S'说明程序所有者没有执行权限(x)。*
 
 为一个目录设置SUID和SGID位可以使用下面的命令：
 

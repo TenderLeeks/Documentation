@@ -1,4 +1,4 @@
-# LVM 的使用
+# LVM 介绍
 
 > 本文由网络内容整理而成的笔记
 
@@ -18,7 +18,7 @@ LVM是逻辑盘卷管理（Logical Volume Manager）的简称，它是Linux环�
 
 LVM概念图：
 
-![](https://res.cloudinary.com/dqxtn0ick/image/upload/v1646318332/article/linux/lvm/lvm-concept.png)
+![](img/lvm-concept.png)
 
 - **PV（Physical Volume）物理卷** 磁盘分区后（还未格式化为文件系统）使用 pvcreate 命令可以将硬盘分区创建为 pv，此分区的 systemID 为8e，即为 LVM 格式的系统标识符。
 - **VG（Volume Group）卷组** 将多个 PV 组合起来，使用 vgcreate 命令创建成卷组。卷组包含了多个 PV，相当于重新整合了多个分区后得到的硬盘。虽然 VG 整合了多个 PV，但是创建 VG 时会将所有空间根据指定 PE 大小划分为多个 PE，在 LVM 模式下的存储都是以 PE 为单元，类似于文件系统的 Block。
@@ -30,7 +30,7 @@ LVM概念图：
 
 LVM 之所以能够伸缩容量，实现的方法就是讲 LV 里空闲的 PE 移出，或向 LV 中添加空闲的 PE。
 
-![](https://res.cloudinary.com/dqxtn0ick/image/upload/v1646318332/article/linux/lvm/lvm-arch.png)
+![](img/lvm-arch.png)
 
 ## 格式化为LVM盘
 
@@ -38,7 +38,7 @@ LVM 之所以能够伸缩容量，实现的方法就是讲 LV 里空闲的 PE �
 
 ```bash
 # 使用fdisk进行盘的格式化
-fdisk /dev/vdb
+$ fdisk /dev/vdb
 
 # 以下是交互输出结果
 Welcome to fdisk (util-linux 2.23.2).
@@ -88,7 +88,7 @@ Syncing disks.
 ### parted格式化2T以上磁盘
 
 ```bash
-# parted /dev/sdk
+$ parted /dev/sdk
 GNU Parted 3.1
 使用 /dev/sdk
 Welcome to GNU Parted! Type 'help' to view a list of commands.
@@ -137,18 +137,18 @@ Number  Start   End     Size    File system  Name  标志
 
 ```bash
 # pvcreate如果提示命令不存在，则需要安装lvm2
-yum install lvm2 -y
+$ yum install lvm2 -y
 ```
 
 ### 创建物理卷（PV）
 
 ```bash
-# pvcreate /dev/nvme1n1p1 /dev/nvme2n1p1
+$ pvcreate /dev/nvme1n1p1 /dev/nvme2n1p1
   Physical volume "/dev/nvme1n1p1" successfully created.
   Physical volume "/dev/nvme2n1p1" successfully created.
 
 # 使用pvs或者 pvdisplay 查看结果
-# pvs
+$ pvs
   PV             VG Fmt  Attr PSize   PFree
   /dev/nvme1n1p1    lvm2 ---  931.51g 931.51g
   /dev/nvme2n1p1    lvm2 ---  931.51g 931.51g
@@ -157,13 +157,13 @@ yum install lvm2 -y
 ### 创建卷组（VG）
 
 ```bash
-# vgcreate vgdata /dev/nvme1n1p1 /dev/nvme2n1p1
+$ vgcreate vgdata /dev/nvme1n1p1 /dev/nvme2n1p1
   Volume group "vgdata" successfully created
 
 # 使用vgs 查看vg, vgdisplay的信息
 
 # lsblk查看
-# lsblk
+$ lsblk
 NAME                                          MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
 nvme0n1                                       259:0    0 931.5G  0 disk  /pcdn_data/storage1_ssd
 nvme2n1                                       259:2    0 931.5G  0 disk
@@ -178,7 +178,7 @@ nvme1n1                                       259:1    0 931.5G  0 disk
 
 ```bash
 # lvcreate -L 后面是大小， -n 后面是逻辑卷名称， vgdata对应上面的卷组
-# lvcreate -L 1.8T -n data vgdata
+$ lvcreate -L 1.8T -n data vgdata
   Rounding up size to full physical extent 1.80 TiB
   Logical volume "data" created.
 
@@ -189,18 +189,18 @@ nvme1n1                                       259:1    0 931.5G  0 disk
 
 ```bash
 # 查看磁盘信息
-# fdisk -l
+$ fdisk -l
 磁盘 /dev/mapper/vgdata-data：1979.1 GB, 1979124285440 字节，3865477120 个扇区
 Units = 扇区 of 1 * 512 = 512 bytes
 扇区大小(逻辑/物理)：512 字节 / 512 字节
 I/O 大小(最小/最佳)：512 字节 / 512 字节
 
 # 格式化成xfs, /dev/vgdata/data为上面 LV Path
-mkfs.xfs /dev/vgdata/data
+$ mkfs.xfs /dev/vgdata/data
 
 # mount
-mkdir -p /data
-mount /dev/vgdata/data /data
+$ mkdir -p /data
+$ mount /dev/vgdata/data /data
 ```
 
 ### LVM扩容
@@ -217,37 +217,52 @@ LVM最大的优势就是其可伸缩性，伸缩性有更加偏重与扩容。�
 
 ### 管理 PV
 
-| **功能**     | **命令**                 |
-| ---------- | ---------------------- |
-| 创建 PV      | pvcreate               |
-| 扫描并列出所有 PV | pvscan                 |
-| 列出 PV 属性   | pvdisplay {name\|size} |
-| 移除 PV      | pvremove               |
-| 移动 PV 中的数据 | pvmove                 |
+<table border="1" cellpadding="10" cellspacing="10">
+  <thead>
+    <tr><th>命令</th><th>说明</th></tr>
+  </thead>
+    <tbody>
+      <tr><td>pvcreate</td><td>创建 PV</td></tr>
+      <tr><td>pvscan</td><td>扫描并列出所有 PV</td></tr>
+      <tr><td>pvdisplay {name\|size}</td><td>列出 PV 属性</td></tr>
+      <tr><td>pvremove</td><td>移除 PV</td></tr>
+      <tr><td>pvmove</td><td>移动 PV 中的数据</td></tr>
+  </tbody>
+</table>
 
 ### 管理 VG
 
-| **功能**        | **命令**    |
-| ------------- | --------- |
-| 创建 VG         | vgcreate  |
-| 扫描并列出所有 VG    | vgscan    |
-| 列出 VG 属性信息    | vgdisplay |
-| 移除（删除）VG      | vgremove  |
-| 从 VG 中移除 PV   | vgreduce  |
-| 将 PV 添加到 VG 中 | vgextend  |
-| 修改 VG 属性      | vgchange  |
+<table border="1" cellpadding="10" cellspacing="10">
+  <thead>
+    <tr><th>命令</th><th>说明</th></tr>
+  </thead>
+    <tbody>
+      <tr><td>vgcreate</td><td>创建 VG</td></tr>
+      <tr><td>vgscan</td><td>扫描并列出所有 VG</td></tr>
+      <tr><td>vgdisplay</td><td>列出 VG 属性信息</td></tr>
+      <tr><td>vgremove</td><td>移除（删除）VG</td></tr>
+      <tr><td>vgreduce</td><td>从 VG 中移除 PV</td></tr>
+      <tr><td>vgextend</td><td>将 PV 添加到 VG 中</td></tr>
+      <tr><td>vgchange</td><td>修改 VG 属性</td></tr>
+  </tbody>
+</table>
 
 ### 管理 LV
 
-| **功能**     | **命令**            |
-| ---------- | ----------------- |
-| 创建 LV      | lvcreate          |
-| 扫描并列出所有 LV | lvscan            |
-| 列出 LV 属性信息 | lvdisplay         |
-| 移除 LV      | lvremove          |
-| 缩小 LV 容量   | lvreduce/lvresize |
-| 增大 LV 容量   | lvextend/lvresize |
-| 调整 LV 容量   | lvresize          |
+<table border="1" cellpadding="10" cellspacing="10">
+  <thead>
+    <tr><th>命令</th><th>说明</th></tr>
+  </thead>
+    <tbody>
+      <tr><td>lvcreate</td><td>创建 LV</td></tr>
+      <tr><td>lvscan</td><td>扫描并列出所有 LV</td></tr>
+      <tr><td>lvdisplay</td><td>列出 LV 属性信息</td></tr>
+      <tr><td>lvremove</td><td>移除 LV</td></tr>
+      <tr><td>lvreduce/lvresize</td><td>缩小 LV 容量</td></tr>
+      <tr><td>lvextend/lvresize</td><td>增大 LV 容量</td></tr>
+      <tr><td>lvresize</td><td>调整 LV 容量</td></tr>
+  </tbody>
+</table>
 
 `lvcreate`命令
 
@@ -260,11 +275,3 @@ LVM最大的优势就是其可伸缩性，伸缩性有更加偏重与扩容。�
 -l：根据 PE 的数量来创建 LV，即分配多少个 PE 给此 LV
 
 -n：指定 LV 名称
-
-参考：
-
-- [Linux下使用lvm将多块盘合并 | Z.S.K.'s Records](https://izsk.me/2020/09/15/System-use-lvm-manager-disks/)
-
-- [100个Linux命令(5)-LVM - 云+社区 - 腾讯云](https://cloud.tencent.com/developer/article/1382501)
-
-- [LVM数据卷 - 容器服务 ACK - 阿里云](https://help.aliyun.com/document_detail/178476.html)

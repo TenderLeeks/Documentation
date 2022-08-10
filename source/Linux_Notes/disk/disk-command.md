@@ -4,14 +4,14 @@
 
 **1、没有使用raid方案**
 
-lsblk -d -o name,rota命令，0表示SSD，1表示HDD
+0表示SSD，1表示HDD
 
 ```bash
-# lsblk -d -o name,rota
+$ lsblk -d -o name,rota
 NAME ROTA
-sda     0
-sdb     1
-sdc     1
+vda     1
+vdb     1
+vdc     0
 ```
 
 **2、使用raid方案**
@@ -59,7 +59,7 @@ umount: /data: target is busy.
 查看目录占用进程：
 
 ```bash
-# fuser -mv /mnt/
+$ fuser -mv /mnt/
                      USER        PID ACCESS COMMAND
 /mnt:                root     kernel mount /mnt
                      root      13830 ..c.. bash
@@ -68,13 +68,13 @@ umount: /data: target is busy.
 杀死目录占用进程
 
 ```bash
-# fuser -kv /mnt/
+4 fuser -kv /mnt/
                      USER        PID ACCESS COMMAND
 /mnt:                root     kernel mount /mnt
                      root      13830 ..c.. bash
 # 检查目录占用进程                     
-# fuser -mv /mnt/   
-# umount /mnt
+$ fuser -mv /mnt/   
+$ umount /mnt
 ```
 
 fuser命令参数说明
