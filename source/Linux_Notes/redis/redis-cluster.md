@@ -1,82 +1,89 @@
-# 1. Redis部署
+# Redis 单服务部署
 
-> 以下以Linux系统为例
-
-## 1.1 下载和编译 
+## 一键安装脚本
 
 ```bash
-$ wget http://download.redis.io/releases/redis-4.0.7.tar.gz
-$ tar xzf redis-4.0.7.tar.gz
-$ cd redis-4.0.7
-$ make
+# 下载地址：https://download.redis.io/releases/
+$ sudo apt install make gcc -y
+
+$ VERSION="6.2.6"  # 默认安装版本为：6.2.6
+$ PORT="6379"  # 默认安装端口是：6379
+$ DIR="/opt"  # 安装目录，确保用户有DIR目录权限，默认安装目录为用户家目录
+$ PASSWORD="redis-password"  # 默认密码为空
+
+# 命令示例：bash redis_install.sh ${VERSION} ${PORT} ${DIR} ${PASSWORD}
+# 安装
+$ bash <(curl -s "https://raw.githubusercontent.com/TenderLeeks/Documentation/main/scripts/redis_install.sh") 
+
+# 查看服务状态
+$ netstat -nlpt
+$ ps -ef|grep redis
+
+# 管理服务
+$ systemctl stop redis-"${PORT}".service
+$ systemctl start redis-"${PORT}".service
+$ systemctl restart redis-"${PORT}".service
+$ systemctl status redis-"${PORT}".service
+```
+
+## 手动安装服务
+
+```bash
+$ wget https://download.redis.io/releases/redis-6.2.6.tar.gz
+$ tar -xvzf redis-6.2.6.tar.gz && cd redis-6.2.6
+$ make install PREFIX=opt/redis-6.2.6
 ```
 
 编译完成后会在`src`目录下生成Redis服务端程序`redis-server`和客户端程序`redis-cli`。
 
-## 1.2 启动服务
+### 启动服务
 
-**1、前台运行**
+1. 前台运行
 
-```bash
-src/redis-server
-```
+   ```bash
+   $ src/redis-server
+   ```
 
-该方式启动默认为`前台方式`运行，使用默认配置。
+   该方式启动默认为`前台方式`运行，使用默认配置。
 
-**2、后台运行**
+2. 后台运行
 
-可以修改`redis.conf`文件的`daemonize`参数为`yes`，指定配置文件启动，例如：
+   可以修改`redis.conf`文件的`daemonize`参数为`yes`，指定配置文件启动，例如：
 
-```bash
-vi redis.conf
+   ```bash
+   $ vim redis.conf
+   
+   daemonize yes
+   ```
 
-# By default Redis does not run as a daemon. Use 'yes' if you need it.
-# Note that Redis will write a pid file in /var/run/redis.pid when daemonized.
-daemonize yes
-```
+   指定配置文件启动。
 
-指定配置文件启动。
+   ```bash
+   $ src/redis-server redis.conf
+   ```
 
-```bash
-src/redis-server redis.conf
-```
+3. 更多启动参数
 
-例如：
+   ```bash
+   $ ./redis-server --help
+   Usage: ./redis-server [/path/to/redis.conf] [options]
+          ./redis-server - (read config from stdin)
+          ./redis-server -v or --version
+          ./redis-server -h or --help
+          ./redis-server --test-memory <megabytes>
+   
+   Examples:
+          ./redis-server (run the server with default conf)
+          ./redis-server /etc/redis/6379.conf
+          ./redis-server --port 7777
+          ./redis-server --port 7777 --slaveof 127.0.0.1 8888
+          ./redis-server /etc/myredis.conf --loglevel verbose
+   
+   Sentinel mode:
+          ./redis-server /etc/sentinel.conf --sentinel
+   ```
 
-```bash
-#指定配置文件后台启动
-[root@kube-node-1 redis-4.0.7]# src/redis-server redis.conf
-95778:C 30 Jan 00:44:37.633 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
-95778:C 30 Jan 00:44:37.634 # Redis version=4.0.7, bits=64, commit=00000000, modified=0, pid=95778, just started
-95778:C 30 Jan 00:44:37.634 # Configuration loaded
-
-#查看Redis进程
-[root@kube-node-1 redis-4.0.7]# ps aux|grep redis
-root      95779  0.0  0.0 145268   468 ?        Ssl  00:44   0:00 src/redis-server 127.0.0.1:6379
-```
-
-更多启动参数如下：
-
-```bash
-[root@kube-node-1 src]# ./redis-server --help
-Usage: ./redis-server [/path/to/redis.conf] [options]
-       ./redis-server - (read config from stdin)
-       ./redis-server -v or --version
-       ./redis-server -h or --help
-       ./redis-server --test-memory <megabytes>
-
-Examples:
-       ./redis-server (run the server with default conf)
-       ./redis-server /etc/redis/6379.conf
-       ./redis-server --port 7777
-       ./redis-server --port 7777 --slaveof 127.0.0.1 8888
-       ./redis-server /etc/myredis.conf --loglevel verbose
-
-Sentinel mode:
-       ./redis-server /etc/sentinel.conf --sentinel
-```
-
-## 1.3 客户端测试
+### 客户端测试
 
 ```bash
 $ src/redis-cli
@@ -86,13 +93,39 @@ redis> get foo
 "bar"
 ```
 
-# 2. Redis集群部署
+
+
+# Redis 主从模式
+
+1. 在 `master` 和 `slave` 上安装 `redis`
+
+2. 修改 `master` 服务配置
+
+   ```shell
+   bind 0.0.0.0
+   ```
+
+3. 修改 `slave` 服务配置
+
+   ```shell
+   replicaof 192.168.67.44 6379
+   ```
+
+4. 查看主从状态
+
+   ```shell
+   $ redis-cli info
+   ```
+
+   
+
+# Redis集群部署
 
 Redis的集群部署需要在每台集群部署的机器上安装Redis（可参考上述的[Redis安装] ），然后修改配置以集群的方式启动。
 
-## 2.1 手动部署集群
+## 手动部署集群
 
-### 2.1.1 设置配置文件及启动实例
+### 设置配置文件及启动实例
 
 修改配置文件redis.conf，集群模式的最小化配置文件如下：
 
@@ -112,9 +145,9 @@ appendonly yes
 最小集群模式需要三个master实例，一般建议起六个实例，即三主三从。因此我们创建6个以端口号命名的目录存放实例的配置文件和其他信息。
 
 ```bash
-mkdir cluster-test
-cd cluster-test
-mkdir 7000 7001 7002 7003 7004 7005
+$ mkdir cluster-test
+$ cd cluster-test
+$ mkdir 7000 7001 7002 7003 7004 7005
 ```
 
 在对应端口号的目录中创建`redis.conf`的文件，配置文件的内容可参考上述的集群模式配置。每个配置文件中的端口号`port`参数改为对应目录的端口号。
@@ -122,7 +155,7 @@ mkdir 7000 7001 7002 7003 7004 7005
 复制`redis-server`的二进制文件到`cluster-test`目录中，通过指定配置文件的方式启动`redis`服务，例如：
 
 ```bash
-cd 7000
+$ cd 7000
 ../redis-server ./redis.conf
 ```
 
@@ -174,27 +207,27 @@ cluster-test/
 └── redis-server
 ```
 
-### 2.1.2 redis-trib创建集群
+### redis-trib创建集群
 
 Redis的实例全部运行之后，还需要`redis-trib.rb`工具来完成集群的创建，`redis-trib.rb`二进制文件在Redis包主目录下的`src`目录中，运行该工具依赖`Ruby`环境和`gem`，因此需要提前安装。
 
 **1、安装Ruby**
 
 ```bash
-yum -y install ruby rubygems
+$ yum -y install ruby rubygems
 ```
 
 查看Ruby版本信息。
 
 ```bash
-[root@kube-node-1 src]# ruby --version
+$ ruby --version
 ruby 2.0.0p648 (2015-12-16) [x86_64-linux]
 ```
 
 由于`centos`系统默认支持Ruby版本为`2.0.0`，因此执行`gem install redis`命令时会报以下错误。
 
 ```bash
-[root@kube-node-1 src]# gem install redis
+$ gem install redis
 Fetching: redis-4.0.1.gem (100%)
 ERROR:  Error installing redis:
 	redis requires Ruby version >= 2.2.2.
@@ -205,13 +238,13 @@ ERROR:  Error installing redis:
 **2、安装rvm**
 
 ```bash
-curl -L get.rvm.io | bash -s stable
+$ curl -L get.rvm.io | bash -s stable
 ```
 
 如果遇到以下报错，则执行报错中的`gpg2 --recv-keys `的命令。
 
 ```bash
-[root@kube-node-1 ~]# curl -L get.rvm.io | bash -s stable
+$ curl -L get.rvm.io | bash -s stable
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100   194  100   194    0     0    335      0 --:--:-- --:--:-- --:--:--   335
@@ -243,7 +276,7 @@ NOTE: GPG version 2.1.17 have a bug which cause failures during fetching keys fr
 例如：
 
 ```bash
-[root@kube-node-1 ~]# gpg2 --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+$ gpg2 --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 gpg: 钥匙环‘/root/.gnupg/secring.gpg’已建立
 gpg: 下载密钥‘D39DC0E3’，从 hkp 服务器 keys.gnupg.net
 gpg: /root/.gnupg/trustdb.gpg：建立了信任度数据库
@@ -256,7 +289,7 @@ gpg:           已导入：1  (RSA: 1)
 再次执行命令`curl -L get.rvm.io | bash -s stable`。例如：
 
 ```bash
-[root@kube-node-1 ~]# curl -L get.rvm.io | bash -s stable
+$ curl -L get.rvm.io | bash -s stable
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100   194  100   194    0     0    310      0 --:--:-- --:--:-- --:--:--   309
@@ -287,19 +320,19 @@ Installation of RVM in /usr/local/rvm/ is almost complete:
 以上表示执行成功，
 
 ```bash
-source /usr/local/rvm/scripts/rvm
+$ source /usr/local/rvm/scripts/rvm
 ```
 
 查看rvm库中已知的ruby版本
 
 ```bash
-rvm list known
+$ rvm list known
 ```
 
 例如：
 
 ```bash
-[root@kube-node-1 ~]# rvm list known
+$ rvm list known
 # MRI Rubies
 [ruby-]1.8.6[-p420]
 [ruby-]1.8.7[-head] # security released on head
@@ -318,20 +351,20 @@ ruby-head
 **3、升级Ruby**
 
 ```bash
-#安装ruby
-rvm install  2.4.0
-#使用新版本
-rvm use  2.4.0
-#移除旧版本
-rvm remove 2.0.0
-#查看当前版本
-ruby --version
+# 安装ruby
+$ rvm install  2.4.0
+# 使用新版本
+$ rvm use  2.4.0
+# 移除旧版本
+$ rvm remove 2.0.0
+# 查看当前版本
+$ ruby --version
 ```
 
 例如：
 
 ```bash
-[root@kube-node-1 ~]# rvm install  2.4.0
+$ rvm install  2.4.0
 Searching for binary rubies, this might take some time.
 Found remote file https://rvm_io.global.ssl.fastly.net/binaries/centos/7/x86_64/ruby-2.4.0.tar.bz2
 Checking requirements for centos.
@@ -355,27 +388,27 @@ ruby-2.4.0 - #gemset created /usr/local/rvm/gems/ruby-2.4.0
 ruby-2.4.0 - #importing gemsetfile /usr/local/rvm/gemsets/default.gems evaluated to empty gem list
 ruby-2.4.0 - #generating default wrappers........
 
-[root@kube-node-1 ~]# rvm use  2.4.0
+$ rvm use  2.4.0
 Using /usr/local/rvm/gems/ruby-2.4.0
 
-[root@kube-node-1 ~]# rvm remove 2.0.0
+$ rvm remove 2.0.0
 ruby-2.0.0-p648 - #already gone
 Using /usr/local/rvm/gems/ruby-2.4.0
 
-[root@kube-node-1 ~]# ruby --version
+$ ruby --version
 ruby 2.4.0p0 (2016-12-24 revision 57164) [x86_64-linux]
 ```
 
 **4、安装gem**
 
 ```bash
-gem install redis
+$ gem install redis
 ```
 
 例如：
 
 ```bash
-[root@kube-node-1 ~]# gem install redis
+$ gem install redis
 
 Fetching: redis-4.0.1.gem (100%)
 Successfully installed redis-4.0.1
@@ -390,9 +423,9 @@ Done installing documentation for redis after 2 seconds
 以上表示安装成功，可以执行`redis-trib.rb`命令。
 
 ```bash
-cd src 
+$ cd src 
 #执行redis-trib.rb命令
-./redis-trib.rb create --replicas 1 127.0.0.1:7000 127.0.0.1:7001 \
+$ ./redis-trib.rb create --replicas 1 127.0.0.1:7000 127.0.0.1:7001 \
 > 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005
 ```
 
@@ -407,7 +440,7 @@ cd src
 例如：
 
 ```bash
-[root@kube-node-1 src]# ./redis-trib.rb create --replicas 1 127.0.0.1:7000 127.0.0.1:7001 \
+$ ./redis-trib.rb create --replicas 1 127.0.0.1:7000 127.0.0.1:7001 \
 > 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005
 >>> Creating cluster
 >>> Performing hash slots allocation on 6 nodes...
@@ -462,7 +495,7 @@ S: dedf672f0a75faf37407ac4edd5da23bc4651e25 127.0.0.1:7004
 [OK] All 16384 slots covered.
 ```
 
-### 2.1.3 部署结果验证
+### 部署结果验证
 
 **1、客户端访问**
 
@@ -522,13 +555,8 @@ d5a834d075fd93eefab877c6ebb86efff680650f 127.0.0.1:7000@17000 myself,master - 0 
 dedf672f0a75faf37407ac4edd5da23bc4651e25 127.0.0.1:7004@17004 slave be2718476eba4e56f696e56b75e67df720b7fc24 0 1517303608082 5 connected
 ```
 
+ 参考[文章一](https://redis.io/download)
 
-
- 参考文章：
-
-https://redis.io/download
-
-https://redis.io/topics/cluster-tutorial
-
+参考[文章一](https://redis.io/topics/cluster-tutorial)
 
 

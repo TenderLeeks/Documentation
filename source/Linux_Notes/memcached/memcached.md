@@ -1,4 +1,6 @@
-# 1. Memcached简介
+# Memcached 使用
+
+## Memcached简介
 
 - Memcached是一个开源的，高性能，分布式内存对象缓存系统。
 
@@ -6,7 +8,7 @@
 
 - 一般的使用目的是，通过缓存数据库查询结果，减少数据库访问次数，以提高动态Web应用的速度、提高可扩展性。
 
-## 1.1. 特征
+### 特征
 
 memcached作为高速运行的分布式缓存服务器，具有以下的特点。
 
@@ -15,33 +17,33 @@ memcached作为高速运行的分布式缓存服务器，具有以下的特点�
 - 内置内存存储方式
 - memcached不互相通信的分布式
 
-# 2. 安装与运行
+## 安装与运行
 
-## 2.1. 自动安装
+### 自动安装
 
 ```bash
 # For Redhat/Fedora
-yum install -y memcached
+$ yum install -y memcached
 
 # For Debian or Ubuntu
-apt-get install memcached
+$ apt-get install memcached
 ```
 
-## 2.2. 源码安装
+### 源码安装
 
 安装指定版本的Memcached可以从 https://github.com/memcached/memcached/wiki/ReleaseNotes 地址下载。
 
 ```bash
 # Memcached depends on libevent
-yum install libevent-devel
+$ yum install libevent-devel
 
 # install 
-wget https://memcached.org/latest
+$ wget https://memcached.org/latest
 [you might need to rename the file]
-tar -zxf memcached-1.x.x.tar.gz
-cd memcached-1.x.x
-./configure --prefix=/usr/local/memcached
-make && make test && sudo make install
+$ tar -zxf memcached-1.x.x.tar.gz
+$ cd memcached-1.x.x
+$ ./configure --prefix=/usr/local/memcached
+$ make && make test && sudo make install
 ```
 
 **问题**
@@ -56,29 +58,29 @@ ok 52 - stop_server
 make: *** [test] Error 127
 ```
 
-## 2.3. 验证
+### 验证
 
 确认是否安装成功，可执行以下命令
 
 ```bash
-/usr/local/memcached/bin/memcached -h      
+$ /usr/local/memcached/bin/memcached -h      
 ```
 
-## 2.4. 运行
+### 运行
 
-### 2.4.1. 前台运行
+前台运行
 
 ```bash
-/usr/local/memcached/bin/memcached -p 11211 -m 64m -vv
+$ /usr/local/memcached/bin/memcached -p 11211 -m 64m -vv
 ```
 
-### 2.4.2. 后台运行
+后台运行
 
 ```bash
-/usr/local/memcached/bin/memcached -p 11211 -m 64m -d -c 102400 -t 8 -P /tmp/memcached.pid 
+$ /usr/local/memcached/bin/memcached -p 11211 -m 64m -d -c 102400 -t 8 -P /tmp/memcached.pid 
 ```
 
-## 2.5. 连接
+### 连接
 
 ```bash
 $ telnet 127.0.0.1 11211
@@ -95,10 +97,10 @@ END                                                             结束行
 quit                                                            退出
 ```
 
-# 3. Memcached运行参数
+## Memcached运行参数
 
 ```bash
-# /usr/local/memcached/bin/memcached -h
+$ /usr/local/memcached/bin/memcached -h
 memcached 1.5.12
 -p, --port=<num>          TCP port to listen on (default: 11211)
 -U, --udp-port=<num>      UDP port to listen on (default: 0, off)
@@ -191,9 +193,3 @@ memcached 1.5.12
 - -P是设置保存Memcache的pid文件。
 
 
-
-参考文章：
-
-- https://github.com/memcached/memcached/wiki/Overview
-- https://github.com/memcached/memcached/wiki/Install
-- http://www.runoob.com/memcached/memcached-tutorial.html

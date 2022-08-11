@@ -1,17 +1,17 @@
-# 1. 部署Redis集群
+# 部署Redis集群
 
 redis的安装及配置参考[redis部署]
 
 > 本文以创建一主二从的集群为例。
 
-## 1.1 部署与配置
+## 部署与配置
 
 先创建`sentinel`目录，在该目录下创建`8000`，`8001`，`8002`三个以端口号命名的目录。
 
 ```bash
-mkdir sentinel
-cd sentinel
-mkdir 8000 8001 8002 
+$ mkdir sentinel
+$ cd sentinel
+$ mkdir 8000 8001 8002 
 ```
 
 在对应端口号目录中创建`redis.conf`的文件，配置文件中的端口号`port`参数改为对应目录的端口号。配置如下：
@@ -234,15 +234,15 @@ hz 10
 aof-rewrite-incremental-fsync yes
 ```
 
-## 1.2 配置主从关系
+## 配置主从关系
 
 **1、启动实例**
 
 三个Redis实例配置相同，分别启动三个Redis实例。建议将`redis-server`、`redis-cli`、`redis-sentinel`的二进制复制到`/usr/local/bin`的目录下。
 
 ```bash
-cd 8000
-redis-server redis.conf
+$ cd 8000
+$ redis-server redis.conf
 ```
 
 **2、配置主从关系**
@@ -254,7 +254,7 @@ redis-server redis.conf
 例如：
 
 ```bash
-[root@kube-node-1 8000]# redis-cli -c -p 8001 -a 0234kz9*l
+$  redis-cli -c -p 8001 -a 0234kz9*l
 127.0.0.1:8001> slaveof 127.0.0.1 8000
 OK
 ```
@@ -266,7 +266,7 @@ OK
 Master
 
 ```bash
-[root@kube-node-1 8000]# redis-cli -c -p 8000 -a 0234kz9*l
+$  redis-cli -c -p 8000 -a 0234kz9*l
 127.0.0.1:8000> info replication
 # Replication
 role:master
@@ -286,7 +286,7 @@ repl_backlog_histlen:2853
 Slave
 
 ```bash
-[root@kube-node-1 8000]# redis-cli -c -p 8001 -a 0234kz9*l
+$  redis-cli -c -p 8001 -a 0234kz9*l
 127.0.0.1:8001> info replication
 # Replication
 role:slave
@@ -311,15 +311,15 @@ repl_backlog_histlen:2909
 
 也可以往master写数据，从slave读取数据来验证。
 
-# 2. 部署sentinel集群
+# 部署sentinel集群
 
-## 2.1 部署与配置
+## 部署与配置
 
 在之前创建的`sentinel`目录中场景sentinel端口号命名的目录`28000`，`28001`，`28002`。
 
 ```bash
-cd sentinel
-mkdir 28000 28001 28002 
+$ cd sentinel
+$ mkdir 28000 28001 28002 
 ```
 
 在对应端口号目录中创建`redis.conf`的文件，配置文件中的端口号`port`参数改为对应目录的端口号。配置如下：
@@ -332,19 +332,19 @@ sentinel failover-timeout mymaster 180000
 sentinel parallel-syncs mymaster 1
 ```
 
-## 2.2 启动sentinel实例
+## 启动sentinel实例
 
 ```bash
 #& 表示后台运行的方式
-redis-sentinel sentinel.conf &
+$ redis-sentinel sentinel.conf &
 ```
 
-## 2.3 查看状态
+## 查看状态
 
 使用`sentinel masters`命令查看监控的master节点。
 
 ```bash
-[root@kube-node-1 28000]# redis-cli -c -p 28000 -a 0234kz9*l
+$  redis-cli -c -p 28000 -a 0234kz9*l
 127.0.0.1:28000>
 127.0.0.1:28000> ping
 PONG
@@ -396,6 +396,5 @@ PONG
 
 
 
-参考文章：
+[参考文章](https://redis.io/topics/sentinel)
 
-https://redis.io/topics/sentinel

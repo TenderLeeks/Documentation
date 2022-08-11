@@ -1,4 +1,4 @@
-# 1. if语句
+# if语句
 
 if 语句通过关系运算符判断表达式的真假来决定执行哪个分支。Shell 有三种 if ... else 语句：
 
@@ -6,7 +6,7 @@ if 语句通过关系运算符判断表达式的真假来决定执行哪个分�
 - if ... else ... fi 语句；
 - if ... elif ... else ... fi 语句。
 
-## 1.1. if ... else 
+## if ... else 
 
 if ... else 语句的语法：
 
@@ -21,7 +21,7 @@ fi
 **最后必须以 fi 来结尾闭合 if**，fi 就是 if 倒过来拼写。
 注意：**expression 和方括号([ ])之间必须有空格**，否则会有语法错误。
 
-## 1.2. if ... else ... fi 
+## if ... else ... fi 
 
 if ... else ... fi 语句的语法：
 
@@ -36,7 +36,7 @@ fi
 
 如果 expression 返回 true，那么 then 后边的语句将会被执行；否则，执行 else 后边的语句。
 
-## 1.3. if ... elif ... fi 多分枝选择
+## if ... elif ... fi 多分枝选择
 
 if ... elif ... fi 语句可以对多个条件进行判断，语法为：
 
@@ -65,7 +65,7 @@ if ... else 语句也经常与 test 命令结合使用，test 命令用于检查
  if test $[num1] -eq $[num2]
 ```
 
-# 2. case语句
+# case语句
 
 case ... esac 与其他语言中的 switch ... case 语句类似，是一种多分枝选择结构。
 

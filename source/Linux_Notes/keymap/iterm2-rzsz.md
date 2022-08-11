@@ -1,16 +1,14 @@
-> 本文由网络文章整理备份。
-
 # iterm2 rz与sz的功能
 
 本文主要介绍`mac`环境下使用`iterm2`的`rz sz`功能的安装流程。
 
-## 1. 安装lrzsz
+## 安装lrzsz
 
 ```bash
-brew install lrzsz
+$ brew install lrzsz
 ```
 
-## 2. 安装执行脚本
+## 安装执行脚本
 
 将`iterm2-send-zmodem.sh`和`iterm2-recv-zmodem.sh`保存到`/usr/local/bin`目录下。
 
@@ -77,13 +75,13 @@ else
 fi
 ```
 
-## 3. 赋予这两个文件可执行权限
+## 赋予这两个文件可执行权限
 
 ```bash
-chmod 777 /usr/local/bin/iterm2-*
+$ chmod 777 /usr/local/bin/iterm2-*
 ```
 
-## 4. 设置Iterm2的Tirgger特性
+## 设置Iterm2的Tirgger特性
 
 设置Iterm2的Tirgger特性，profiles->default->editProfiles->Advanced中的Tirgger
 
@@ -103,9 +101,9 @@ Instant: checked
 
 示例图：
 
-<img src="https://raw.githubusercontent.com/aikuyun/iterm2-zmodem/master/imgs/01.png">
+![](img/01.png)
 
-## 5. 使用
+## 使用
 
 - 上传文件：rz
 - 下载文件：sz + file

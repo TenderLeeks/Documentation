@@ -6,9 +6,9 @@
 ```bash
 "~/.vimrc
 "vim config file
-"date 2018-12-26
+"date 2022-08
 "Created by bert
-"blog:https://blog.51cto.com/zpf666
+"home:https://www.leeks.info
 """""""""""""""""""""""""""""""""""
 """=>全局配置<="""
 """""""""""""""""""""""""""""""""""
@@ -278,8 +278,8 @@ autocmd BufNewFile *.py,*.cc,*.sh,*.java exec ":call SetTitle()"
 func SetTitle()
     if expand ("%:e") == 'sh'
         call setline(1, "#!/bin/bash")
-        call setline(2, "#Author:bert")
-        call setline(3, "#Blog:https://blog.51cto.com/zpf666")
+        call setline(2, "#Author:ken")
+        call setline(3, "#home:https://www.leeks.info")
         call setline(4, "#Time:".strftime("%F %T"))
         call setline(5, "#Name:".expand("%"))
         call setline(6, "#Version:V1.0")

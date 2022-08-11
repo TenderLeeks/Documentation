@@ -1,16 +1,16 @@
-# 1. vi的模式
+# vi的模式
 
-<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931318/article/vim/vi-mode.png">
+![](img/vi-mode.png)
 
-## 1.1. 普通模式
+## 普通模式
 
 由Shell进入vi编辑器时，首先进入普通模式。在普通模式下，从键盘输入任何字符都被当作命令来解释。普通模式下没有任何提示符，输入命令后立即执行，不需要回车，而且输入的字符不会在屏幕上显示出来。
 
-## 1.2. 编辑模式
+## 编辑模式
 
 编辑模式主要用于文本的编辑。该模式下用户输入的任何字符都被作为文件的内容保存起来，并在屏幕上显示出来。
 
-## 1.3. 命令模式
+## 命令模式
 
 命令模式下，用户可以对文件进行一些高级处理。尽管普通模式下的命令可以完成很多功能，但要执行一些如字符串查找、替换、显示行号等操作还是必须要进入命令模式。
 
@@ -18,19 +18,19 @@
 >
 > 如果不确定当前处于哪种模式，按两次 Esc 键将回到普通模式。
 
-# 2. vim命令汇总
+# vim命令汇总
 
-<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562930885/article/vim/vi-vim-cheat-sheet.gif">
+![](img/vi-vim-cheat-sheet.png)
 
 **高级汇总**
 
-<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562930889/article/vim/vim-keymap.png">
+![](img/vim-keymap.png)
 
-# 3. vim命令分类
+# vim命令分类
 
-## 3.1. 基础编辑、移动光标
+## 基础编辑、移动光标
 
-<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931487/article/vim/vim-toturial/vi-vim-tutorial-1.gif">
+![](img/vi-vim-tutorial-1.png)
 
 | 指令     | 解释                                       |
 | :------- | :----------------------------------------- |
@@ -51,9 +51,9 @@
 | s        | 覆盖                                       |
 | esc      | 退出输入模式，进入普通模式，可执行各种命令 |
 
-## 3.2. 操作和重复操作
+## 操作和重复操作
 
-<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931488/article/vim/vim-toturial/vi-vim-tutorial-2.gif">
+![](img/vi-vim-tutorial-2.png)
 
 | 指令     | 解释                                                         |
 | :------- | :----------------------------------------------------------- |
@@ -70,9 +70,9 @@
 |          | `d2w` 删除两个单词                                           |
 |          | `d2t,` 删除当前位置到后面第二个 `,` 之间的内容，不包含 `,` （t = `to`） |
 
-## 3.3. 复制 和 粘贴
+## 复制 和 粘贴
 
-<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931487/article/vim/vim-toturial/vi-vim-tutorial-3.gif">
+![](img/vi-vim-tutorial-3.png)
 
 | 指令 | 解释                                 |
 | :--- | :----------------------------------- |
@@ -85,9 +85,9 @@
 
 **所有经过 d x e 处理的字符串都已经复制到了粘贴板上。**
 
-## 3.4. 搜索
+## 搜索
 
-<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931487/article/vim/vim-toturial/vi-vim-tutorial-4.gif">
+![](img/vi-vim-tutorial-4.png)
 
 | 指令 | 解释                                                         |
 | :--- | :----------------------------------------------------------- |
@@ -98,9 +98,9 @@
 | *    | 直接匹配当前光标下面的字符串，移到下一个匹配项，跟`/` `?` 没有关系 |
 | #    | 上一个匹配项                                                 |
 
-## 3.5. 标记 和 宏
+## 标记 和 宏
 
-<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931487/article/vim/vim-toturial/vi-vim-tutorial-5.gif">
+![](img/vi-vim-tutorial-5.png)
 
 **标记**
 
@@ -123,9 +123,9 @@
 - `@@` 代表最后一个宏
 
 
-## 3.6. 高级移动
+## 高级移动
 
-<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931489/article/vim/vim-toturial/vi-vim-tutorial-6.gif">
+![](img/vi-vim-tutorial-6.png)
 
 - `%` 在配对的 `()` `[]` 之间移动 
 
@@ -143,9 +143,9 @@
 
 - `]]` jumps to the next `}` column 0
 
-## 3.7. 高级指令
+## 高级指令
 
-<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931488/article/vim/vim-toturial/vi-vim-tutorial-7.gif">
+![](img/vi-vim-tutorial-7.png)
 
 - `J` 合并当前行与下一行。合并已选中的所有行。
 

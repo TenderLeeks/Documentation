@@ -11,7 +11,7 @@ keepalived只有一个配置文件`/etc/keepalived/keepalived.conf`。
 - vrrp_instance
 - virtual_server
 
-## 1. global_defs区域
+## global_defs区域
 
 主要是配置故障发生时的通知对象以及机器标识。
 
@@ -30,7 +30,7 @@ global_defs {
 }
 ```
 
-## 2. static_ipaddress和static_routes区域[可忽略]
+## static_ipaddress和static_routes区域[可忽略]
 
 static_ipaddress和static_routes区域配置的是是本节点的IP和路由信息。如果你的机器上已经配置了IP和路由，那么这两个区域可以不用配置。其实，一般情况下你的机器都会有IP地址和路由信息的，因此没必要再在这两个区域配置。
 
@@ -45,7 +45,7 @@ static_routes {
 }
 ```
 
-## 3. vrrp_script区域
+## vrrp_script区域
 
 用来做健康检查的，当时检查失败时会将vrrp_instance的priority减少相应的值。
 
@@ -57,7 +57,7 @@ vrrp_script chk_http_port {   
 }
 ```
 
-## 4. vrrp_instance和vrrp_sync_group区域
+## vrrp_instance和vrrp_sync_group区域
 
 vrrp_instance用来定义对外提供服务的VIP区域及其相关属性。
 
@@ -118,7 +118,7 @@ vrrp_instance VI_1 {
 }
 ```
 
-## 5. virtual_server_group和virtual_server区域
+## virtual_server_group和virtual_server区域
 
 virtual_server_group一般在超大型的LVS中用到，一般LVS用不到这东西。
 

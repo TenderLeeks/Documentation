@@ -1,28 +1,28 @@
-# 1. Keepalived的安装
+# Keepalived的安装
 
-## 1.1. yum install方式
+## yum install方式
 
 ```bash
-yum install -y keepalived
+$ yum install -y keepalived
 ```
 
-## 1.2. 安装包编译方式
+## 安装包编译方式
 
 更多安装包参考：http://www.keepalived.org/download.html
 
 ```bash
-wget http://www.keepalived.org/software/keepalived-2.0.7.tar.gz
-tar zxvf keepalived-2.0.7.tar.gz
-cd keepalived-2.0.7
-./configure --bindir=/usr/bin --sbindir=/usr/sbin --sysconfdir=/etc --mandir=/usr/share
-make && make install
+$ wget http://www.keepalived.org/software/keepalived-2.0.7.tar.gz
+$ tar zxvf keepalived-2.0.7.tar.gz
+$ cd keepalived-2.0.7
+$ ./configure --bindir=/usr/bin --sbindir=/usr/sbin --sysconfdir=/etc --mandir=/usr/share
+$ make && make install
 ```
 
-# 2. 常用配置
+# 常用配置
 
 keepalived配置文件路径：`/etc/keepalived/keepalived`。
 
-## 2.1. MASTER（主机配置）
+## MASTER（主机配置）
 
 ```shell
 global_defs {
@@ -63,7 +63,7 @@ vrrp_instance VI_1 {
 
 ```
 
-## 2.2. BACKUP（备机配置）
+## BACKUP（备机配置）
 
 ```shell
 global_defs {
@@ -104,7 +104,7 @@ vrrp_instance VI_1 {
 
 ```
 
-# 3. 注意事项
+# 注意事项
 
 1、指定Nginx健康检测脚本：/etc/keepalived/scripts/check_nginx.sh
 
@@ -147,12 +147,12 @@ vrrp_instance VI_1 {
 7、virtual_router_id 15值，主备值一致，但建议不应与集群中其他Nginx机器上的相同，如果同一个网段配置的virtual_router_id 重复则会报错，选择一个不重复的0~255之间的值，可以用以下命令查看已存在的vrid。
 
 ```bash
-tcpdump -nn -i any net 224.0.0.0/8
+$ tcpdump -nn -i any net 224.0.0.0/8
 ```
 
-# 4. 常用脚本
+# 常用脚本
 
-## 4.1. Nginx健康检测脚本
+## Nginx健康检测脚本
 
 在Nginx配置目录下（/etc/nginx/conf.d/）增加health.conf的配置文件,该配置文件用于配置Nginx health的接口。
 
@@ -167,7 +167,7 @@ server {
 
 Nginx健康检测脚本：/etc/keepalived/scripts/check_nginx.sh
 
-### 4.1.1. 检查接口调用是否为200
+### 检查接口调用是否为200
 
 ```shell
 #!/bin/sh
@@ -191,7 +191,7 @@ fi
 
 ```
 
-### 4.1.2. 检查Nginx进程是否运行
+### 检查Nginx进程是否运行
 
 ```shell
 #!/bin/sh
@@ -202,7 +202,7 @@ fi
 
 ```
 
-## 4.2. Keepalived状态通知脚本
+## Keepalived状态通知脚本
 
 ```shell
 #!/bin/bash

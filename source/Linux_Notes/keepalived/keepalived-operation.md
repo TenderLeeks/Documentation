@@ -1,33 +1,33 @@
-# 1. 常用命令
+# 常用命令
 
-## 1.1. 查看当前VIP在哪个节点上
+## 查看当前VIP在哪个节点上
 
 ```bash
 # 查看VIP是否在筛选结果中
-ip addr show|grep "scope global"
+$ ip addr show|grep "scope global"
 
 # 或者 
-ip addr show|grep {vip}
+$ ip addr show|grep {vip}
 ```
 
-## 1.2. 查看keepalived的日志
+## 查看keepalived的日志
 
 ```bash
-tail /var/log/messages
+$ tail /var/log/messages
 ```
 
-## 1.3. 抓包命令
+## 抓包命令
 
 ```bash
 # 抓包
-tcpdump -nn vrrp
+$ tcpdump -nn vrrp
 # 可以用这条命令来查看该网络中所存在的vrid
-tcpdump -nn -i any net 224.0.0.0/8
+$ tcpdump -nn -i any net 224.0.0.0/8
 ```
 
 ```bash
-# tcpdump -nn -i any net 224.0.0.0/8
-# tcpdump -nn vrrp
+$ tcpdump -nn -i any net 224.0.0.0/8
+$ tcpdump -nn vrrp
 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
 listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
 14:40:00.576387 IP 192.168.98.57 > 224.0.0.18: VRRPv2, Advertisement, vrid 9, prio 99, authtype simple, intvl 1s, length 20
@@ -37,28 +37,28 @@ listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
 14:40:04.580443 IP 192.168.98.57 > 224.0.0.18: VRRPv2, Advertisement, vrid 9, prio 99, authtype simple, intvl 1s, length 20
 ```
 
-## 1.4. VIP操作
+## VIP操作
 
 ```bash
 # 解绑VIP
-ip addr del  dev 
+$ ip addr del  dev 
 # 绑定VIP
-ip addr add  dev 
+$ ip addr add  dev 
 ```
 
-## 1.5. keepalived 切 VIP
+## keepalived 切 VIP
 
 例如将 A 机器上的 VIP 迁移到B 机器上。
 
-### 1.5.1. 停止keepalived服务
+### 停止keepalived服务
 
 停止被迁移的机器（A机器）的keepalived服务。
 
 ```bash
-systemctl stop keepalived
+$ systemctl stop keepalived
 ```
 
-### 1.5.2. 查看日志
+### 查看日志
 
 解绑 A机器 VIP的日志
 
@@ -100,9 +100,9 @@ Sep 17 17:20:26 localhost kernel: IPVS: ipvs loaded.
 Sep 17 17:20:26 localhost Keepalived_healthcheckers[34569]: Opening file '/etc/keepalived/keepalived.conf'.
 ```
 
-# 2. 指定keepalived的输出日志文件
+# 指定keepalived的输出日志文件
 
-## 2.1. 修改 `/etc/sysconfig/keepalived`
+## 修改 `/etc/sysconfig/keepalived`
 
 将`KEEPALIVED_OPTIONS="-D"`改为`KEEPALIVED_OPTIONS="-D -d -S 0"`。
 
@@ -123,30 +123,30 @@ Sep 17 17:20:26 localhost Keepalived_healthcheckers[34569]: Opening file '/etc/k
 KEEPALIVED_OPTIONS="-D -d -S 0"
 ```
 
-## 2.2. 修改rsyslog的配置 /etc/rsyslog.conf
+## 修改rsyslog的配置 /etc/rsyslog.conf
 
 在/etc/rsyslog.conf  添加 keepalived的日志路径
 
 ```bash
-vi /etc/rsyslog.conf
+$ vim /etc/rsyslog.conf
 ...
 # keepalived log
 local0.*                                                /etc/keepalived/keepalived.log
 ```
 
-## 2.3. 重启rsyslog和keepalived
+## 重启rsyslog和keepalived
 
 ```bash
 # 重启rsyslog
-systemctl restart rsyslog
+$ systemctl restart rsyslog
  
 #  重启keepalived
-systemctl restart keepalived
+$ systemctl restart keepalived
 ```
 
-# 3. Troubleshooting
+# Troubleshooting
 
-## 3.1. virtual_router_id 同网段重复
+## virtual_router_id 同网段重复
 
 日志报错如下：
 
@@ -162,6 +162,6 @@ Mar 09 21:28:43 k8s4 Keepalived_vrrp[8548]: one or more VIP associated with VRID
 同一网段内LB节点配置的 `virtual_router_id` 值有重复了，选择一个不重复的0~255之间的值，可以用以下命令查看已存在的vrid。
 
 ```bash
-tcpdump -nn -i any net 224.0.0.0/8
+$ tcpdump -nn -i any net 224.0.0.0/8
 ```
 

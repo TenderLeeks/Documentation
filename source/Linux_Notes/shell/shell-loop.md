@@ -1,4 +1,4 @@
-# 1. for
+# for
 
 for循环一般格式为：
 
@@ -30,7 +30,7 @@ The value is: 4
 The value is: 5
 ```
 
-# 2. while
+# while
 
 while循环用于不断执行一系列命令，也用于从输入文件中读取数据
 
@@ -65,7 +65,7 @@ do
 done
 ```
 
-# 3. until
+# until
 
 until 循环执行一系列命令直至条件为 true 时停止。until 循环与 while 循环在处理方式上刚好相反。一般while循环优于until循环，但在某些时候，也只是极少数情况下，until 循环更加有用。
 until 循环格式为：
@@ -91,7 +91,7 @@ do
 done
 ```
 
-# 4. break命令
+# break命令
 
 break命令允许跳出**所有**（终止执行后面的所有循环）。
 
@@ -121,7 +121,7 @@ do
 done
 ```
 
-# 5. continue命令
+# continue命令
 
 continue命令与break命令类似，只有一点差别，它不会跳出所有循环，仅仅跳出循环
 

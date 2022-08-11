@@ -4,10 +4,9 @@ MySQL
 .. toctree::
    :maxdepth: 3
 
-   curd-commands
-   system-manage
-   table-operation
-
-
-
-
+   MySQL-Server-Deploy
+   MySQL-CMD
+   Common-Problem
+   PerconaXtraBackup2.4
+   PerconaXtraBackup8.0
+   Yearning

@@ -1,16 +1,16 @@
-# 1. Keepalived简介
+# Keepalived简介
 
-## 1.1. 概述
+## 概述
 
 Keepalived一个基于VRRP协议来实现的LVS服务高可用方案，可以利用其来避免单点故障。一个LVS服务会有2台服务器运行Keepalived，一台为主服务器（MASTER），一台为备份服务器（BACKUP），但是对外表现为一个虚拟IP，主服务器会发送特定的消息给备份服务器，当备份服务器收不到这个消息的时候，即主服务器宕机的时候， 备份服务器就会接管虚拟IP，继续提供服务，从而保证了高可用性。 
 
-## 1.2. keepalived的作用
+## keepalived的作用
 
 Keepalived的作用是检测服务器的状态，如果有一台web服务器死机，或工作出现故障，Keepalived将检测到，并将有故障的服务器从系统中剔除，同时使用其他服务器代替该服务器的工作，当服务器工作正常后Keepalived自动将服务器加入到服务器群中。
 
-# 2. 如何实现Keepalived
+# 如何实现Keepalived
 
-## 2.1. 基于VRRP协议的理解
+## 基于VRRP协议的理解
 
 Keepalived是以VRRP协议为实现基础的，VRRP全称`Virtual Router Redundancy Protocol`，即`虚拟路由冗余协议`。
        
@@ -18,7 +18,7 @@ Keepalived是以VRRP协议为实现基础的，VRRP全称`Virtual Router Redunda
 
 keepalived主要有三个模块，分别是core、check和vrrp。core模块为keepalived的核心，负责主进程的启动、维护以及全局配置文件的加载和解析。check负责健康检查，包括常见的各种检查方式。vrrp模块是来实现VRRP协议的。
 
-## 2.2. 基于TCP/IP协议的理解
+## 基于TCP/IP协议的理解
 
 Layer3,4&7工作在IP/TCP协议栈的IP层，TCP层，及应用层,原理分别如下：
 
@@ -34,9 +34,9 @@ Keepalived使用Layer3的方式工作式时，Keepalived会定期向服务器群
 
 Layer7就是工作在具体的应用层了，比Layer3,Layer4要复杂一点，在网络上占用的带宽也要大一些。Keepalived将根据用户的设定检查服务器程序的运行是否正常，如果与用户的设定不相符，则Keepalived将把服务器从服务器群中剔除。
 
-# 3. Keepalived选举策略
+# Keepalived选举策略
 
-## 3.1. 选举策略   
+## 选举策略   
 
 首先，每个节点有一个初始优先级，由配置文件中的priority配置项指定，MASTER节点的priority应比BAKCUP高。运行过程中keepalived根据vrrp_script的weight设定，增加或减小节点优先级。规则如下：
 
@@ -58,7 +58,7 @@ Layer7就是工作在具体的应用层了，比Layer3,Layer4要复杂一点，�
 
 3. 当两个节点的优先级相同时，以节点发送VRRP通告的IP作为比较对象，IP较大者为MASTER。
 
-## 3.2. priority和weight的设定     
+## priority和weight的设定     
 
 1. 主从的优先级初始值priority和变化量weight设置非常关键，配错的话会导致无法进行主从切换。比如，当MASTER初始值定得太高，即使script脚本执行失败，也比BACKUP的priority + weight大，就没法进行VIP漂移了。
    

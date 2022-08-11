@@ -4,11 +4,10 @@
 .. toctree::
    :maxdepth: 3
 
-   chrome-keymap
-   eclipse-keymap
-   iterm2-rzsz
-   tmux-keymap
    vscode-keymap
-
+   eclipse-keymap
+   chrome-keymap
+   tmux-keymap
+   iterm2-rzsz
 
 

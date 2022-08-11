@@ -1,17 +1,22 @@
-# 1. Memcached 命令
+# Memcached 命令
 
-## 1.1. 存储命令
+## 存储命令
 
-### 1.1.1. 常用命令
+### 常用命令
 
-| 命令    | 说明       |
-| ------- | ---------- |
-| set     | 新增或更新 |
-| add     | 新增       |
-| replace | 替换       |
-| append  | 在后面追加 |
-| prepend | 在前面追加 |
-| cas     | 检查并设置 |
+<table border="1" cellpadding="10" cellspacing="10">
+  <thead>
+    <tr><th>命令</th><th>说明</th></tr>
+  </thead>
+    <tbody>
+      <tr><td>set</td><td>新增或更新</td></tr>
+      <tr><td>add</td><td>新增</td></tr>
+      <tr><td>replace</td><td>替换</td></tr>
+      <tr><td>append</td><td>在后面追加</td></tr>
+      <tr><td>prepend</td><td>在前面追加</td></tr>
+      <tr><td>cas</td><td>检查并设置</td></tr>
+  </tbody>
+</table>
 
 以上几个命令语法格式相似，以`set`为例：
 
@@ -62,7 +67,7 @@ STORED
 - **STORED**：保存成功后输出。
 - **ERROR**：在保存失败后输出。
 
-### 1.1.2. cas命令
+### cas命令
 
 Memcached CAS（Check-And-Set 或 Compare-And-Swap） 命令用于执行一个"检查并设置"的操作。
 
@@ -91,25 +96,32 @@ value
 
 **unique_cas_token**通过**gets**命令获取。
 
-## 1.2. 查找命令
+## 查找命令
 
-| 命令      | 说明                                          |
-| --------- | --------------------------------------------- |
-| get       | 获取一个或多个key                             |
-| gets      | 获取一个或多个cas token                       |
-| delete    | 删除已存在的key                               |
-| incr/decr | 对已存在的 key(键) 的数字值进行自增或自减操作 |
+<table border="1" cellpadding="10" cellspacing="10">
+  <thead>
+    <tr><th>Volu命令mes</th><th>说明</th></tr>
+  </thead>
+    <tbody>
+      <tr><td>get</td><td>获取一个或多个key</td></tr>
+      <tr><td>gets</td><td>获取一个或多个cas token</td></tr>
+      <tr><td>delete</td><td>删除已存在的key</td></tr>
+      <tr><td>incr/decr</td><td>对已存在的 key(键) 的数字值进行自增或自减操作</td></tr>
+  </tbody>
+</table>
 
-## 1.3. 统计命令
+## 统计命令
 
-| 命令        | 说明                                                         |
-| ----------- | ------------------------------------------------------------ |
-| stats       | 用于返回统计信息例如 PID(进程号)、版本号、连接数等。         |
-| stats items | 用于显示各个 slab 中 item 的数目和存储时长(最后一次访问距离现在的秒数)。 |
-| stats slabs | 用于显示各个slab的信息，包括chunk的大小、数目、使用情况等。  |
-| stats sizes | 用于显示所有item的大小和个数。                               |
-| flush_all   | 用于清理缓存中的所有 **key=>value(键=>值)** 对。             |
+<table border="1" cellpadding="10" cellspacing="10">
+  <thead>
+    <tr><th>命令</th><th>说明</th></tr>
+  </thead>
+    <tbody>
+      <tr><td>stats</td><td>用于返回统计信息例如 PID(进程号)、版本号、连接数等。</td></tr>
+      <tr><td>stats items</td><td>用于显示各个 slab 中 item 的数目和存储时长(最后一次访问距离现在的秒数)。</td></tr>
+      <tr><td>stats slabs</td><td>用于显示各个slab的信息，包括chunk的大小、数目、使用情况等。</td></tr>
+      <tr><td>stats sizes</td><td>用于显示所有item的大小和个数。</td></tr>
+      <tr><td>flush_all</td><td>用于清理缓存中的所有 key=>value(键=>值) 对。</td></tr>
+  </tbody>
+</table>
 
-参考文章：
-
-- http://www.runoob.com/memcached/memcached-tutorial.html

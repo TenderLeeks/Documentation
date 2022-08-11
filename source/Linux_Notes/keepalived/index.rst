@@ -4,11 +4,9 @@ keepalived
 .. toctree::
    :maxdepth: 3
 
-   install-keepalived
-   keepalived-conf
    keepalived-introduction
+   install-keepalived
    keepalived-operation
-
-
+   keepalived-conf
 
 

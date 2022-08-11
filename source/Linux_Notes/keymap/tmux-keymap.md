@@ -1,40 +1,42 @@
-# 1. 安装tmux
+# tmux
+
+## 安装tmux
 
 ```bash
 # linux
-yum install -y tmux
+$ yum install -y tmux
 
 # mac
-brew install tmux
+$ brew install tmux
 ```
 
-# 2. tmux常用命令
+## tmux常用命令
 
-## 2.1. 进入tmux
+### 进入tmux
 
 ```bash
-tmux
+$ tmux
 ```
 
-## 2.2. 退出tmux，程序后台运行
+### 退出tmux，程序后台运行
 
 ```bash
 按ctrl + b 进入控制台，再按 d
 ```
 
-## 2.3. 重回上次tmux窗口
+### 重回上次tmux窗口
 
 ```bash
 ctrl + a
 ```
 
-## 2.4. 结束tmux窗口运行的进程
+### 结束tmux窗口运行的进程
 
 ```bash
 ctrl + d
 ```
 
-# 3. 更多快捷键说明
+## 更多快捷键说明
 
 | 类别           | 快捷键      | 说明                                                         |
 | -------------- | ----------- | ------------------------------------------------------------ |
