@@ -10,68 +10,36 @@
 `````````````
 www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题和技术知识。
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Linux 笔记
+
+   Linux_Notes/index
+
+
+.. toctree::
+   :caption: Python 笔记
+   :maxdepth: 2
+
+   Python_Notes/env/index
+   Python_Notes/scripts/index
+   Python_Notes/Django/index
+   Python_Notes/Flask/index
+
+
+.. toctree::
+   :caption: BlockChain 笔记
+   :maxdepth: 2
+
+   polygon <BlockChain_Notes/polygon/index>
+   BlockChain_Notes/aelf/index
+   Okx <BlockChain_Notes/OKChain/index>
+   节点部署文档 <BlockChain_Notes/index>
+
 
 .. toctree::
    :maxdepth: 1
-   :caption: 搭建托管文档
+   :caption: 使用托管文档
 
    introduction/ReadtheDocs
-
-
-.. toctree::
-   :caption: Linux 系统相关
-   :maxdepth: 2
-
-   Linux/base/index
-   Linux/deploy-env/index
-   Linux/disk-management/index
-   Linux/SystemOptimization/index
-   Linux/GitUse/index
-   Linux/Shell-Scripts/index
-   Linux/Ansible/index
-   Linux/Docker/index
-   Linux/logrotate/index
-   Linux/CentOS7-firewall-config/index
-   Linux/ViewHardwareConfig/index
-   tools/monitor/index
-   tools/log-manage/index
-   tools/net-tools/index
-   tools/cicd-tools/index
-   tools/config/index
-   tools/kvm/index
-   Tomcat <tools/tomcat/index>
-   tools/PerformanceTesting/index
-   tools/other/index
-
-
-.. toctree::
-   :caption: 数据库、消息队列
-   :maxdepth: 2
-
-   Databases/MySQL/index
-   Databases/Redis/index
-   Databases/RabbitMQ/index
-   Databases/Oracle/index
-   Databases/Archery
-
-
-.. toctree::
-   :caption: Python笔记
-   :maxdepth: 2
-
-   Python_note/env/index
-   Python_note/scripts/index
-   Python_note/Django/index
-   Python_note/Flask/index
-
-
-.. toctree::
-   :caption: 区块链笔记
-   :maxdepth: 2
-
-   polygon <BlockChain/polygon/index>
-   BlockChain/aelf/index
-   Okx <BlockChain/OKChain/index>
-   节点部署文档 <BlockChain/index>
-
 
