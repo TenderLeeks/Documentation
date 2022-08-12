@@ -48,56 +48,50 @@ Linux文件系统与Windows有较大的差别：
 
 为了便于定位和查找，Linux中的每个目录一般都存放特定类型的文件，下表列出了各种Linux发行版本的常见目录：
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>目录</th><th>说明</th></tr>
-  </thead>
-    <tbody>
-      <tr><td>/</td><td>根目录，只能包含目录，不能包含具体文件。</td></tr>
-      <tr><td>/bin</td><td>存放可执行文件。很多命令就对应/bin目录下的某个程序，例如 ls、cp、mkdir。/bin目录对所有用户有效。</td></tr>
-      <tr><td>/dev</td><td>硬件驱动程序。例如声卡、磁盘驱动等，还有如 /dev/null、/dev/console、/dev/zero、/dev/full 等文件。</td></tr>
-      <tr><td>/etc</td><td>主要包含系统配置文件和用户、用户组配置文件。</td></tr>
-      <tr><td>/lib</td><td>主要包含共享库文件，类似于Windows下的DLL；有时也会包含内核相关文件。</td></tr>
-      <tr><td>/boot</td><td>系统启动文件，例如Linux内核、引导程序等。</td></tr>
-      <tr><td>/home</td><td>用户工作目录（主目录），每个用户都会分配一个目录。</td></tr>
-      <tr><td>/mnt</td><td>临时挂载文件系统。这个目录一般是用于存放挂载储存设备的挂载目录的，例如挂载CD-ROM的cdrom目录。</td></tr>
-      <tr><td>/proc</td><td>操作系统运行时，进程（正在运行中的程序）信息及内核信息（比如cpu、硬盘分区、内存信息等）存放在这里。/proc目录伪装的文件系统proc的挂载目录，proc并不是真正的文件系统。</td></tr>
-      <tr><td>/tmp</td><td>临时文件目录，系统重启后不会被保存。</td></tr>
-      <tr><td>/usr</td><td>/user目下的文件比较混杂，包含了管理命令、共享文件、库文件等，可以被很多用户使用。</td></tr>
-      <tr><td>/var</td><td>主要包含一些可变长度的文件，会经常对数据进行读写，例如日志文件和打印队列里的文件。</td></tr>
-      <tr><td>/sbin</td><td>和 /bin 类似，主要包含可执行文件，不过一般是系统管理所需要的，不是所有用户都需要。</td></tr>
-  </tbody>
-</table>
+| 目录  | 说明                                                         |
+| ----- | ------------------------------------------------------------ |
+| /     | 根目录，只能包含目录，不能包含具体文件。                     |
+| /bin  | 存放可执行文件。很多命令就对应/bin目录下的某个程序，例如 ls、cp、mkdir。/bin目录对所有用户有效。 |
+| /dev  | 硬件驱动程序。例如声卡、磁盘驱动等，还有如 /dev/null、/dev/console、/dev/zero、/dev/full 等文件。 |
+| /etc  | 主要包含系统配置文件和用户、用户组配置文件。                 |
+| /lib  | 主要包含共享库文件，类似于Windows下的DLL；有时也会包含内核相关文件。 |
+| /boot | 系统启动文件，例如Linux内核、引导程序等。                    |
+| /home | 用户工作目录（主目录），每个用户都会分配一个目录。           |
+| /mnt  | 临时挂载文件系统。这个目录一般是用于存放挂载储存设备的挂载目录的，例如挂载CD-ROM的cdrom目录。 |
+| /proc | 操作系统运行时，进程（正在运行中的程序）信息及内核信息（比如cpu、硬盘分区、内存信息等）存放在这里。/proc目录伪装的文件系统proc的挂载目录，proc并不是真正的文件系统。 |
+| /tmp  | 临时文件目录，系统重启后不会被保存。                         |
+| /usr  | /user目下的文件比较混杂，包含了管理命令、共享文件、库文件等，可以被很多用户使用。 |
+| /var  | 主要包含一些可变长度的文件，会经常对数据进行读写，例如日志文件和打印队列里的文件。 |
+| /sbin | 和 /bin 类似，主要包含可执行文件，不过一般是系统管理所需要的，不是所有用户都需要。 |
+
 
 ## 常用文件管理命令
 
 你可以通过下面的命令来管理文件：
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>命令</th><th>说明</th></tr>
-  </thead>
-    <tbody>
-      <tr><td>cat filename</td><td>查看文件内容。</td></tr>
-      <tr><td>cd dirname</td><td>改变所在目录。</td></tr>
-      <tr><td>cp file1 file2</td><td>复制文件或目录。</td></tr>
-      <tr><td>file filename</td><td>查看文件类型(binary, text, etc)。</td></tr>
-      <tr><td>find filename dir</td><td>搜索文件或目录。</td></tr>
-      <tr><td>head filename</td><td>显示文件的开头，与tail命令相对。</td></tr>
-      <tr><td>less filename</td><td>查看文件的全部内容，可以分页显示，比more命令要强大。</td></tr>
-      <tr><td>ls dirname</td><td>遍历目录下的文件或目录。</td></tr>
-      <tr><td>mkdir dirname</td><td>创建目录。</td></tr>
-      <tr><td>more filename</td><td>查看文件的全部内容，可以分页显示。</td></tr>
-      <tr><td>mv file1 file2</td><td>移动文件或重命名。</td></tr>
-      <tr><td>pwd</td><td>显示用户当前所在目录。</td></tr>
-      <tr><td>rm filename</td><td>删除文件。</td></tr>
-      <tr><td>rmdir dirname</td><td>删除目录。</td></tr>
-      <tr><td>tail filename</td><td>显示文件的结尾，与head命令相对。</td></tr>
-      <tr><td>touch filename</td><td>文件不存在时创建一个空文件，存在时修改文件时间戳。</td></tr>
-      <tr><td>whereis filename</td><td>查看文件所在位置。</td></tr>
-      <tr><td>which filename</td><td>如果文件在环境变量PATH中有定义，那么显示文件位置。</td></tr>
-  </tbody>
-</table>
+| 命令              | 说明                                                 |
+| ----------------- | ---------------------------------------------------- |
+| cat filename      | 查看文件内容。                                       |
+| cd dirname        | 改变所在目录。                                       |
+| cp file1 file2    | 复制文件或目录。                                     |
+| file filename     | 查看文件类型(binary, text, etc)。                    |
+| find filename dir | 搜索文件或目录。                                     |
+| head filename     | 显示文件的开头，与tail命令相对。                     |
+| less filename     | 查看文件的全部内容，可以分页显示，比more命令要强大。 |
+| ls dirname        | 遍历目录下的文件或目录。                             |
+| mkdir dirname     | 创建目录。                                           |
+| more filename     | 查看文件的全部内容，可以分页显示。                   |
+| mv file1 file2    | 移动文件或重命名。                                   |
+| pwd               | 显示用户当前所在目录。                               |
+| rm filename       | 删除文件。                                           |
+| rmdir dirname     | 删除目录。                                           |
+| tail filename     | 显示文件的结尾，与head命令相对。                     |
+| touch filename    | 文件不存在时创建一个空文件，存在时修改文件时间戳。   |
+| whereis filename  | 查看文件所在位置。                                   |
+| which filename    | 如果文件在环境变量PATH中有定义，那么显示文件位置。   |
+
+## 
+
 
 ### df命令
 
@@ -119,19 +113,15 @@ tmpfs             816752       0    816752   0% /run/user/1000
 
 每一列的含义如下：
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>列</th><th>说明</th></tr>
-  </thead>
-    <tbody>
-      <tr><td>Filesystem</td><td>代表文件系统对应的设备文件的路径名（一般是硬盘上的分区）。</td></tr>
-      <tr><td>kbytes</td><td>分区包含的数据块（1024字节）的数目。</td></tr>
-      <tr><td>used</td><td>已用空间。</td></tr>
-      <tr><td>avail</td><td>可用空间。</td></tr>
-      <tr><td>capacity</td><td>已用空间的百分比。</td></tr>
-      <tr><td>Mounted on</td>文件系统挂载点。<td></td></tr>
-  </tbody>
-</table>
+| 列         | 说明                                                       |
+| ---------- | ---------------------------------------------------------- |
+| Filesystem | 代表文件系统对应的设备文件的路径名（一般是硬盘上的分区）。 |
+| kbytes     | 分区包含的数据块（1024字节）的数目。                       |
+| used       | 已用空间。                                                 |
+| avail      | 可用空间。                                                 |
+| capacity   | 已用空间的百分比。                                         |
+| Mounted on | 文件系统挂载点。                                           |
+
 
 某些目录（例如 /devices）的 kbytes、used、avail 列为0，use列为0%，这些都是特殊（或虚拟）文件系统，即使位于根目录下，也不占用硬盘空间。
 
@@ -218,19 +208,15 @@ $ umount /dev/cdrom
 
 下面的命令可以用来管理配额：
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>命令</th><th>说明</th></tr>
-  </thead>
-    <tbody>
-      <tr><td>quota</td><td>显示磁盘使用情况以及每个用户组的配额。</td></tr>
-      <tr><td>edquota</td><td>编辑用户和群组的配额。</td></tr>
-      <tr><td>quotacheck</td><td>查看文件系统的磁盘使用情况，创建、检查并修复配额文件。</td></tr>
-      <tr><td>setquota</td><td>设置配额。</td></tr>
-      <tr><td>quotaon</td><td>开启用户或群组的配额功能。</td></tr>
-      <tr><td>quotaoff</td><td>关闭用户或群组的配额功能。</td></tr>
-      <tr><td>repquota</td><td>打印指定文件系统的配额。</td></tr>
-  </tbody>
-</table>
+| 命令       | 说明                                                   |
+| ---------- | ------------------------------------------------------ |
+| quota      | 显示磁盘使用情况以及每个用户组的配额。                 |
+| edquota    | 编辑用户和群组的配额。                                 |
+| quotacheck | 查看文件系统的磁盘使用情况，创建、检查并修复配额文件。 |
+| setquota   | 设置配额。                                             |
+| quotaon    | 开启用户或群组的配额功能。                             |
+| quotaoff   | 关闭用户或群组的配额功能。                             |
+| repquota   | 打印指定文件系统的配额。                               |
+
 
 

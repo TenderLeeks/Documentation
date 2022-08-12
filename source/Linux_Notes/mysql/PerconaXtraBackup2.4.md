@@ -77,16 +77,12 @@ $ xtrabackup --host=127.0.0.1 --user=root \
 
 ### 其他连接选项
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>选项</th><th>描述</th></tr>
-  </thead>
-    <tbody>
-    <tr><td>-P, --port=#</td><td>使用 TCP/IP 连接到数据库服务器时使用的端口。</td></tr>
-    <tr><td>-S, --socket=name</td><td>连接到本地数据库时使用的套接字。</td></tr>
-    <tr><td>-H, --host=name</td><td>使用 TCP/IP 连接到数据库服务器时使用的主机。</td></tr>
-  </tbody>
-</table>
+| 选项              | 描述                                         |
+| ----------------- | -------------------------------------------- |
+| -P, --port=#      | 使用 TCP/IP 连接到数据库服务器时使用的端口。 |
+| -S, --socket=name | 连接到本地数据库时使用的套接字。             |
+| -H, --host=name   | 使用 TCP/IP 连接到数据库服务器时使用的主机。 |
+
 
 在多个服务器实例的情况下，必须指定正确的连接参数（port、socket、host），以便 xtrabackup 与正确的服务器通信。
 

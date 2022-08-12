@@ -1,23 +1,19 @@
 # Git常用命令
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>分类</th><th>子类别</th><th>git command</th><th>zsh alias</th></tr>
-  </thead>
-    <tbody>
-      <tr><td>分支</td><td>查看当前分支</td><td>git branch</td><td>gb</td></tr>
-      <tr><td></td><td>创建新分支,仍停留在当前分支</td><td>git branch [new branch]</td><td></td></tr>
-      <tr><td></td><td>创建并切换到新分支</td><td>git checkout -b [new branch]</td><td>gcb</td></tr>
-      <tr><td></td><td>切换分支</td><td>git checkout [branch]</td><td></td></tr>
-      <tr><td></td><td>合并分支</td><td>git checkout [branch] #切换到要合并的分支git merge –no-ff [to be merged branch] #合并指定分支到当前分支</td><td></td></tr>
-      <tr><td>提交</td><td>查看状态</td><td>git status</td><td>gst</td></tr>
-      <tr><td></td><td>查看修改部分</td><td>git diff --color</td><td>gd</td></tr>
-      <tr><td></td><td>添加文件到暂存区</td><td>git add --all</td><td></td></tr>
-      <tr><td></td><td>提交本地仓库</td><td>git commit -m "message"</td><td></td></tr>
-      <tr><td></td><td>推送到指定分支</td><td>git push -u origin [branch]</td><td></td></tr>
-      <tr><td></td><td>查看提交日志</td><td>git log</td><td></td></tr>
-  </tbody>
-</table>
+| 分类 | 子类                        | git command                                                  | zsh alias |
+| ---- | --------------------------- | ------------------------------------------------------------ | --------- |
+| 分支 | 查看当前分支                | `git branch`                                                 | gb        |
+|      | 创建新分支,仍停留在当前分支 | git branch                                                   |           |
+|      | 创建并切换到新分支          | git checkout -b                                              | gcb       |
+|      | 切换分支                    | git checkout                                                 |           |
+|      | 合并分支                    | git checkout #切换到要合并的分支git merge –no-ff #合并指定分支到当前分支 |           |
+| 提交 | 查看状态                    | git status                                                   | gst       |
+|      | 查看修改部分                | git diff --color                                             | gd        |
+|      | 添加文件到暂存区            | git add --all                                                |           |
+|      | 提交本地仓库                | git commit -m ""                                             |           |
+|      | 推送到指定分支              | git push -u origin                                           |           |
+|      | 查看提交日志                | git log                                                      | -         |
+
 
 ## git rebase
 

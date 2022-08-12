@@ -78,20 +78,16 @@ drwx------  2 root root 4096 Aug  8 03:55 .ssh
 
 ### 文件的操作
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>操作</th><th>命令</th></tr>
-  </thead>
-    <tbody>
-      <tr><td>创建</td><td>touch filename</td></tr>
-      <tr><td>编辑</td><td>vi filename 或者 vim filename</td></tr>
-      <tr><td>查看</td><td>cat filename</td></tr>
-      <tr><td>复制</td><td>cp filename copyfile</td></tr>
-      <tr><td>重命名</td><td>mv filename newfile</td></tr>
-      <tr><td>删除</td><td>rm filename filename2</td></tr>
-      <tr><td>统计词数</td><td>wc filename</td></tr>
-  </tbody>
-</table>
+| 操作     | 命令                  |
+| -------- | --------------------- |
+| 创建     | touch filename        |
+| 编辑     | vi filename           |
+| 查看     | cat filename          |
+| 复制     | cp filename copyfile  |
+| 重命名   | mv filename newfile   |
+| 删除     | rm filename filename2 |
+| 统计词数 | wc filename           |
+
 
 ### 标准的Linux流
 
@@ -141,21 +137,17 @@ drwx------ 2 ubuntu ubuntu 4096 Aug  8 03:55 .ssh
 
 使用数字表示权限：
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>数字</th><th>说明</th><th>权限</th></tr>
-  </thead>
-    <tbody>
-      <tr><td>0</td><td>没有任何权限</td><td>---</td></tr>
-      <tr><td>1</td><td>执行权限</td><td>--x</td></tr>
-      <tr><td>2</td><td>写入权限</td><td>-w-</td></tr>
-      <tr><td>3</td><td>执行权限和写入权限：1 (执行) + 2 (写入) = 3</td><td>-wx</td></tr>
-      <tr><td>4</td><td>读取权限</td><td>r--</td></tr>
-      <tr><td>5</td><td>读取和执行权限：4 (读取) + 1 (执行) = 5</td><td>r-x</td></tr>
-      <tr><td>6</td><td>读取和写入权限：4 (读取) + 2 (写入) = 6</td><td>rw-</td></tr>
-      <tr><td>7</td><td>所有权限: 4 (读取) + 2 (写入) + 1 (执行) = 7</td><td>rwx</td></tr>
-  </tbody>
-</table>
+| 数字 | 说明                                         | 权限 |
+| ---- | -------------------------------------------- | ---- |
+| 0    | 没有任何权限                                 | ---  |
+| 1    | 执行权限                                     | --x  |
+| 2    | 写入权限                                     | -w-  |
+| 3    | 执行权限和写入权限：1 (执行) + 2 (写入) = 3  | -wx  |
+| 4    | 读取权限                                     | r--  |
+| 5    | 读取和执行权限：4 (读取) + 1 (执行) = 5      | r-x  |
+| 6    | 读取和写入权限：4 (读取) + 2 (写入) = 6      | rw-  |
+| 7    | 所有权限: 4 (读取) + 2 (写入) + 1 (执行) = 7 | rwx  |
+
 
 ### 访问模式
 
@@ -191,16 +183,12 @@ drwx------ 2 ubuntu ubuntu 4096 Aug  8 03:55 .ssh
 - g(group)：所属用户组权限
 - o(other)：其他用户权限
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>符号</th><th>说明</th></tr>
-  </thead>
-    <tbody>
-      <tr><td>+</td><td>为文件或目录增加权限</td></tr>
-      <tr><td>-</td><td>删除文件或目录的权限</td></tr>
-      <tr><td>=</td><td>设置指定的权限</td></tr>
-  </tbody>
-</table>
+| 符号 | 说明                 |
+| ---- | -------------------- |
+| +    | 为文件或目录增加权限 |
+| -    | 删除文件或目录的权限 |
+| =    | 设置指定的权限       |
+
 
 示例
 

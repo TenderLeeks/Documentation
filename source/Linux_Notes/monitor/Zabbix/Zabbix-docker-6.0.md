@@ -116,24 +116,20 @@ $ docker run -v /etc/localtime:/etc/localtime \
 
 ```
 
+| Volumes                         | 描述                                                         |
+| ------------------------------- | ------------------------------------------------------------ |
+| /usr/lib/zabbix/alertscripts    | 用于自定义告警脚本。即 zabbix_server.conf 中的 AlertScriptsPath 参数。 |
+| /usr/lib/zabbix/externalscripts | 用于外部检查。即 zabbix_server.conf 中的 ExternalScripts 参数。 |
+| /var/lib/zabbix/modules         | 允许通过 LoadModule 功能加载额外的模块以扩展 Zabbix server。 |
+| /var/lib/zabbix/enc             | 用于存放 TLS 相关的文件。这些文件名使用 ZBX_TLSCAFILE, ZBX_TLSCRLFILE, ZBX_TLSKEY_FILE ，ZBX_TLSPSKFILE 等环境变量指定。 |
+| /var/lib/zabbix/ssl/certs       | 用于存放客户端认证的 SSL 客户端认证文件。即 [zabbix_server.conf] 中的 SSLCertLocation 参数。 |
+| /var/lib/zabbix/ssl/keys        | 用于存放客户端认证的 SSL 私钥文件。即 zabbix_server.conf 中的 SSLKeyLocation 参数。 |
+| /var/lib/zabbix/ssl/ssl_ca      | 用于存放 SSL 服务器证书认证的证书颁发机构(CA)文件。即 zabbix_server.conf 中的 SSLCALocation 参数。 |
+| /var/lib/zabbix/snmptraps       | 用于存放 snmptraps.log 文件。它可由 zabbix-snmptraps 容器共享，并在创建 Zabbix server 新实例时使用 Docker 的 --volumes-from 选项继承。可以通过共享 volume ，并将 ZBX_ENABLE_SNMP_TRAPS 环境变量切换为 'true' 以启用 SNMP trap 处理功能。 |
+| /var/lib/zabbix/mibs            | 允许添加新的 MIB 文件。它不支持子目录，所有的 MIB 文件必须位于 /var/lib/zabbix/mibs 下。 |
 
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>Volumes</th><th>描述</th></tr>
-  </thead>
-    <tbody>
-    <tr><td>/usr/lib/zabbix/alertscripts</td><td>用于自定义告警脚本。即 zabbix_server.conf 中的 AlertScriptsPath 参数。</td></tr>
-    <tr><td>/usr/lib/zabbix/externalscripts</td><td>用于外部检查。即 zabbix_server.conf 中的 ExternalScripts 参数。</td></tr>
-    <tr><td>/var/lib/zabbix/modules</td><td>允许通过 LoadModule 功能加载额外的模块以扩展 Zabbix server。</td></tr>
-    <tr><td>/var/lib/zabbix/enc</td><td>用于存放 TLS 相关的文件。这些文件名使用 ZBX_TLSCAFILE, ZBX_TLSCRLFILE, ZBX_TLSKEY_FILE ，ZBX_TLSPSKFILE 等环境变量指定。</td></tr>
-    <tr><td>/var/lib/zabbix/ssl/certs</td><td>用于存放客户端认证的 SSL 客户端认证文件。即 [zabbix_server.conf] 中的 SSLCertLocation 参数。</td></tr>
-    <tr><td>/var/lib/zabbix/ssl/keys</td><td>用于存放客户端认证的 SSL 私钥文件。即 zabbix_server.conf 中的 SSLKeyLocation 参数。</td></tr>
-    <tr><td>/var/lib/zabbix/ssl/ssl_ca</td><td>用于存放 SSL 服务器证书认证的证书颁发机构(CA)文件。即 zabbix_server.conf 中的 SSLCALocation 参数。</td></tr>
-    <tr><td>/var/lib/zabbix/snmptraps</td><td>用于存放 snmptraps.log 文件。它可由 zabbix-snmptraps 容器共享，并在创建 Zabbix server 新实例时使用 Docker 的 --volumes-from 选项继承。可以通过共享 volume ，并将 ZBX_ENABLE_SNMP_TRAPS 环境变量切换为 'true' 以启用 SNMP trap 处理功能。</td></tr>
-    <tr><td>/var/lib/zabbix/mibs</td><td>允许添加新的 MIB 文件。它不支持子目录，所有的 MIB 文件必须位于 /var/lib/zabbix/mibs 下。</td></tr>
-  </tbody>
-</table>
+
 
 ## 启动 Zabbix Web 界面
 
@@ -157,14 +153,10 @@ $ docker run -v /etc/localtime:/etc/localtime \
 
 - `ZBX_SERVER_NAME`：Web 界面右上角显示的安装名称。
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>Volumes</th><th>描述</th></tr>
-  </thead>
-    <tbody>
-    <tr><td>/etc/ssl/nginx</td><td>允许为 Zabbix Web 接口启用 HTTPS。这个 volume 必须包含为 Nginx SSL 连接装备的 ssl.crt 和 ssl.key 两个文件。</td></tr>
-  </tbody>
-</table>
+| Volumes        | 描述                                                         |
+| -------------- | ------------------------------------------------------------ |
+| /etc/ssl/nginx | 允许为 Zabbix Web 接口启用 HTTPS。这个 volume 必须包含为 Nginx SSL 连接装备的 ssl.crt 和 ssl.key 两个文件。 |
+
 
 
 ## 启动 Zabbix agent2 服务
@@ -208,16 +200,14 @@ $ docker run -v /etc/localtime:/etc/localtime \
          -d zabbix/zabbix-agent2:ubuntu-6.0-latest
    ```
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>Volumes</th><th>描述</th></tr>
-  </thead>
-    <tbody>
-    <tr><td>/etc/zabbix/zabbix_agentd.d</td><td>允许包含 *.conf 文件并使用  UserParameter 扩展 Zabbix agent。</td></tr>
-    <tr><td>/var/lib/zabbix/modules</td><td>允许加载其它 module 并使用 LoadModule 功能扩展 Zabbix agent。</td></tr>
-    <tr><td>/var/lib/zabbix/enc	</td><td>用于存放 TLS 相关的文件。这些文件名使用 ZBX_TLSCAFILE, ZBX_TLSCRLFILE, ZBX_TLSKEY_FILE ，ZBX_TLSPSKFILE 等环境变量指定。</td></tr>
-  </tbody>
-</table>
+| Volumes                     | 描述                                                         |
+| --------------------------- | ------------------------------------------------------------ |
+| /etc/zabbix/zabbix_agentd.d | 允许包含 *.conf 文件并使用  UserParameter 扩展 Zabbix agent。 |
+| /var/lib/zabbix/modules     | 允许加载其它 module 并使用 LoadModule 功能扩展 Zabbix agent。 |
+| /var/lib/zabbix/enc         | 用于存放 TLS 相关的文件。这些文件名使用 ZBX_TLSCAFILE, ZBX_TLSCRLFILE, ZBX_TLSKEY_FILE ，ZBX_TLSPSKFILE 等环境变量指定。 |
+
+
+
 
 ## 解决 Zabbix 图形界面乱码问题
 
