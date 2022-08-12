@@ -4,19 +4,15 @@
 
 ### 常用命令
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>命令</th><th>说明</th></tr>
-  </thead>
-    <tbody>
-      <tr><td>set</td><td>新增或更新</td></tr>
-      <tr><td>add</td><td>新增</td></tr>
-      <tr><td>replace</td><td>替换</td></tr>
-      <tr><td>append</td><td>在后面追加</td></tr>
-      <tr><td>prepend</td><td>在前面追加</td></tr>
-      <tr><td>cas</td><td>检查并设置</td></tr>
-  </tbody>
-</table>
+| 命令    | 说明       |
+| ------- | ---------- |
+| set     | 新增或更新 |
+| add     | 新增       |
+| replace | 替换       |
+| append  | 在后面追加 |
+| prepend | 在前面追加 |
+| cas     | 检查并设置 |
+
 
 以上几个命令语法格式相似，以`set`为例：
 
@@ -98,30 +94,21 @@ value
 
 ## 查找命令
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>Volu命令mes</th><th>说明</th></tr>
-  </thead>
-    <tbody>
-      <tr><td>get</td><td>获取一个或多个key</td></tr>
-      <tr><td>gets</td><td>获取一个或多个cas token</td></tr>
-      <tr><td>delete</td><td>删除已存在的key</td></tr>
-      <tr><td>incr/decr</td><td>对已存在的 key(键) 的数字值进行自增或自减操作</td></tr>
-  </tbody>
-</table>
+| 命令      | 说明                                          |
+| --------- | --------------------------------------------- |
+| get       | 获取一个或多个key                             |
+| gets      | 获取一个或多个cas token                       |
+| delete    | 删除已存在的key                               |
+| incr/decr | 对已存在的 key(键) 的数字值进行自增或自减操作 |
+
 
 ## 统计命令
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>命令</th><th>说明</th></tr>
-  </thead>
-    <tbody>
-      <tr><td>stats</td><td>用于返回统计信息例如 PID(进程号)、版本号、连接数等。</td></tr>
-      <tr><td>stats items</td><td>用于显示各个 slab 中 item 的数目和存储时长(最后一次访问距离现在的秒数)。</td></tr>
-      <tr><td>stats slabs</td><td>用于显示各个slab的信息，包括chunk的大小、数目、使用情况等。</td></tr>
-      <tr><td>stats sizes</td><td>用于显示所有item的大小和个数。</td></tr>
-      <tr><td>flush_all</td><td>用于清理缓存中的所有 key=>value(键=>值) 对。</td></tr>
-  </tbody>
-</table>
+| 命令        | 说明                                                         |
+| ----------- | ------------------------------------------------------------ |
+| stats       | 用于返回统计信息例如 PID(进程号)、版本号、连接数等。         |
+| stats items | 用于显示各个 slab 中 item 的数目和存储时长(最后一次访问距离现在的秒数)。 |
+| stats slabs | 用于显示各个slab的信息，包括chunk的大小、数目、使用情况等。  |
+| stats sizes | 用于显示所有item的大小和个数。                               |
+| flush_all   | 用于清理缓存中的所有 **key=>value(键=>值)** 对。             |
 

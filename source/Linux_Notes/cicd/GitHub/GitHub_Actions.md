@@ -407,18 +407,15 @@ on:
 
    `action`可使用的机器包括：
 
-   <table border="1" cellpadding="10" cellspacing="10">
-     <thead>
-       <tr><th>虚拟环境</th><th>YAML 工作流程标签</th></tr>
-     </thead>
-       <tbody>
-       <tr><td>Windows Server 2019</td><td>windows-latest 或 windows-2019</td></tr>
-       <tr><td>Ubuntu 18.04</td><td>ubuntu-latest 或 ubuntu-18.0</td></tr>
-       <tr><td>Ubuntu 16.04</td><td>ubuntu-16.04</td></tr>
-       <tr><td>macOS Catalina 10.15</td><td>macos-latest or macos-10.15</td></tr>
-     </tbody>
-   </table>
-
+   | 虚拟环境             | YAML 工作流程标签              |
+   | -------------------- | ------------------------------ |
+   | Windows Server 2019  | windows-latest 或 windows-2019 |
+   | Ubuntu 18.04         | ubuntu-latest 或 ubuntu-18.0   |
+   | Ubuntu 16.04         | ubuntu-16.04                   |
+   | macOS Catalina 10.15 | macos-latest or macos-10.15    |
+   
+   
+   
 3. `needs`
 
    **当`action`中有多个`job`时，默认是并行运行**；如果某一个`job`需要依赖另一个`job`，可使用`needs`属性，如：
@@ -606,17 +603,12 @@ steps:
 - action中矩阵最多能构建256个job
 - action中多个job默认会并行执行，但对于最大的并行数也是有限制的：
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>GitHub 计划</th><th>同时运行的作业总数</th><th>MacOS 作业同时运行的最大数量</th></tr>
-  </thead>
-    <tbody>
-    <tr><td>免费</td><td>20</td><td>5</td></tr>
-    <tr><td>Pro</td><td>40</td><td>5</td></tr>
-    <tr><td>团队</td><td>60</td><td>5</td></tr>
-    <tr><td>企业</td><td>180</td><td>50</td></tr>
-  </tbody>
-</table>
+| GitHub 计划 | 同时运行的作业总数 | MacOS 作业同时运行的最大数量 |
+| ----------- | ------------------ | ---------------------------- |
+| 免费        | 20                 | 5                            |
+| Pro         | 40                 | 5                            |
+| 团队        | 60                 | 5                            |
+| 企业        | 180                | 50                           |
 
 关于`GitHub Actions`付费条款详见[About billing for GitHub Actions](https://help.github.com/cn/github/setting-up-and-managing-billing-and-payments-on-github/about-billing-for-github-actions)。
 

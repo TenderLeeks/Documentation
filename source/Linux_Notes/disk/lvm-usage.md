@@ -217,52 +217,40 @@ LVM最大的优势就是其可伸缩性，伸缩性有更加偏重与扩容。�
 
 ### 管理 PV
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>命令</th><th>说明</th></tr>
-  </thead>
-    <tbody>
-      <tr><td>pvcreate</td><td>创建 PV</td></tr>
-      <tr><td>pvscan</td><td>扫描并列出所有 PV</td></tr>
-      <tr><td>pvdisplay {name\|size}</td><td>列出 PV 属性</td></tr>
-      <tr><td>pvremove</td><td>移除 PV</td></tr>
-      <tr><td>pvmove</td><td>移动 PV 中的数据</td></tr>
-  </tbody>
-</table>
+| 说明              | 命令                   |
+| ----------------- | ---------------------- |
+| 创建 PV           | pvcreate               |
+| 扫描并列出所有 PV | pvscan                 |
+| 列出 PV 属性      | pvdisplay {name\|size} |
+| 移除 PV           | pvremove               |
+| 移动 PV 中的数据  | pvmove                 |
+
 
 ### 管理 VG
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>命令</th><th>说明</th></tr>
-  </thead>
-    <tbody>
-      <tr><td>vgcreate</td><td>创建 VG</td></tr>
-      <tr><td>vgscan</td><td>扫描并列出所有 VG</td></tr>
-      <tr><td>vgdisplay</td><td>列出 VG 属性信息</td></tr>
-      <tr><td>vgremove</td><td>移除（删除）VG</td></tr>
-      <tr><td>vgreduce</td><td>从 VG 中移除 PV</td></tr>
-      <tr><td>vgextend</td><td>将 PV 添加到 VG 中</td></tr>
-      <tr><td>vgchange</td><td>修改 VG 属性</td></tr>
-  </tbody>
-</table>
+| 说明               | 命令      |
+| ------------------ | --------- |
+| 创建 VG            | vgcreate  |
+| 扫描并列出所有 VG  | vgscan    |
+| 列出 VG 属性信息   | vgdisplay |
+| 移除（删除）VG     | vgremove  |
+| 从 VG 中移除 PV    | vgreduce  |
+| 将 PV 添加到 VG 中 | vgextend  |
+| 修改 VG 属性       | vgchange  |
+
 
 ### 管理 LV
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>命令</th><th>说明</th></tr>
-  </thead>
-    <tbody>
-      <tr><td>lvcreate</td><td>创建 LV</td></tr>
-      <tr><td>lvscan</td><td>扫描并列出所有 LV</td></tr>
-      <tr><td>lvdisplay</td><td>列出 LV 属性信息</td></tr>
-      <tr><td>lvremove</td><td>移除 LV</td></tr>
-      <tr><td>lvreduce/lvresize</td><td>缩小 LV 容量</td></tr>
-      <tr><td>lvextend/lvresize</td><td>增大 LV 容量</td></tr>
-      <tr><td>lvresize</td><td>调整 LV 容量</td></tr>
-  </tbody>
-</table>
+| 说明              | 命令              |
+| ----------------- | ----------------- |
+| 创建 LV           | lvcreate          |
+| 扫描并列出所有 LV | lvscan            |
+| 列出 LV 属性信息  | lvdisplay         |
+| 移除 LV           | lvremove          |
+| 缩小 LV 容量      | lvreduce/lvresize |
+| 增大 LV 容量      | lvextend/lvresize |
+| 调整 LV 容量      | lvresize          |
+
 
 `lvcreate`命令
 

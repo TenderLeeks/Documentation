@@ -77,32 +77,28 @@ mysql > flush privileges;
 
 权限列表
 
-<table border="1" cellpadding="10" cellspacing="10">
-  <thead>
-    <tr><th>权限</th><th>说明</th><th>服务使用给予情况</th></tr>
-  </thead>
-    <tbody>
-      <tr><td>Select</td><td>可对其下所有表进行查询</td><td>建议给予</td></tr>
-      <tr><td>Insert</td><td>可对其下所有表进行插入</td><td>建议给予</td></tr>
-      <tr><td>Update</td><td>可对其下所有表进行更新</td><td>建议给予</td></tr>
-      <tr><td>Delete</td><td>可对其下所有表进行删除</td><td>建议给予</td></tr>
-      <tr><td>Create</td><td>可在此数据库下创建表或索引</td><td>建议给予</td></tr>
-      <tr><td>Drop</td><td>可删除此数据库及数据库下所有表</td><td>不建议给予</td></tr>
-      <tr><td>Grant</td><td>赋予权限选项</td><td>不建议给予</td></tr>
-      <tr><td>References</td><td>未来MySQL特性的占位符</td><td>不建议给予</td></tr>
-      <tr><td>Index</td><td>可对其下所有表进行索引</td><td>建议给予</td></tr>
-      <tr><td>Alter</td><td>可对其下所有表进行更改</td><td>建议给予</td></tr>
-      <tr><td>Create_tmp_table</td><td>创建临时表</td><td>不建议给予</td></tr>
-      <tr><td>Lock_tables</td><td>可对其下所有表进行锁定</td><td>不建议给予</td></tr>
-      <tr><td>Create_view</td><td>可在此数据下创建视图</td><td>建议给予</td></tr>
-      <tr><td>Show_view</td><td>可在此数据下查看视图</td><td>建议给予</td></tr>
-      <tr><td>Create_routine</td><td>可在此数据下创建存储过程</td><td>不建议给予</td></tr>
-      <tr><td>Alter_routine</td><td>可在此数据下更改存储过程</td><td>不建议给予</td></tr>
-      <tr><td>Execute</td><td>可在此数据下执行存储过程</td><td>不建议给予</td></tr>
-      <tr><td>Event</td><td>可在此数据下创建事件调度器</td><td>不建议给予</td></tr>
-      <tr><td>Trigger</td><td>可在此数据下创建触发器</td><td>不建议给予</td></tr>
-  </tbody>
-</table>
+| 权限             | 说明                           | 服务使用给予情况 |
+| ---------------- | ------------------------------ | ---------------- |
+| Select           | 可对其下所有表进行查询         | 建议给予         |
+| Insert           | 可对其下所有表进行插入         | 建议给予         |
+| Update           | 可对其下所有表进行更新         | 建议给予         |
+| Delete           | 可对其下所有表进行删除         | 建议给予         |
+| Create           | 可在此数据库下创建表或索引     | 建议给予         |
+| Drop             | 可删除此数据库及数据库下所有表 | 不建议给予       |
+| Grant            | 赋予权限选项                   | 不建议给予       |
+| References       | 未来MySQL特性的占位符          | 不建议给予       |
+| Index            | 可对其下所有表进行索引         | 建议给予         |
+| Alter            | 可对其下所有表进行更改         | 建议给予         |
+| Create_tmp_table | 创建临时表                     | 不建议给予       |
+| Lock_tables      | 可对其下所有表进行锁定         | 不建议给予       |
+| Create_view      | 可在此数据下创建视图           | 建议给予         |
+| Show_view        | 可在此数据下查看视图           | 建议给予         |
+| Create_routine   | 可在此数据下创建存储过程       | 不建议给予       |
+| Alter_routine    | 可在此数据下更改存储过程       | 不建议给予       |
+| Execute          | 可在此数据下执行存储过程       | 不建议给予       |
+| Event            | 可在此数据下创建事件调度器     | 不建议给予       |
+| Trigger          | 可在此数据下创建触发器         | 不建议给予       |
+
 
 ## 数据表管理
 
