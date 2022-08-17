@@ -6,5 +6,5 @@
    Zabbix/zabbix-contos-4.4.7
    Zabbix/Zabbix-Config
    AmazonCloudWatch/dingding_AmazonCloudWatch
-
-
+   Prometheus/Prometheus
+   Sentry/Sentry

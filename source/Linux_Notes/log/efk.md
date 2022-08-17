@@ -1,4 +1,10 @@
+> 此笔记部分内容为网上资料整理，方便自己查询使用。
+
 # EFK日志分析系统
+
+[官方网站](https://www.elastic.co/cn/what-is/elk-stack)
+
+[官方文档](https://www.elastic.co/guide/en/elastic-stack/current/index.html)
 
 ## 环境说明
 
@@ -11,6 +17,19 @@
 | elasticsearch-3  | 7.16.2  | elasticsearch-3 | 192.168.66.40  |
 
 **注意：三个组件（elasticsearch，filebeat，kibana）版本必须一致，elasticsearch必须3台以上且总数量为单数。**
+
+## 安装顺序
+
+按以下顺序安装您要使用的 Elastic Stack 产品：
+
+1. Elasticsearch（[安装说明](https://www.elastic.co/guide/en/elasticsearch/reference/8.3/install-elasticsearch.html)）
+2. Kibana（[安装](https://www.elastic.co/guide/en/kibana/8.3/install.html)）
+3. Logstash（[安装](https://www.elastic.co/guide/en/logstash/8.3/installing-logstash.html)）
+4. Beats（[安装说明](https://www.elastic.co/guide/en/beats/libbeat/8.3/getting-started.html)）
+5. APM（[安装说明](https://www.elastic.co/guide/en/apm/guide/8.3/apm-quick-start.html)）
+6. Elasticsearch Hadoop（[安装说明](https://www.elastic.co/guide/en/elasticsearch/hadoop/8.3/install.html)）
+
+按此顺序安装可确保每个产品所依赖的组件都到位。
 
 ## elasticsearch + filebeta + kibana 日志采集
 
@@ -284,7 +303,9 @@
 
 
 
- ### filebeat 配置说明
+
+
+## filebeat 配置说明
 
 ```yaml
 # 文件输入

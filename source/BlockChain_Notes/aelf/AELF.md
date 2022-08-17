@@ -120,6 +120,47 @@ $ sudo apt install -y git-all unzip make autoconf build-essential docker.io
    $ /opt/ssdb8881/ssdb.sh stop
    $ /opt/ssdb8882/ssdb.sh stop
    ```
+   
+4. 服务自启动配置
+
+   ```bash
+   $ tee /etc/systemd/system/ssdb-8881.service <<EOF
+   [Unit]
+   Description=ssdb-server
+   After=network.target
+   
+   [Service]
+   Type=forking
+   ExecStart=/opt/ssdb8881/ssdb-server /opt/ssdb8881/ssdb.conf -s start -d
+   PrivateTmp=true
+   
+   [Install]
+   WantedBy=multi-user.target
+   EOF
+   
+   $ tee /etc/systemd/system/ssdb-8882.service <<EOF
+   [Unit]
+   Description=ssdb-server
+   After=network.target
+   
+   [Service]
+   Type=forking
+   ExecStart=/opt/ssdb8882/ssdb-server /opt/ssdb8882/ssdb.conf -s start -d
+   PrivateTmp=true
+   
+   [Install]
+   WantedBy=multi-user.target
+   EOF
+   
+   
+   $ systemctl daemon-reload
+   $ systemctl enable ssdb-8881.service
+   $ systemctl enable ssdb-8882.service
+   ```
+   
+   
+
+
 
 ## 部署主网主链服务
 
@@ -127,7 +168,7 @@ $ sudo apt install -y git-all unzip make autoconf build-essential docker.io
 
 1. 安装命令`aelf-command`
 
-   安装node环境请参照[文档](https://www.leeks.info/zh_CN/latest/Linux/deploy-env/%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2.html#node)
+   安装node环境请参照[文档](https://www.leeks.info/zh_CN/latest/Linux_Notes/env/linux-env.html#node)
 
    ```shell
    $ npm i -g aelf-command

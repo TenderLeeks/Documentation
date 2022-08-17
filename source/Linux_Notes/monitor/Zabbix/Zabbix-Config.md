@@ -93,7 +93,7 @@
 
 
 
-# 自动注册服务检查端口
+# Zabbix 自动注册服务示例
 
 ## 配置文件
 
@@ -202,7 +202,7 @@ if __name__ == '__main__':
         exit()
 ```
 
-## Zabbix 增加配置
+## Zabbix 配置修改
 
 `vim check_port.conf`
 

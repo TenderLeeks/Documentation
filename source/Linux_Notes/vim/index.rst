@@ -7,6 +7,6 @@ VIM
    vim-keymap
    vimrc-cn
    basic-vimrc
-
+   vim-python
 
 
