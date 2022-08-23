@@ -1,6 +1,6 @@
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    Zabbix/Zabbix-docker-6.0
    Zabbix/zabbix-contos-4.4.7

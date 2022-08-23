@@ -5,7 +5,7 @@
 =====================================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    file/index
    disk/index
@@ -16,7 +16,7 @@
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    tcpip/index
    http/index
@@ -28,7 +28,7 @@ Shell 脚本
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    shell/index
 
@@ -38,7 +38,7 @@ Shell 脚本
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    tools/index
 
@@ -48,7 +48,7 @@ GIT 管理
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    git/index
 
@@ -58,13 +58,14 @@ GIT 管理
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    mysql/index
    redis/index
    oracle/index
    rabbitmq/index
    memcached/index
+   SSDB/index
    archery/Archery
 
 
@@ -73,7 +74,7 @@ GIT 管理
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    nginx/index
    keepalived/index
@@ -87,7 +88,7 @@ GIT 管理
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    monitor/index
 
@@ -97,7 +98,7 @@ Docker 使用
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    docker/index
 
@@ -108,7 +109,7 @@ CICD
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    cicd/index
 
@@ -118,7 +119,7 @@ KVM 虚拟化
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    kvm/index
 
@@ -128,7 +129,7 @@ KVM 虚拟化
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    config/index
 
@@ -138,7 +139,7 @@ KVM 虚拟化
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    logrotate/index
    log/index
@@ -149,7 +150,7 @@ Linux 基础命令
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    base/index
 
@@ -159,7 +160,7 @@ Linux 基础命令
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    env/index
    keymap/index

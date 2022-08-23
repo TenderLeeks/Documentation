@@ -160,8 +160,6 @@ $ sudo apt install -y git-all unzip make autoconf build-essential docker.io
    
    
 
-
-
 ## 部署主网主链服务
 
 ### 修改节点配置

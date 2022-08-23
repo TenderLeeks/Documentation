@@ -1,9 +1,6 @@
-******************
-Flask
-******************
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
 
    use_request
