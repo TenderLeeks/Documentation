@@ -2,6 +2,42 @@
 
 ## 系统资源限制优化
 
+```shell
+$ cat /proc/sys/fs/file-nr
+1440    0       811999
+```
+
+第三个数字 `811999` 就是当前系统的全局最大打开文件数(Max Open Files)
+
+用 root 权限修改 `/etc/sysctl.conf` 文件:
+
+```shell
+$ vim /etc/sysctl.conf
+
+fs.file-max = 1020000
+net.ipv4.ip_conntrack_max = 1020000
+net.ipv4.netfilter.ip_conntrack_max = 1020000
+
+$ sysctl -p /etc/sysctl.conf
+
+$ ulimit -n
+1024
+# 说明当前 Linux 系统的每一个进程只能最多打开 1024 个文件
+
+# 临时修改
+ulimit -n 1020000
+
+# 如果不是 root, 可能不能修改超过 1024, 会报错:
+# -bash: ulimit: open files: cannot modify limit: Operation not permitted
+
+# 永久修改
+# 编辑 /etc/security/limits.conf 文件, 加入如下行:
+
+$ vim /etc/security/limits.conf
+*         hard    nofile      1020000
+*         soft    nofile      1020000
+```
+
 编辑`/etc/security/limits.conf`文件
 
 ```shell
@@ -133,3 +169,6 @@ fs.nr_open=52706963
 
 此参数确定了TCP连接中已完成队列(完成三次握手之后)的长度， 当然此值必须不大于Linux系统定义的`/proc/sys/net/core/somaxconn`值，默认是511，而Linux的默认参数值是128。当系统并发量大并且客户端速度缓慢的时候，可以将这二个参数一起参考设定。该内核参数默认值一般是128，对于负载很大的服务程序来说大大的不够。一般会将它修改为2048或者更大。在`/etc/sysctl.conf`中加:`net.core.somaxconn = 2048`，然后在终端中执行`sysctl -p`
 
+
+
+测试系统是否支持百万连接的工具：https://github.com/ideawu/c1000k
