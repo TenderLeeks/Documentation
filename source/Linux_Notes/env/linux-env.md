@@ -280,7 +280,6 @@ export PATH=\${JAVA_HOME}/bin:\${JAVA_HOME}/jre/bin:\$PATH
 export CLASSPATH=.:\${JAVA_HOME}/lib:\${JAVA_HOME}/jre/lib
 EOF
 
-$ cat /etc/profile.d/java-11.sh
 $ source /etc/profile
 ```
 

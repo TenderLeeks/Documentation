@@ -1,5 +1,36 @@
 # Docker 环境配置
 
+## 安装Docker
+
+```shell
+# 卸载老版本docker服务
+$ sudo apt-get remove docker docker-engine docker.io -y
+
+# 安装最新版本docker
+# curl -sSL https://get.docker.com/ | sh 
+$ curl -fsSL get.docker.com -o get-docker.sh
+$ sudo sh get-docker.sh
+
+```
+
+## 安装docker-compose
+
+```shell
+# 下载最新版的 docker-compose 文件
+$ sudo curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+
+# 若是github访问太慢，可以用daocloud下载
+$ sudo curl -L https://get.daocloud.io/docker/compose/releases/download/1.25.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+
+# 添加可执行权限
+$ sudo chmod +x /usr/local/bin/docker-compose
+
+# 查看安装版本
+$ docker-compose --version
+```
+
+
+
 ## 更换docker源
 
 ```shell

@@ -131,7 +131,7 @@ $ sudo apt install -y git-all unzip make autoconf build-essential docker.io
    
    [Service]
    Type=forking
-   ExecStart=/opt/ssdb8881/ssdb-server /opt/ssdb8881/ssdb.conf -s start -d
+   ExecStart=/opt/ssdb8881/ssdb-server /opt/ssdb8881/ssdb.conf -s restart -d
    PrivateTmp=true
    
    [Install]
@@ -145,7 +145,7 @@ $ sudo apt install -y git-all unzip make autoconf build-essential docker.io
    
    [Service]
    Type=forking
-   ExecStart=/opt/ssdb8882/ssdb-server /opt/ssdb8882/ssdb.conf -s start -d
+   ExecStart=/opt/ssdb8882/ssdb-server /opt/ssdb8882/ssdb.conf -s restart -d
    PrivateTmp=true
    
    [Install]
