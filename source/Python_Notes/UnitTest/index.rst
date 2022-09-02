@@ -1,7 +1,6 @@
 
-
 .. toctree::
    :maxdepth: 1
 
-   scripts
+   unit_test
 

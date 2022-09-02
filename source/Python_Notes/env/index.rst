@@ -1,10 +1,7 @@
-******************
-环境配置
-******************
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
 
    env_deploy
    PyInstaller

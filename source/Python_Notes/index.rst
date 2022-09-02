@@ -1,58 +1,54 @@
 
-Azure DevOps
+环境配置
+=====================================
+
+
+.. toctree::
+   :maxdepth: 2
+
+   env/index
+
+
+Django
 =====================================
 
 .. toctree::
    :maxdepth: 2
 
-   Azure DevOps/Azure DevOps
+   Django/index
 
 
-GitHub
+Flask
 =====================================
+
 
 .. toctree::
    :maxdepth: 2
 
-   GitHub/index
+   Flask/index
 
 
-GitLab
+Python 脚本
 =====================================
+
 
 .. toctree::
    :maxdepth: 2
 
-   GitLab/gitlab
+   scripts/index
 
-GitOlite
+
+UnitTest
 =====================================
+
 
 .. toctree::
    :maxdepth: 2
 
-   GitOlite/gitolite
+   UnitTest/index
 
-Jenkins
-=====================================
 
-.. toctree::
-   :maxdepth: 2
 
-   Jenkins/Jenkins
 
-SonarQube
-=====================================
 
-.. toctree::
-   :maxdepth: 2
 
-   SonarQube/SonarQube
-
-Travis CI
-=====================================
-
-.. toctree::
-   :maxdepth: 2
-
-   Travis CI/Travis CI

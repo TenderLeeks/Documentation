@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-欢迎使用 Leeks 的文档！
+欢迎使用 Leeks 的笔记！
 =========================================
 
 介绍
@@ -21,10 +21,7 @@ www.leeks.info 是我个人随手笔记，记录一下工作中遇到的问题�
    :caption: Python 笔记
    :maxdepth: 2
 
-   Python_Notes/env/index
-   Python_Notes/scripts/index
-   Python_Notes/Django/index
-   Python_Notes/Flask/index
+   Python_Notes/index
 
 
 .. toctree::

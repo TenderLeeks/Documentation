@@ -2,7 +2,7 @@ Linux 文件系统
 =====================================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    linux-introduction
    linux-file-system

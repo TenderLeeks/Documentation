@@ -280,11 +280,22 @@ export PATH=\${JAVA_HOME}/bin:\${JAVA_HOME}/jre/bin:\$PATH
 export CLASSPATH=.:\${JAVA_HOME}/lib:\${JAVA_HOME}/jre/lib
 EOF
 
-$ cat /etc/profile.d/java-11.sh
 $ source /etc/profile
 ```
 
+## 安装 .NET 6.0 SDK
 
+[官方文档](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-6.0.400-linux-x64-binaries)
+
+```shell
+# 下载源码
+$ wget https://download.visualstudio.microsoft.com/download/pr/cd0d0a4d-2a6a-4d0d-b42e-dfd3b880e222/008a93f83aba6d1acf75ded3d2cfba24/dotnet-sdk-6.0.400-linux-x64.tar.gz -P /tmp
+
+$ mkdir -p /opt/dotnet && tar zxf /tmp/dotnet-sdk-6.0.400-linux-x64.tar.gz -C /opt/dotnet
+
+$ echo -e "export DOTNET_ROOT=/opt/dotnet\nexport PATH=\$PATH:/opt/dotnet" >> /etc/profile
+
+```
 
 
 

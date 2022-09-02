@@ -36,6 +36,16 @@ $ make install PREFIX=opt/redis-6.2.6
 
 编译完成后会在`src`目录下生成Redis服务端程序`redis-server`和客户端程序`redis-cli`。
 
+## Docker 安装
+
+```shell
+$ docker pull redis:latest
+$ docker run -itd --name redis -p 6379:6379 redis
+
+```
+
+
+
 ### 启动服务
 
 1. 前台运行
@@ -558,5 +568,4 @@ dedf672f0a75faf37407ac4edd5da23bc4651e25 127.0.0.1:7004@17004 slave be2718476eba
  参考[文章一](https://redis.io/download)
 
 参考[文章一](https://redis.io/topics/cluster-tutorial)
-
 

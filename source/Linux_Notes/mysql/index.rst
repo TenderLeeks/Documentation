@@ -2,7 +2,7 @@ MySQL
 =====================================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    MySQL-Server-Deploy
    MySQL-CMD

@@ -2,6 +2,6 @@ OpenVPN 服务
 =====================================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    OpenVPN

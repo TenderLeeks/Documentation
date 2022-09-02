@@ -1,6 +1,29 @@
 # Jenkins 服务使用
 
-## 部署及配置 Jenkins
+## 使用 Docker 运行 Jenkins
+
+建议使用的Docker映像是[`jenkinsci/blueocean` image](https://hub.docker.com/r/jenkinsci/blueocean/)(来自 the [Docker Hub repository](https://hub.docker.com/))。 该镜像包含当前的[长期支持 (LTS) 的Jenkins版本](https://www.jenkins.io/download) （可以投入使用） ，捆绑了所有Blue Ocean插件和功能。这意味着你不需要单独安装Blue Ocean插件。
+
+运行容器
+
+```shell
+$ mkdir -p /opt/jenkins/{jenkins_home,project}
+
+$ docker run --name jenkins \
+  -u root -d \
+  -p 8080:8080 \
+  -p 50000:50000 \
+  -v /opt/jenkins/jenkins_home:/var/jenkins_home \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /opt/jenkins/project:/app/project \
+  jenkinsci/blueocean
+```
+
+参考文档：
+
+- https://www.jenkins.io/zh/doc/book/installing/
+
+## 使用war包运行 Jenkins
 
 1. [配置java环境变量](https://www.leeks.info/zh_CN/latest/Linux/deploy-env/%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2.html#java-jdk)
 
@@ -181,3 +204,14 @@ server {
 
    ![](img/image-20220106161920922.png)
 
+## 清理工作空间 workspace
+
+1. 进入Jenkins 插件管理安装 workspace cleanup plugin 插件
+
+2. 在项目中配置构建前删除工作空间，将在每次构建之前删除旧的工作空间
+
+   ![](img/build-1.png)
+
+3. 配置构建后删除工作空间，将在每次构建完成后删除工作空间
+
+   ![](img/build-2.png)

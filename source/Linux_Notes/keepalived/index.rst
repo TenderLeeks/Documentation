@@ -2,7 +2,7 @@ keepalived
 =====================================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    keepalived-introduction
    install-keepalived

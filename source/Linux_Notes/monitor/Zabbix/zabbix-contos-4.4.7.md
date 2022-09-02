@@ -1,8 +1,8 @@
-# 源码安装 4.4.7 版本
+# 源码安装 Zabbix 4.4.7 版本
 
 ## 安装MySQL服务
 
-请参考此[文档](https://www.leeks.info/zh_CN/latest/Databases/MySQL/MySQL%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2.html#dockermysql)
+请参考数据库部分文档。
 
 ## 安装前准备
 

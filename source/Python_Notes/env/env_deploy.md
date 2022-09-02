@@ -22,7 +22,7 @@ $ make && make install
 $ echo -e "export PATH=/opt/python38/bin:\$PATH" > /etc/profile.d/python3.8.sh
 $ source /etc/profile
 
-### Ubuntu 18.04
+### Ubuntu
 $ sudo apt build-dep python3
 
 # 安装相关工具包
@@ -118,10 +118,8 @@ $ pipreqs . --encoding=utf8 --force
    $ sudo apt-get upgrade
    $ sudo apt-get install --reinstall zlibc zlib1g zlib1g-dev
    $ sudo apt-get install libffi-dev libssl-dev libreadline-dev -y
-   
-   
    ```
-
+   
 2. 安装 pyenv，[git 地址](https://github.com/pyenv/pyenv)
 
    ```shell
