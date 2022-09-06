@@ -176,6 +176,11 @@ http {
       '"客户端用户名称": "$remote_user"'
       '}';
 
+  # 客户端IP,请求开始时间,
+  # 服务端Url,请求Url,接口名或工程名,服务端IP,
+  # Post-body,Get-body,返回状态码,
+  # 请求大小-字节,整个请求总时间,Upstream响应时间,
+  # 真正提供服务的地址,客户端浏览器信息,客户端地址,客户端用户名称
   log_format main '"$proxy_add_x_forwarded_for", "$time_iso8601", '
       '"$host$uri", "$http_referer", "$uri", "$server_addr", '
       '"$request_body", "$request", "$status", '
