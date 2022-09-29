@@ -82,6 +82,7 @@ $ docker images -f dangling=true
 2. 停止docker服务并移动原有docker文件到新目录
 
    ```shell
+   $ systemctl stop docker.socket
    $ systemctl stop docker.service
    $ mkdir -p /opt/docker/lib/
    $ cp -a /var/lib/docker /opt/docker/lib/
@@ -104,7 +105,7 @@ $ docker images -f dangling=true
    EOF
    
    $ systemctl daemon-reload
-   $ systemctl restart docker
+   $ systemctl restart docker.service
    ```
 
    `data-root`：docker数据目录

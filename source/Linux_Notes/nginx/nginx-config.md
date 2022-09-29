@@ -181,11 +181,13 @@ http {
   # Post-body,Get-body,返回状态码,
   # 请求大小-字节,整个请求总时间,Upstream响应时间,
   # 真正提供服务的地址,客户端浏览器信息,客户端地址,客户端用户名称
+  # 客户端真实IP
   log_format main '"$proxy_add_x_forwarded_for", "$time_iso8601", '
       '"$host$uri", "$http_referer", "$uri", "$server_addr", '
       '"$request_body", "$request", "$status", '
       '"$body_bytes_sent", "$request_time", "$upstream_response_time", '
-      '"$upstream_addr", "$http_user_agent", "$remote_addr", "$remote_user"';
+      '"$upstream_addr", "$http_user_agent", "$remote_addr", "$remote_user", '
+      '"$http_x_forwarded_for"';
 
   access_log  logs/access.log  json;
   #access_log  logs/access.log  main;

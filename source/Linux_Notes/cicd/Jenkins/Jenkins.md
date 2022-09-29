@@ -215,3 +215,29 @@ server {
 3. 配置构建后删除工作空间，将在每次构建完成后删除工作空间
 
    ![](img/build-2.png)
+
+
+
+## 构建 Job 时设置环境变量
+
+`Environment Injector` 插件可以在构建步骤中添加环境变量
+
+- `Properties Content` 自定义环境变量
+- `Properties File Path` 引用本地文件作为环境变量
+
+搜索插件：`Environment Injector`，安装成功后，重启 Jenkins 生效。
+
+
+
+Properties Content 自定义环境变量
+
+![](img/jenkins-job-env.png)
+
+Properties Content 可以写成如下键值对的格式
+
+```tex
+AUTHOR=Job
+NAME=JOB
+ENV=/opt
+```
+

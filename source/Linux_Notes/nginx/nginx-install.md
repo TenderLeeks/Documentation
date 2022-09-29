@@ -81,8 +81,8 @@ $ useradd nginx -s /sbin/nologin -M
 
 ```bash
 # 更新升级apt-get
-$ sudo apt-get update -y 
-$ sudo apt-get upgrade -y 
+$ sudo apt-get update -y
+$ sudo apt-get upgrade -y
 
 # 下载 http://tengine.taobao.org/download.html
 $ wget http://tengine.taobao.org/download/tengine-2.3.3.tar.gz -P /tmp
