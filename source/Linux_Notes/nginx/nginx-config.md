@@ -820,6 +820,27 @@ http {
 }
 ```
 
+**Cloudflare 使用 proxy status 域名解析**
+
+```nginx
+  limit_req_zone $http_x_forwarded_for zone=one:10m rate=10r/s;
+  limit_req zone=one burst=300 nodelay;
+```
+
+**Cloudflare 使用 proxy status 域名解析，并且使用 AWS ALB 负载均衡器**
+
+网络配置中有负载均衡，并且是双 NGINX 实例，限制数需要除以2.
+
+```nginx
+  limit_req_zone $binary_remote_addr zone=one:10m rate=5r/s;
+  limit_req zone=one burst=150 nodelay;
+
+  set_real_ip_from 172.0.0.0/8;
+  set_real_ip_from 162.0.0.0/8;
+  real_ip_header X-Forwarded-For;
+  real_ip_recursive on;
+```
+
 
 
 
