@@ -176,11 +176,18 @@ http {
       '"客户端用户名称": "$remote_user"'
       '}';
 
+  # 客户端IP,请求开始时间,
+  # 服务端Url,请求Url,接口名或工程名,服务端IP,
+  # Post-body,Get-body,返回状态码,
+  # 请求大小-字节,整个请求总时间,Upstream响应时间,
+  # 真正提供服务的地址,客户端浏览器信息,客户端地址,客户端用户名称
+  # 客户端真实IP
   log_format main '"$proxy_add_x_forwarded_for", "$time_iso8601", '
       '"$host$uri", "$http_referer", "$uri", "$server_addr", '
       '"$request_body", "$request", "$status", '
       '"$body_bytes_sent", "$request_time", "$upstream_response_time", '
-      '"$upstream_addr", "$http_user_agent", "$remote_addr", "$remote_user"';
+      '"$upstream_addr", "$http_user_agent", "$remote_addr", "$remote_user", '
+      '"$http_x_forwarded_for"';
 
   access_log  logs/access.log  json;
   #access_log  logs/access.log  main;
@@ -811,6 +818,27 @@ http {
     }
   }
 }
+```
+
+**Cloudflare 使用 proxy status 域名解析**
+
+```nginx
+  limit_req_zone $http_x_forwarded_for zone=one:10m rate=10r/s;
+  limit_req zone=one burst=300 nodelay;
+```
+
+**Cloudflare 使用 proxy status 域名解析，并且使用 AWS ALB 负载均衡器**
+
+网络配置中有负载均衡，并且是双 NGINX 实例，限制数需要除以2.
+
+```nginx
+  limit_req_zone $binary_remote_addr zone=one:10m rate=5r/s;
+  limit_req zone=one burst=150 nodelay;
+
+  set_real_ip_from 172.0.0.0/8;
+  set_real_ip_from 162.0.0.0/8;
+  real_ip_header X-Forwarded-For;
+  real_ip_recursive on;
 ```
 
 

@@ -1,3 +1,26 @@
+# 配置参数优化
+
+## Zabbix Server 的常用参数
+
+| 参数                    | 必填 | 范围       | 默认值 | 描述                                                         |
+| :---------------------- | ---- | ---------- | ------ | ------------------------------------------------------------ |
+| CacheSize               | no   | 128K-8G    | 8M     | 缓存大小, 单位字节.<br/>用于存储主机、监控项、触发器数据的共享内存大小.<br/>服务器分配有4G<br/>设置为：CacheSize=256M |
+| CacheUpdateFrequency    | no   | 1-3600     | 60     | Zabbix 缓存更新频率, 单位秒.60秒感觉太快了<br/>设置为：CacheUpdateFrequency=180 |
+| DebugLevel              | no   | 0-5        | 3      | 指定调试等级:<br/>0 - Zabxxi进程起停的基本信息<br/>1 - 重要信息<br/>2 - 错误信息<br/>3 - 警告信息<br/>4 - 调试 (产生大量信息)<br/>5 - 扩展调试 (产生更多信息) |
+| HistoryCacheSize        | no   | 128K-2G    | 16M    | 历史缓存数据大小, 单位字节.<br/>存储历史数据.<br/>设置为：HistoryCacheSize=64M |
+| HistoryIndexCacheSize   | no   | 128K-2G    | 4M     | 历史索引缓存大小, 单位字节.<br/>用于索引历史缓存中历史数据的共享内存大小.<br/>缓存一个item大概需要索引的大小为100字节.item代表一个监控项，按照100000个监控项来算：100000*100/1024/1024=9.6M<br/>设置为：HistoryIndexCacheSize=10M |
+| HousekeepingFrequency   | no   | 0-24       | 1      | Zabbix 执行 housekeeping 的频率 (单位小时).<br/>从数据库中删除过期的信息.<br/>注意: 为了防止 housekeeper 过载 (例如, 当历史和趋势周期大大减小时), 对于每一个item，不会在一个housek周期内删除超过4倍HousekeepingFrequency 的过时信息. 因此, 如果 HousekeepingFrequency 是 1, 一个周期内不会删除超过4小时的过时信息 (starting from the oldest entry) . |
+| StartPollersUnreachable | no   | 0-1000     | 1      | 不可达主机 (包括IPMI 和 Java)的轮询器实例数量。<br/>设置为：StartPollersUnreachable=20 占总数20%足够 |
+| StartPollers            | no   | 0-1000     | 5      | 轮询器实例数量。根据具体情况设置大小<br/>设置为：StartPollers=30 |
+| StartDiscoverers        | no   | 0-250      | 1      | 自动发现子进程实例个数。<br/>设置为：StartDiscoverers=5      |
+| StartTrappers           | no   | 0-1000     | 5      | trappers进程实例数量。<br/>Trappers接受来自Zabbix发送者、主动agents和主动proxies的传入连接。<br/>至少要运行一个trapper进程来显示前端的服务器可用性和视图队列。<br/>设置为：StartTrappers=15 |
+| StartVMwareCollectors   | no   | 0-250      | 0      | vmware 采集器的子进程实例个数,如果有虚拟机的话，记得开启。   |
+| Timeout                 | no   | 1-30       | 3      | agent, SNMP 设备或外部检查的超时时长(单位秒)。<br/>设置为：Timeout=6 |
+| TrendCacheSize          | no   | 128K-2G    | 4M     | 趋势缓存的大小，单位字节。<br/>用于存储趋势数据的共享内存大小。<br/>设置为：128M |
+| ValueCacheSize          | no   | 0,128K-64G | 8M     | 历史数据缓存大小, 单位bytes.<br/>缓存item历史数据请求的共享内存大小.<br/>0即禁止缓存 (不建议).<br/>当缓存大小超过共享内存时，每5分钟会向服务器日志写入一条警告信息.<br/>设置为：ValueCacheSize=128M |
+
+
+
 # Zabbix Webhook 集成飞书机器人
 
 管理 --> 报警媒介类型 --> 创建媒介类型

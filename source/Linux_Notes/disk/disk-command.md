@@ -85,3 +85,17 @@ fuser命令参数说明
 -v,--verbose 　　 verbose output
 ```
 
+## 挂载磁盘
+
+```bash
+$ fdisk -l
+# 执行  fdisk /dev/xvdb 对磁盘分区，需要依次输入 “n” ，"p"，"1"，两次回车，"wq"：
+$ fdisk /dev/vdc
+# 格式化
+$ mkfs.ext4 /dev/vdc1
+$ blkid /dev/xvdb
+$ echo 'UUID=4993a375-d69a-44e6-87cb-ca4b09584e2e /data ext4 defaults 0 0' >> /etc/fstab
+$ mount -a
+$ df -lh
+```
+
