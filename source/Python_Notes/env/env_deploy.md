@@ -26,8 +26,47 @@ $ source /etc/profile
 $ sudo apt build-dep python3
 
 # 安装相关工具包
-$ pip3.8 install --upgrade pip Django Pillow Pillow-PIL PyMySQL asgiref certifi chardet cos-python-sdk-v5 dicttoxml django-redis idna migrate pytz redis requests setuptools six sqlparse urllib3 DingtalkChatbot PyYAML aop et-xmlfile html-table jdcal jsonpath numpy opencv-python openpyxl panda pandas pyaml python-dateutil tencentcloud-sdk-python yagmail verse
+$ pip3.8 install --upgrade pip Django Pillow \
+	Pillow-PIL PyMySQL asgiref certifi chardet \
+	cos-python-sdk-v5 dicttoxml django-redis \
+	idna migrate pytz redis requests setuptools \
+	six sqlparse urllib3 DingtalkChatbot PyYAML \
+	aop et-xmlfile html-table jdcal jsonpath numpy \
+	opencv-python openpyxl panda pandas pyaml verse \
+	python-dateutil tencentcloud-sdk-python yagmail 
+	
 ```
+
+## Ubuntu部署 Python3.11
+
+```bash
+$ apt-get update
+$ apt-get upgrade
+
+$ apt install build-essential zlib1g-dev \
+    libncurses5-dev libgdbm-dev libnss3-dev \
+    libssl-dev libncursesw5-dev libffi-dev \
+    tk-dev libgdbm-dev libc6-dev libsqlite3-dev \
+    libbz2-dev pkg-config make gcc -y
+
+# 安装 python3.11.1
+$ wget https://www.python.org/ftp/python/3.11.1/Python-3.11.1.tgz -P /tmp
+
+$ cd /tmp && tar -zxf Python-3.11.1.tgz
+
+$ cd Python-3.11.1/
+
+$ ./configure --enable-optimizations --prefix=/opt/python3.11
+
+$ make && make install
+
+# make altinstall
+
+/opt/python3.11/bin/pip3 install Flask==2.2.2 psutil==5.9.4 requests==2.28.1
+
+```
+
+
 
 ### python pip 使用国内镜像源
 

@@ -86,7 +86,7 @@ $ sudo apt-get upgrade -y
 
 # 下载 http://tengine.taobao.org/download.html
 $ wget http://tengine.taobao.org/download/tengine-2.3.3.tar.gz -P /tmp
-$ tar -zxf /tmp/tengine-2.3.3.tar.gz
+$ tar -zxf /tmp/tengine-2.3.3.tar.gz -C /tmp
 
 # 安装PCRE库，
 # PCRE(Perl Compatible Regular Expressions)是一个 Perl 库，包括 perl 兼容的正则表达式库。nginx rewrite 依赖于 PCRE 库，所以在安装 Tengine 前一定要先安装 PCRE。
@@ -155,6 +155,9 @@ $ sudo systemctl daemon-reload
 # 设置开机启动
 $ sudo systemctl enable nginx.service
 
+$ echo -e "export PATH=\$PATH:/opt/nginx/sbin" >> /etc/profile
+$ . /etc/profile
+
 # 启动
 $ sudo /opt/nginx/sbin/nginx
 # 或者
@@ -180,6 +183,135 @@ $ sudo systemctl stop nginx.service
 - https://www.cnblogs.com/JC-0527/p/14237651.html
 
 ---
+
+## 使用 Docker 配置 Tengine
+
+Dockerfile 内容
+
+```dockerfile
+FROM ubuntu:20.04
+
+ARG VERSION=2.3.3
+
+WORKDIR /opt
+
+RUN set -x \
+    && addgroup --system --gid 101 nginx \
+    && adduser --system --disabled-login --ingroup nginx \
+       --no-create-home --gecos "nginx user" \
+       --shell /bin/false --uid 101 nginx \
+    && apt-get update \
+#    && apt-get upgrade -y \
+    && apt-get install -y wget \
+                       lsb-release \
+                       libpcre3 libpcre3-dev \
+                       zlib1g-dev \
+                       openssl libssl-dev \
+                       build-essential \
+    && wget http://tengine.taobao.org/download/tengine-${VERSION}.tar.gz -P /tmp \
+    && tar -zxf /tmp/tengine-${VERSION}.tar.gz -C /tmp \
+    && cd /tmp/tengine-${VERSION} \
+    && ./configure --prefix=/opt/nginx \
+       --with-pcre \
+       --with-stream \
+       --with-threads \
+       --with-file-aio \
+       --with-http_v2_module \
+       --with-http_sub_module \
+       --with-http_dav_module \
+       --with-http_flv_module \
+       --with-http_mp4_module \
+       --with-http_ssl_module \
+       --with-http_slice_module \
+       --with-stream_ssl_module \
+       --with-http_realip_module \
+       --with-http_gunzip_module \
+       --with-http_addition_module \
+       --with-http_gzip_static_module \
+       --with-http_secure_link_module \
+       --with-http_stub_status_module \
+       --with-http_random_index_module \
+       --with-http_auth_request_module \
+       --add-module=modules/mod_config \
+       --with-stream_ssl_preread_module \
+       --add-module=modules/ngx_slab_stat \
+       --add-module=modules/ngx_debug_pool \
+       --add-module=modules/ngx_debug_timer \
+       --add-module=modules/ngx_backtrace_module \
+       --add-module=modules/ngx_http_slice_module \
+       --add-module=modules/ngx_http_concat_module \
+       --add-module=modules/ngx_http_reqstat_module \
+       --add-module=modules/ngx_http_sysguard_module \
+       --add-module=modules/ngx_multi_upstream_module \
+       --add-module=modules/ngx_http_user_agent_module \
+       --add-module=modules/ngx_http_trim_filter_module \
+       --add-module=modules/ngx_http_proxy_connect_module \
+       --add-module=modules/ngx_http_footer_filter_module \
+       --add-module=modules/ngx_http_upstream_check_module \
+       --add-module=modules/ngx_http_upstream_dyups_module \
+       --add-module=modules/ngx_http_upstream_vnswrr_module \
+       --add-module=modules/ngx_http_upstream_dynamic_module \
+       --add-module=modules/ngx_http_upstream_session_sticky_module \
+       --add-module=modules/ngx_http_upstream_consistent_hash_module \
+    && make \
+    && make install \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /tmp/*
+
+COPY nginx.conf /opt/nginx/conf/nginx.conf
+
+ENV PATH=${PATH}:/opt/nginx/sbin
+
+EXPOSE 80/tcp 443/tcp
+
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+构建 Docker 镜像
+
+```bash
+docker build -t leeks200930/nginx:tengine-2.3.3 .
+```
+
+部署 Tengine Docker 环境
+
+```bash
+# 首次启动
+mkdir -p /opt/nginx/conf/{conf.d,ssl-cert} /opt/nginx/{www,logs}
+
+docker pull leeks200930/nginx:tengine-2.3.3
+
+docker run -d --name nginx \
+  -p 80:80 -p 443:443 \
+  -v /etc/localtime:/etc/localtime \
+  -v /opt/nginx/conf/conf.d:/opt/nginx/conf/conf.d \
+  -v /opt/nginx/conf/ssl-cert:/opt/nginx/conf/ssl-cert \
+  -v /opt/nginx/www:/opt/nginx/www \
+  -v /opt/nginx/logs:/opt/nginx/logs \
+  leeks200930/nginx:tengine-2.3.3
+
+docker cp nginx:/opt/nginx/conf/nginx.conf /opt/nginx/conf
+
+docker rm -f nginx
+
+# 重新启动
+docker run -d --name nginx \
+  -p 80:80 -p 443:443 \
+  -v /etc/localtime:/etc/localtime \
+  -v /opt/nginx/conf/nginx.conf:/opt/nginx/conf/nginx.conf \
+  -v /opt/nginx/conf/conf.d:/opt/nginx/conf/conf.d \
+  -v /opt/nginx/conf/ssl-cert:/opt/nginx/conf/ssl-cert \
+  -v /opt/nginx/www:/opt/nginx/www \
+  -v /opt/nginx/logs:/opt/nginx/logs \
+  leeks200930/nginx:tengine-2.3.3
+
+docker exec nginx sh -c 'nginx -t'
+docker exec nginx sh -c 'nginx -s reload'
+```
+
+
+
+
 
 ## 使用 Docker 安装 Nginx
 
