@@ -31,18 +31,116 @@ $ systemctl status redis-"${PORT}".service
 ```bash
 $ wget https://download.redis.io/releases/redis-6.2.6.tar.gz
 $ tar -xvzf redis-6.2.6.tar.gz && cd redis-6.2.6
-$ make install PREFIX=opt/redis-6.2.6
+$ make install PREFIX=/opt/redis-6.2.6
 ```
 
 编译完成后会在`src`目录下生成Redis服务端程序`redis-server`和客户端程序`redis-cli`。
 
 ## Docker 安装
 
-```shell
-$ docker pull redis:latest
-$ docker run -itd --name redis -p 6379:6379 redis
+```bash
+# 搜索 redis
+docker search redis
+
+# 拉取镜像
+docker pull redis:6.2.8
+
+# 创建数据和配置路径
+mkdir -p /opt/redis/conf
+mkdir -p /opt/redis/data
+
+# https://redis.io/docs/management/config/ 查看redis各版本的配置文件
+# 下载配置文件
+# wget http://download.redis.io/redis-stable/redis.conf -P /opt/redis/conf
+# /opt/redis/conf/redis.conf 参考下面配置信息
+
+chmod 644 /opt/redis/conf
+
+# 启动服务
+docker run -d --privileged=true -p 6379:6379 \
+    --restart always -v /etc/timezone:/etc/timezone:ro \
+    -v /etc/localtime:/etc/localtime:ro \
+    -v /opt/redis/conf/redis.conf:/etc/redis/redis.conf \
+    -v /opt/redis/data:/data \
+    --name redis redis:latest redis-server \
+    /etc/redis/redis.conf --appendonly yes
+
+# 参数 --appendonly yes 开启数据持久化
+# 参数 --requirepass "redispassword"  设置密码为redispassword；当配置文件和命令行同时设置密码时，以命令行的密码为准！
+
+# redis-cli 访问
+docker exec -ti myredis redis-cli -h localhost -p 6379
+docker run -it --link myredis:redis --rm redis redis-cli -h redis -p 6379
 
 ```
+
+## 配置信息
+
+```bash
+tee /opt/redis/conf/redis.conf <<EOF
+bind 0.0.0.0
+protected-mode no
+port 6379
+tcp-backlog 511
+timeout 0
+tcp-keepalive 300
+daemonize no
+supervised no
+loglevel notice
+databases 16
+always-show-logo yes
+save 900 1
+save 300 10
+save 60 10000
+stop-writes-on-bgsave-error yes
+rdbcompression yes
+rdbchecksum yes
+dbfilename dump.rdb
+replica-serve-stale-data yes
+replica-read-only yes
+repl-diskless-sync no
+repl-diskless-sync-delay 5
+repl-disable-tcp-nodelay no
+replica-priority 100
+lazyfree-lazy-eviction no
+lazyfree-lazy-expire no
+lazyfree-lazy-server-del no
+replica-lazy-flush no
+appendonly no
+appendfilename "appendonly.aof"
+appendfsync everysec
+no-appendfsync-on-rewrite no
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+aof-load-truncated yes
+aof-use-rdb-preamble yes
+lua-time-limit 5000
+slowlog-log-slower-than 10000
+slowlog-max-len 128
+latency-monitor-threshold 0
+notify-keyspace-events ""
+hash-max-ziplist-entries 512
+hash-max-ziplist-value 64
+list-max-ziplist-size -2
+list-compress-depth 0
+set-max-intset-entries 512
+zset-max-ziplist-entries 128
+zset-max-ziplist-value 64
+hll-sparse-max-bytes 3000
+stream-node-max-bytes 4096
+stream-node-max-entries 100
+activerehashing yes
+client-output-buffer-limit normal 0 0 0
+client-output-buffer-limit replica 256mb 64mb 60
+client-output-buffer-limit pubsub 32mb 8mb 60
+hz 10
+dynamic-hz yes
+aof-rewrite-incremental-fsync yes
+rdb-save-incremental-fsync yes
+EOF
+```
+
+
 
 
 

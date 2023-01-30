@@ -276,7 +276,20 @@ $ curl http://127.0.0.1:8000/api/blockchain/chainStatus
 $ aelf-command get-blk-height -e http://127.0.0.1:8000
 
 $ curl http://127.0.0.1:8000/api/blockChain/blockHeight
+
+$ curl -s http://127.0.0.1:8000/api/blockChain/blockHeight | grep -v Total
 ```
+
+查看创世块Hash
+
+```bash
+$ curl -s -X 'GET' 'http://127.0.0.1:8000/api/blockChain/chainStatus' \
+    -H 'accept: text/plain; v=1.0' | \
+    grep -v "Total" | \
+    jq ".GenesisBlockHash"
+```
+
+
 
 ### 使用快照数据启动
 
