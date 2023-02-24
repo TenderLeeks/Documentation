@@ -162,8 +162,8 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
   ```bash
   groupadd elastic
   useradd -g elastic -M -s /sbin/nologin elastic
-  mkdir -p /opt/elasticsearch/{data,var/run,tmp,backup}
-  chown -R elastic. /opt/elasticsearch
+  mkdir -p /opt/elasticsearch-data/{data,var/run,tmp,backup}
+  chown -R elastic. /opt/elasticsearch*
   
   ```
 
@@ -174,23 +174,141 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
   ```
 
   ```yaml
-  node.name: node-1
-  cluster.name: docker-cluster
-  path.data: /opt/elasticsearch/data
-  path.logs: /opt/elasticsearch/logs
-  path.repo: /opt/elasticsearch/backup
-  # 启动内存锁定
-  bootstrap.memory_lock: true
-  network.host: 0.0.0.0
-  http.port: 9200
-  transport.port: 9300
+  # 集群名称，默认elasticsearch
+  cluster.name: es-cluster
   
-  discovery.seed_hosts: ["192.168.67.78:9300"]
-  cluster.initial_master_nodes: ["node-1"]
+  # 节点名称，默认主机名
+  node.name: node-01
+  # 添加此行配置，定义节点的角色。参考：https://www.elastic.co/guide/en/elasticsearch/reference/7.17/modules-node.html
+  node.roles: [ master, data, voting_only ]
+  
+  # 数据目录路径
+  path.data: /opt/elasticsearch-data/data
+  # 日志目录路径
+  path.logs: /opt/elasticsearch/logs
+  # 快照存储库目录路径
+  path.repo: /opt/elasticsearch-data/backup
+  
+  # tcp通讯端口，为节点之间的通信绑定的端口
+  transport.port: 9330
+  # 设置是否压缩TCP传输时的数据，默认为false
+  transport.tcp.compress: true
+  
+  
+  
+  # 开启跨域访问支持，默认为false
+  http.cors.enabled: true
+  # 跨域访问允许的域名地址，(允许所有域名)以上使用正则
+  http.cors.allow-origin: /.*/  
+  http.cors.allow-headers: Authorization,X-Requested-With,Content-Length,Content-Type
+  # 设置http端口，接受单个值或范围。 如果指定了范围，则节点将绑定到范围中的第一个可用端口。默认为9200-9300。
+  http.port: 9200
+  # HTTP 请求正文的最大大小。 默认为100mb。
+  http.max_content_length: 200mb
+  
+  
+  # 绑定访问地址
+  network.host: 0.0.0.0
+  # 是否启用tcp无延迟，true为启用tcp不延迟，默认为false启用tcp延迟
+  network.tcp.no_delay: true
+  # 是否启用TCP保持活动状态，默认为true
+  network.tcp.keep_alive: true
+  # 是否应该重复使用地址。默认true，在Windows机器上默认为false
+  network.tcp.reuse_address: true
+  # tcp发送缓冲区大小，默认不设置
+  network.tcp.send_buffer_size: 128mb
+  # tcp接收缓冲区大小，默认不设置
+  network.tcp.receive_buffer_size: 128mb
+  
+  
+  
+  # 设置自动发现的Node，以便集群中的节点可以相互发现并选举一个主节点。
+  # 参考：https://www.elastic.co/guide/en/elasticsearch/reference/7.17/modules-discovery-settings.html
+  discovery.seed_hosts:
+     - 192.168.67.78:9330
+     - 192.168.67.79:9330
+     - 192.168.67.80:9330
+  
+  # 通过外部文件配置集群节点相互发现列表。Elasticsearch会在这个文件改变的时候重新加载这个文件，这样集群节点列表就可以动态的改变，而不需要重启每个节点。在$ES_PATH_CONF下创建unicast_hosts.txt文件，任何时候unicast_hosts.txt文件改变都会被Elasticsearch接收，并使用新的主机列表。如果discovery.seed_hosts中存在有效的列表，那么Elasticsearch除了使用unicast_hosts.txt中提供的地址外，还使用这些地址。unicast_hosts.txt文件每行包含一个节点条目。 每个节点条目由主机名和端口号组成。
+  # discovery.seed_providers
+  
+  # 指定Elasticsearch是否应该形成一个多节点集群。默认情况下，Elasticsearch在形成集群时发现其他节点，并允许其他节点随后加入集群。如果discovery.type设置为single-node，Elasticsearch会形成一个单节点集群，并抑制cluster.publish.timeout设置的超时。
+  # discovery.type
+  
+  # 设置尝试连接到每个地址时的等待时间。默认为30秒。
+  # discovery.probe.connect_timeout
+  
+  # 设置在试图通过握手识别远程节点时要等待多长时间。默认为30秒。
+  # discovery.probe.handshake_timeout
+  
+  # 设置节点在再次询问其对等方之后将等待多长时间，然后才认为请求失败。默认为3s.
+  discovery.request_peers_timeout: 30s
+  # Elasticsearch7 新增参数，启动后30秒内，如果集群未形成，那么将会记录一条警告信息，警告信息未master not fount开始，默认为10秒
+  discovery.cluster_formation_warning_timeout: 30s 
+  
+  
+  # 初始化主节点，当第一次启动 ES 集群时， 集群引导步骤会确定在第一次选举中计票的符合主节点资格的节点集。
+  cluster.initial_master_nodes:
+     - node-01
+     - node-02
+     - node-03
+  # Elasticsearch7 新增参数，设置每个节点在选中的主节点的检查之间等待的时间。默认为1秒
+  cluster.fault_detection.leader_check.interval: 15s
+  # Elasticsearch7新增参数，节点发送请求加入集群后，在认为请求失败后，再次发送请求的等待时间，默认为60秒
+  cluster.join.timeout: 30s
+  # Elasticsearch7新增参数，设置主节点等待每个集群状态完全更新后发布到所有节点的时间，默认为30秒
+  cluster.publish.timeout: 90s 
+  # 集群内同时启动的数据任务个数，默认是2个
+  cluster.routing.allocation.cluster_concurrent_rebalance: 32
+  # 添加或删除节点及负载均衡时并发恢复的线程个数，默认4个
+  cluster.routing.allocation.node_concurrent_recoveries: 32
+  # 初始化数据恢复时，并发恢复线程的个数，默认4个
+  cluster.routing.allocation.node_initial_primaries_recoveries: 32
+  # 设置集群最大shard(分片)数
+  cluster.max_shards_per_node: 10000
+  
+  
+  # 设置集群中N个数据节点加入集群后就可以进行数据恢复
+  gateway.recover_after_data_nodes: 2
+  # 设置初始化数据恢复进程的超时时间，默认是5分钟。
+  gateway.recover_after_time: 3m
+  # 集群中预期的数据节点数。当预期数量的数据节点加入集群时，本地分片的恢复开始。默认为0.
+  gateway.expected_data_nodes: 3
+  
+  
+  
+  # 在节点上关闭 Elasticsearch 安全功能
+  xpack.security.enabled: false
+  # 设置为true在节点上启用审计。默认值为false。
+  xpack.security.audit.enabled: false
+  
+  # 启用自动创建索引，禁用后logstash无法自动创建索引。安全考虑可以关闭，即使是内网也有很多扫描程序，一旦开启，扫描程序会自动给你创建很多索引。
+  action.auto_create_index: true
+  
+  
+  
+  # 启动内存锁定
+  # 在ES运行起来后锁定ES所能使用的堆内存大小，锁定内存大小一般为可用内存的一半左右；锁定内存后就不会使用交换分区
+  # 如果不打开此项，当系统物理内存空间不足，ES将使用交换分区，ES如果使用交换分区，那么ES的性能将会变得很差
+  bootstrap.memory_lock: true
   
   # 删除索引时要求明确的名称
   action.destructive_requires_name: true
   ingest.geoip.downloader.enabled: false
+  
+  # xpack配置
+  xpack.security.enabled: true
+  xpack.security.transport.ssl.enabled: true
+  xpack.monitoring.collection.enabled: true
+  xpack.security.transport.ssl.verification_mode: certificate
+  xpack.security.transport.ssl.keystore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+  xpack.security.transport.ssl.truststore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+  xpack.security.http.ssl.enabled: true
+  xpack.security.http.ssl.keystore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+  xpack.security.http.ssl.truststore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+  xpack.security.http.ssl.client_authentication: none
+  xpack.security.http.ssl.verification_mode: certificate
+  
   ```
 
   ```bash
@@ -200,7 +318,10 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
   -Xms8g
   -Xmx8g
   
+  # 当来自Java堆的分配失败时生成堆转储；除非指定了替代路径，否则堆转储将在JVM的工作目录中创建
   -XX:+HeapDumpOnOutOfMemoryError
+  
+  # 指定堆转储的替代路径；确保目录存在并且有足够的空间
   -XX:HeapDumpPath=/opt/elasticsearch/logs
   ```
 
@@ -219,8 +340,8 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
   PrivateTmp=true
   Environment=ES_HOME=/opt/elasticsearch
   Environment=ES_PATH_CONF=/opt/elasticsearch/config
-  Environment=PID_DIR=/opt/elasticsearch/var/run
-  Environment=ES_TMPDIR=/opt/elasticsearch/tmp
+  Environment=PID_DIR=/opt/elasticsearch-data/var/run
+  Environment=ES_TMPDIR=/opt/elasticsearch-data/tmp
   WorkingDirectory=/opt/elasticsearch
   User=elastic
   Group=elastic
@@ -262,73 +383,63 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
   systemctl enable elasticsearch
   ```
 
-  
+
+## 启用X-pack安全配置TLS和身份验证
+
+1. 生成CA证书
+
+   开启安全模块后，节点间通讯需要配置TLS 生成CA证书 `bin/elasticsearch-certutil ca`，将产生新文件 `elastic-stack-ca.p12` 为集群中的每个节点生成证书和私钥 `bin/elasticsearch-certutil cert –ca elastic-stack-ca.p12`，将产生新文件 `elastic-certificates.p12` 默认情况下 `elasticsearch-certutil` 生成没有主机名信息的证书，这意味着你可以将证书用于集群中的每个节点，另外要关闭主机名验证。 将 `elastic-certificates.p12` 文件复制到每个节点上Elasticsearch配置目录中。
+
+   **注意：** 密码后面需要单独设置，这里是集群安全认证，建议密码不设置，成功后生成的证书默认在es的config目录里面 `elastic-certificates.p12`；分别copy一份到其他节点的config里面（默认目录）
+
+   ```bash
+   bin/elasticsearch-certutil ca --days  2920
+   bin/elasticsearch-certutil cert --days 2920 --ca elastic-stack-ca.p12
+   ```
+
+   拷贝证书到所有节点下并赋予相关的权限， elasticsearch.yml 末尾增加xpack相关配置
+
+   ```bash
+   xpack.security.enabled: true
+   # xpack.license.self_generated.type: basic
+   xpack.security.transport.ssl.enabled: true
+   xpack.security.transport.ssl.verification_mode: certificate
+   xpack.security.transport.ssl.keystore.path: elastic-certificates.p12
+   xpack.security.transport.ssl.truststore.path: elastic-certificates.p12
+   xpack.security.http.ssl.enabled: true
+   xpack.security.http.ssl.keystore.path: elastic-certificates.p12
+   xpack.security.http.ssl.truststore.path: elastic-certificates.p12
+   xpack.security.http.ssl.client_authentication: none
+   ```
+
+2. 设置内置用户密码
+
+   启动集群初始化 `elastic,apm_system,kibana,logstash_system,beats_system,remote_monitoring_user`用户的密码，请牢记！ `bin/elasticsearch-setup-passwords auto` 各用户生成随机密码。 `bin/elasticsearch-setup-passwords interactive` 手动定义密码。
+
+   ```bash
+   bin/elasticsearch-setup-passwords interactive
+   
+   -----------------------
+   
+   # 将p12证书转换为PEM格式
+   openssl pkcs12 -in ca.p12 -clcerts -nokeys -chain -out ca.pem
+   ```
+
+   - `elastic` 账号：拥有 superuser 角色，是内置的超级用户。
+   - `kibana` 账号：拥有 kibana_system 角色，用户 kibana 用来连接 elasticsearch 并与之通信。Kibana 服务器以该用户身份提交请求以访问集群监视 API 和 .kibana 索引。不能访问 index。
+   - `logstash_system` 账号：拥有 logstash_system 角色。用户 Logstash 在 Elasticsearch 中存储监控信息时使用。
+   - `beats_system` 账号：拥有 beats_system 角色。用户 Beats 在 Elasticsearch 中存储监控信息时使用。
+
+3. 配置 kibana 认证
+
+   ```bash
+   elasticsearch.username: "kibana"
+   elasticsearch.password: "123456"
+   ```
+
+   
 
 ## 配置详解
-
-- `path.data`
-
-  数据目录路径
-
-- `path.logs`
-
-  日志目录路径
-
-- `path.repo`
-
-  快照存储库目录路径
-
-- `cluster.name`
-
-  集群名称，默认elasticsearch
-
-- `node.name`
-
-  节点名称，默认主机名
-
-- `network.host`
-
-  绑定访问地址
-
-- `http.port`
-
-  设置http端口，接受单个值或范围。 如果指定了范围，则节点将绑定到范围中的第一个可用端口。默认为9200-9300。
-
-- `http.max_content_length`
-
-  HTTP 请求正文的最大大小。 默认为100mb。
-
-- `http.cors.enabled`
-
-  启用或禁用跨域资源共享，默认false。
-
-- `http.cors.allow-origin`
-
-  允许哪些来源，默认为不允许来源。通配符 (*) 是一个有效值。
-
-- `transport.port`
-
-  为节点之间的通信绑定的端口。 接受单个值或范围。 如果指定了范围，则节点将绑定到范围中的第一个可用端口。 在每个符合主节点的节点上将此设置为单个端口，而不是范围，默认为9300-9400。
-
-- `discovery.seed_hosts`
-
-  集群节点相互发现列表。Elasticsearch默认会从本机的9300-9305端口尝试去连接其它节点，这提供了自动集群的体验，该端口默认为9300。
-
-- `discovery.seed_providers`
-
-  通过外部文件配置集群节点相互发现列表。Elasticsearch会在这个文件改变的时候重新加载这个文件，这样集群节点列表就可以动态的改变，而不需要重启每个节点。在$ES_PATH_CONF下创建unicast_hosts.txt文件，任何时候unicast_hosts.txt文件改变都会被Elasticsearch接收，并使用新的主机列表。如果discovery.seed_hosts中存在有效的列表，那么Elasticsearch除了使用unicast_hosts.txt中提供的地址外，还使用这些地址。unicast_hosts.txt文件每行包含一个节点条目。 每个节点条目由主机名和端口号组成。
-
-- `discovery.type`
-
-  指定Elasticsearch是否应该形成一个多节点集群。默认情况下，Elasticsearch在形成集群时发现其他节点，并允许其他节点随后加入集群。如果discovery.type设置为single-node，Elasticsearch会形成一个单节点集群，并抑制cluster.publish.timeout设置的超时。
-
-- `discovery.probe.connect_timeout`
-
-  设置尝试连接到每个地址时的等待时间。默认为30秒。
-
-- `discovery.probe.handshake_timeout`
-
-  设置在试图通过握手识别远程节点时要等待多长时间。默认为30秒。
 
 - `cluster.initial_master_nodes`
 
@@ -501,9 +612,9 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
    node.name: node-01
    node.roles: [master]
    cluster.name: es-cluster
-   path.data: /opt/elasticsearch/data
+   path.data: /opt/elasticsearch-data/data
    path.logs: /opt/elasticsearch/logs
-   path.repo: /opt/elasticsearch/backup
+   path.repo: /opt/elasticsearch-data/backup
    bootstrap.memory_lock: true
    network.host: 0.0.0.0
    http.port: 9200
@@ -536,9 +647,9 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
    node.name: node-02
    node.roles: [data]
    cluster.name: es-cluster
-   path.data: /opt/elasticsearch/data
+   path.data: /opt/elasticsearch-data/data
    path.logs: /opt/elasticsearch/logs
-   path.repo: /opt/elasticsearch/backup
+   path.repo: /opt/elasticsearch-data/backup
    bootstrap.memory_lock: true
    network.host: 0.0.0.0
    http.port: 9200
@@ -593,10 +704,9 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
      "persistent": {
        "cluster.routing.allocation.enable": "primaries"
      }
-   }
-   '
+   }'
    ```
-
+   
 2. **停止索引并执行同步刷新**
 
    执行同步刷新可加快分片恢复。当你执行同步刷新时，检查响应以确保没有失败。由于挂起的索引操作而失败的同步刷新操作会在响应体中列出，尽管请求本身仍然返回200 OK状态。如果有失败，重新发出请求。此功能将在8.0版本中删除。
@@ -631,11 +741,10 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
      "persistent": {
        "cluster.routing.allocation.enable": null
      }
-   }
-   '
+   }'
    ```
-
    
+
 
 ## 使用标准SQL操作ES
 
@@ -852,6 +961,149 @@ Option             Description
 
 参考官方文档[REST APIs](https://www.elastic.co/guide/en/elasticsearch/reference/7.15/rest-apis.html)
 
+### 查询
+
+1. 查看ES集群健康值
+
+   ```bash
+   GET /_cluster/health
+   
+   curl -X GET "http://127.0.0.1:9200/_cluster/health?pretty"
+   ```
+
+2. 请求带密码的ES接口
+
+   ```bash
+   curl -X GET "http://127.0.0.1:9200/_cluster/health?pretty --user elastic:123456"
+   ```
+
+3. 查看每个索引的状态
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/_cat/indices?v"
+   ```
+
+4. 查看某个索引的status
+
+   ```bash
+   curl -s "http://127.0.0.1:9200/_cat/indices/Index_Name?h=status"
+   ```
+
+5. 查看状态是red的索引
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/_cat/indices | awk '$1 ~/red/'"
+   ```
+
+6. 查询索引库的settings信息
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/<index_name>/settings?pretty&pretty=true"
+   ```
+
+7. 查询所有索引别名信息
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/_cat/aliases?v"
+   ```
+
+8. 查询某个索引的别名信息
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/<index_name>/_alias/*"
+   ```
+
+9. 查询用户信息
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/_xpack/security/role_mapping/<username>"
+   ```
+
+### 修改
+
+1. 关闭不需要的索引，减少内存占用
+
+   ```bash
+   curl -XPOST "http://127.0.0.1:9200/<index_name>/_close"
+   ```
+
+2. 创建索引
+
+   ```bash
+   curl -XPUT 'http://127.0.0.1:9200/<index_name>' -H 'content-Type:application/json' -d'{"settings":{"index":{"number_of_shards":3,"number_of_replicas":1}}}'
+   ```
+
+   操作已存在的索引
+
+   ```bash
+   curl -XPUT 'http://127.0.0.1:9200/<index_name>/_settings' -d '{"index":{"number_of_replicas":1}}'
+   ```
+
+   总结：就是，不存在索引时,可以指定副本和分片，如果已经存在,则只能修改副本。
+
+3. 修改索引别名
+
+   ```bash
+   POST /_aliases
+   {
+       "actions" : [
+           { "remove" : { "index" : "test1", "alias" : "alias1" } },
+           { "add" : { "index" : "test2", "alias" : "alias1" } }
+       ]
+   }
+   ```
+
+4. 添加用户权限组
+
+   ```bash
+   curl -XPUT 'http://127.0.0.1:9200/_xpack/security/role_mapping/<username>' -d
+   '{
+       "enabled" : true,
+       "roles" : [
+         "ops.test",
+         "ops.eic.test.group"
+       ],
+       "rules" : {
+         "any" : [
+           {
+             "field" : {
+               "username" : "<username>"
+             }
+           }
+         ]
+       },
+       "metadata" : {
+         "username" : "<username>"
+       }
+   }'
+   ```
+
+5. 取消索引只读
+
+   ```bash
+   curl -XPUT 'http://127.0.0.1:9200/_all/_settings' -d '{"index.blocks.read_only_allow_delete": null}'
+   ```
+
+### 删除
+
+1. 删除索引数据
+
+   ```bash
+   curl -XDELETE 'http://127.0.0.1:9200/jr-2018.08.06'
+   ```
+
+   
+
+
+
+
+
+
+
+
+
+
+
 ```bash
 GET /_cat/aliases?v=true
     检索集群的索引别名，包括过滤器和路由信息。API不返回data stream别名。
@@ -875,7 +1127,7 @@ GET /_cat/pending_tasks?v=true
     返回尚未执行的集群级别更改，类似于挂起的集群任务API。
 GET /_cat/plugins?v=true&h=name,component,version,description
     返回在集群的每个节点上运行的插件列表。
-GET _cat/recovery?v=true
+GET /_cat/recovery?v=true
     返回有关正在进行和已完成的分片恢复的信息，类似于索引恢复API。
 GET /_cat/repositories?v=true
     返回集群的快照存储库。
@@ -896,8 +1148,8 @@ GET /_cluster/allocation/explain
     提供分片当前分配的详情。
 GET /_cluster/settings
     返回集群范围设置。
-GET /_cluster/health
-    返回集群的健康状态。
+#GET /_cluster/health
+#    返回集群的健康状态。
 GET /_cluster/state/<metrics>/<target>
     返回有关集群状态的元数据。
 GET /_cluster/stats
@@ -934,95 +1186,564 @@ Elasticsearch以增量方式进行快照：快照过程只将数据复制到存�
 
 ![](./img/es0001.webp)
 
-1. **创建快照**
+### 环境说明
 
-   ```bash
-   curl -X PUT "http://127.0.0.1:9200/_snapshot/my_backup/snapshot_2?wait_for_completion=true&pretty" -H 'Content-Type: application/json' -d'
-   {
-     "include_global_state": true
-   }
-   '
-   ```
+**注意：**
 
-2. **快照恢复**
+- 多节点的集群实现快照必须满足以下要求
+  - 建立共享文件系统：如NFS共享，确定每一个节点挂载到指定路径，才能创建快照存储库。
+  - 在所有的主节点、数据节点都要配置相同的 path.repo 配置项。
 
-   ```bash
-   curl -X POST "http://127.0.0.1:9200/_snapshot/my_backup/snapshot_1/_restore?pretty" -H 'Content-Type: application/json' -d'
-   {
-     "include_global_state": true              
-   }
-   '
-   ```
 
-3. **删除快照**
 
-   ```bash
-   curl -X DELETE "http://127.0.0.1:9200/_snapshot/my_backup/snap*?pretty"
-   ```
+集群快照存储路径: `/opt/elasticsearch-data/backup`
 
-4. **设置快照生命周期策略**
+仓库名: `repository_name`
 
-   ```bash
-   curl -X PUT "http://127.0.0.1:9200/_slm/policy/nightly-snapshots?pretty" -H 'Content-Type: application/json' -d'
-   {
-     "nightly-snapshots" : {
-       "version": 1,
-       "modified_date": "2019-04-23T01:30:00.000Z",
-       "modified_date_millis": 1556048137314,
-       "policy" : {
-         "schedule": "0 30 1 * * ?",
-         "name": "<nightly-snap-{now/d}>",
-         "repository": "my_repository",
-         "config": {
-           "indices": ["*"],
-         },
-         "retention": {
-           "expire_after": "30d",
-           "min_count": 5,
-           "max_count": 50
-         }
-       },
-       "last_success": {                                                    
-         "snapshot_name": "nightly-snap-2019.04.24-tmtnyjtrsxkhbrrdcgg18a", 
-         "time_string": "2019-04-24T16:43:49.316Z",
-         "time": 1556124229316
-       } ,
-       "last_failure": {                                                    
-         "snapshot_name": "nightly-snap-2019.04.02-lohisb5ith2n8hxacaq3mw",
-         "time_string": "2019-04-02T01:30:00.000Z",
-         "time": 1556042030000,
-         "details": "{\"type\":\"index_not_found_exception\",\"reason\":\"no such index [important]\",\"resource.type\":\"index_or_alias\",\"resource.id\":\"important\",\"index_uuid\":\"_na_\",\"index\":\"important\",\"stack_trace\":\"[important] IndexNotFoundException[no such index [important]]\\n\\tat org.elasticsearch.cluster.metadata.IndexNameExpressionResolver$WildcardExpressionResolver.indexNotFoundException(IndexNameExpressionResolver.java:762)\\n\\tat org.elasticsearch.cluster.metadata.IndexNameExpressionResolver$WildcardExpressionResolver.innerResolve(IndexNameExpressionResolver.java:714)\\n\\tat org.elasticsearch.cluster.metadata.IndexNameExpressionResolver$WildcardExpressionResolver.resolve(IndexNameExpressionResolver.java:670)\\n\\tat org.elasticsearch.cluster.metadata.IndexNameExpressionResolver.concreteIndices(IndexNameExpressionResolver.java:163)\\n\\tat org.elasticsearch.cluster.metadata.IndexNameExpressionResolver.concreteIndexNames(IndexNameExpressionResolver.java:142)\\n\\tat org.elasticsearch.cluster.metadata.IndexNameExpressionResolver.concreteIndexNames(IndexNameExpressionResolver.java:102)\\n\\tat org.elasticsearch.snapshots.SnapshotsService$1.execute(SnapshotsService.java:280)\\n\\tat org.elasticsearch.cluster.ClusterStateUpdateTask.execute(ClusterStateUpdateTask.java:47)\\n\\tat org.elasticsearch.cluster.service.MasterService.executeTasks(MasterService.java:687)\\n\\tat org.elasticsearch.cluster.service.MasterService.calculateTaskOutputs(MasterService.java:310)\\n\\tat org.elasticsearch.cluster.service.MasterService.runTasks(MasterService.java:210)\\n\\tat org.elasticsearch.cluster.service.MasterService$Batcher.run(MasterService.java:142)\\n\\tat org.elasticsearch.cluster.service.TaskBatcher.runIfNotProcessed(TaskBatcher.java:150)\\n\\tat org.elasticsearch.cluster.service.TaskBatcher$BatchedTask.run(TaskBatcher.java:188)\\n\\tat org.elasticsearch.common.util.concurrent.ThreadContext$ContextPreservingRunnable.run(ThreadContext.java:688)\\n\\tat org.elasticsearch.common.util.concurrent.PrioritizedEsThreadPoolExecutor$TieBreakingPrioritizedRunnable.runAndClean(PrioritizedEsThreadPoolExecutor.java:252)\\n\\tat org.elasticsearch.common.util.concurrent.PrioritizedEsThreadPoolExecutor$TieBreakingPrioritizedRunnable.run(PrioritizedEsThreadPoolExecutor.java:215)\\n\\tat java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)\\n\\tat java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)\\n\\tat java.base/java.lang.Thread.run(Thread.java:834)\\n\"}"
-       } ,
-       "next_execution": "2019-04-24T01:30:00.000Z",                        
-       "next_execution_millis": 1556048160000
-     }
-   }
-   '
-   ```
+快照名: `indexer_snapshot_01`
 
-5. **测试快照策略**
+快照含索引: `blockindex, logeventindex, transactionindex`
 
-   ```bash
-   curl -X POST "http://127.0.0.1:9200/_slm/policy/nightly-snapshots/_execute?pretty"
-   ```
+查看创建的repo路径信息：
 
-6. **SLM权限设置**
+```bash
+GET _cluster/settings?include_defaults&filter_path=*.path.repo
 
-   ```bash
-   curl -X POST "http://127.0.0.1:9200/_security/role/slm-admin?pretty" -H 'Content-Type: application/json' -d'
-   {
-     "cluster": ["manage_slm", "cluster:admin/snapshot/*"],
-     "indices": [
-       {
-         "names": [".slm-history-*"],
-         "privileges": ["all"]
-       }
-     ]
-   }
-   ' 
-   ```
+curl -X GET "http://127.0.0.1:9200/_cluster/settings?include_defaults&filter_path=*.path.repo&pretty"
 
-   
+# 输出结果
+{
+  "defaults" : {
+    "path" : {
+      "repo" : [
+        "/opt/elasticsearch-data/backup"
+      ]
+    }
+  }
+}
+```
+
+### 创建快照仓库
+
+**注意：**location配置的路径 ，必须和集群 `elasticsearh.yml` 中配置 `path.repo` 保持一致。
+
+```bash
+PUT /_snapshot/repository_name
+{
+  "type": "fs",
+  "settings": {
+    "location": "/opt/elasticsearch-data/backup"
+  }
+}
+
+# 在终端执行命令
+curl -X PUT "http://127.0.0.1:9200/_snapshot/repository_name" -H 'Content-Type: application/json' -d'
+{
+  "type": "fs",
+  "settings": {
+    "location": "/opt/elasticsearch-data/backup"
+  }
+}'
+```
+
+使用获取快照API检索有关注册存储库的信息：
+
+```bash
+GET /_snapshot/repository_name
+
+# 在终端执行命令
+curl -X GET "http://127.0.0.1:9200/_snapshot/repository_name"
+
+# 输出结果
+{
+  "repository_name": {
+    "type": "fs",
+    "uuid": "0JLknrXbSUiVPuLakHjBrQ",
+    "settings": {
+      "location": "/opt/elasticsearch-data/backup"
+    }
+  }
+}
+```
+
+查看在哪个node上创建的仓库：
+
+```bash
+POST _snapshot/repository_name/_verify
+
+curl -X GET "http://127.0.0.1:9200/_snapshot/repository_name/_verify"
+
+# 输出结果
+{
+  "nodes" : {
+    "pMrJwVGSQcSgeTZdh61QRw" : {
+      "name" : "node1"
+    }
+  }
+}
+```
+
+要检索有关所有已注册快照存储库的信息，请省略存储库名称：
+
+```bash
+GET /_snapshot
+
+curl -X GET "http://127.0.0.1:9200/_snapshot"
+
+# 或者可以指定 _all
+GET /_snapshot/_all
+```
+
+### 删除或注销快照仓库
+
+```bash
+DELETE /_snapshot/repository_name
+
+curl -X DELETE "http://127.0.0.1:9200/_snapshot/repository_name"
+```
+
+
+
+### 创建快照
+
+以下请求在存储库 repository_name 中创建名为 indexer_snapshot_01 的快照。
+
+默认情况下，快照备份集群中的所有数据流和打开的索引。您可以通过在快照请求的主体中指定数据流和索引的列表来更改此行为。
+
+```bash
+# 创建快照 indexer_snapshot_01 对索引 blockindex,logeventindex,transactionindex 的快照
+PUT /_snapshot/repository_name/indexer_snapshot_01?wait_for_completion=true
+{
+  "indices": "blockindex,logeventindex,transactionindex",
+  "ignore_unavailable": true,
+  "include_global_state": false
+}
+
+# 在终端执行命令
+curl -X PUT "http://127.0.0.1:9200/_snapshot/repository_name/indexer_snapshot_01?wait_for_completion=true&pretty" -H 'Content-Type: application/json' -d'
+{
+  "indices": "blockindex,logeventindex,transactionindex",
+  "ignore_unavailable": true,
+  "include_global_state": false
+}'
+
+# 保存集群下的所有索引快照
+PUT /_snapshot/repository_name/indexer_snapshot_01?wait_for_completion=true
+
+curl -X PUT "http://127.0.0.1:9200/_snapshot/repository_name/indexer_snapshot_01?wait_for_completion=true&pretty"
+```
+
+`wait_for_completion`: 参数指定请求是否应在快照初始化后立即返回（默认）或等待快照完成。在快照初始化期间，有关所有先前快照的信息都会加载到内存中，这意味着在大型存储库中，即使wait_for_completion参数设置为false，此请求也可能需要几秒钟（甚至几分钟）才能返回。
+
+使用`indices`参数列出快照中应包含的数据流和索引。此参数支持多目标语法，但控制多索引语法行为的选项必须在请求正文中提供，而不是作为请求参数提供。
+
+创建快照请求支持`ignore_unavailable`选项。将其设置为true将导致在创建快照期间忽略不存在的数据流和索引。默认情况下，当未设置ignore_unavailable选项并且缺少数据流或索引时，快照请求将失败。
+
+通过将`include_global_state`设置为false，可以防止将集群全局状态存储为快照的一部分。
+
+### 查看快照
+
+```bash
+# 查看所有快照存储库
+GET /_snapshot/_all
+
+curl -X GET "http://127.0.0.1:9200/_snapshot/_all?pretty"
+
+# 查看创建的快照信息
+GET /_snapshot/repository_name/indexer_snapshot_*
+
+curl -X GET "http://127.0.0.1:9200/_snapshot/repository_name/indexer_snapshot_*?pretty"
+
+# 查看所有的快照信息
+GET /_snapshot/repository_name/_all
+
+curl -X GET "http://127.0.0.1:9200/_snapshot/repository_name/_all?pretty"
+
+# 查看快照状态或备份的进度
+GET /_snapshot/repository_name/indexer_snapshot_01/_status?pretty
+
+curl -X GET "http://127.0.0.1:9200/_snapshot/repository_name/indexer_snapshot_01/_status?pretty"
+```
+
+### 还原或恢复快照
+
+```bash
+POST /_snapshot/repository_name/indexer_snapshot_01/_restore
+{
+  "indices": "aelfindexer.blockindex,aelfindexer.logeventindex,aelfindexer.transactionindex",
+  "ignore_unavailable": true,
+  "include_aliases": false
+}
+
+# 在终端执行命令
+curl -X POST "http://127.0.0.1:9200/_snapshot/repository_name/indexer_snapshot_01/_restore?pretty" -H 'Content-Type: application/json' -d'
+{
+  "indices": "*",
+  "ignore_unavailable": true,
+  "include_aliases": false
+}'
+```
+
+恢复快照到重命名索引
+
+```bash
+POST _snapshot/repository_name/indexer_snapshot_01/_restore
+{
+  "indices": "blockindex,logeventindex,transactionindex",
+  "ignore_unavailable": true,
+  "rename_pattern": "(.+)",
+  "rename_replacement": "restored_$1"
+}
+
+# 在终端执行命令
+curl -X POST "http://127.0.0.1:9200/_snapshot/repository_name/indexer_snapshot_01/_restore?pretty" -H 'Content-Type: application/json' -d'
+{
+  "indices": "blockindex,logeventindex,transactionindex",
+  "ignore_unavailable": true,
+  "rename_pattern": "(.+)",
+  "rename_replacement": "restored_$1"
+}'
+```
+
+查询新索引的数据：
+
+```bash
+GET restored_blockindex/_search
+
+curl -X GET "http://127.0.0.1:9200/restored_blockindex/_search?pretty"
+```
+
+查看快照恢复的进度
+
+```bash
+curl -XGET 'http://127.0.0.1:9200/indexer_snapshot_01/_recovery?pretty'
+```
+
+取消恢复
+
+```bash
+curl -XDELETE 'http://127.0.0.1:9200/indexer_snapshot_01'
+```
+
+
+
+### 删除和取消快照
+
+正在备份的数据可以执行取消，使用的是 DELETE 命令：
+
+- 如果备份正在进行中，那么取消备份操作，并且删除备份了一半的数据。
+- 如果备份已经完成，直接删除备份数据。
+
+```bash
+DELETE /_snapshot/repository_name/indexer_snapshot_01
+
+curl -X DELETE "http://127.0.0.1:9200/_snapshot/repository_name/indexer_snapshot_01?pretty"
+```
+
+### 设置快照生命周期策略
+
+```bash
+curl -X PUT "http://127.0.0.1:9200/_slm/policy/nightly-snapshots?pretty" -H 'Content-Type: application/json' -d'
+{
+  "nightly-snapshots" : {
+    "version": 1,
+    "modified_date": "2019-04-23T01:30:00.000Z",
+    "modified_date_millis": 1556048137314,
+    "policy" : {
+      "schedule": "0 30 1 * * ?",
+      "name": "<nightly-snap-{now/d}>",
+      "repository": "my_repository",
+      "config": {
+        "indices": ["*"],
+      },
+      "retention": {
+        "expire_after": "30d",
+        "min_count": 5,
+        "max_count": 50
+      }
+    },
+    "last_success": {                                                    
+      "snapshot_name": "nightly-snap-2019.04.24-tmtnyjtrsxkhbrrdcgg18a", 
+      "time_string": "2019-04-24T16:43:49.316Z",
+      "time": 1556124229316
+    } ,
+    "last_failure": {                                                    
+      "snapshot_name": "nightly-snap-2019.04.02-lohisb5ith2n8hxacaq3mw",
+      "time_string": "2019-04-02T01:30:00.000Z",
+      "time": 1556042030000,
+      "details": "{\"type\":\"index_not_found_exception\",\"reason\":\"no such index [important]\",\"resource.type\":\"index_or_alias\",\"resource.id\":\"important\",\"index_uuid\":\"_na_\",\"index\":\"important\",\"stack_trace\":\"[important] IndexNotFoundException[no such index [important]]\\n\\tat org.elasticsearch.cluster.metadata.IndexNameExpressionResolver$WildcardExpressionResolver.indexNotFoundException(IndexNameExpressionResolver.java:762)\\n\\tat org.elasticsearch.cluster.metadata.IndexNameExpressionResolver$WildcardExpressionResolver.innerResolve(IndexNameExpressionResolver.java:714)\\n\\tat org.elasticsearch.cluster.metadata.IndexNameExpressionResolver$WildcardExpressionResolver.resolve(IndexNameExpressionResolver.java:670)\\n\\tat org.elasticsearch.cluster.metadata.IndexNameExpressionResolver.concreteIndices(IndexNameExpressionResolver.java:163)\\n\\tat org.elasticsearch.cluster.metadata.IndexNameExpressionResolver.concreteIndexNames(IndexNameExpressionResolver.java:142)\\n\\tat org.elasticsearch.cluster.metadata.IndexNameExpressionResolver.concreteIndexNames(IndexNameExpressionResolver.java:102)\\n\\tat org.elasticsearch.snapshots.SnapshotsService$1.execute(SnapshotsService.java:280)\\n\\tat org.elasticsearch.cluster.ClusterStateUpdateTask.execute(ClusterStateUpdateTask.java:47)\\n\\tat org.elasticsearch.cluster.service.MasterService.executeTasks(MasterService.java:687)\\n\\tat org.elasticsearch.cluster.service.MasterService.calculateTaskOutputs(MasterService.java:310)\\n\\tat org.elasticsearch.cluster.service.MasterService.runTasks(MasterService.java:210)\\n\\tat org.elasticsearch.cluster.service.MasterService$Batcher.run(MasterService.java:142)\\n\\tat org.elasticsearch.cluster.service.TaskBatcher.runIfNotProcessed(TaskBatcher.java:150)\\n\\tat org.elasticsearch.cluster.service.TaskBatcher$BatchedTask.run(TaskBatcher.java:188)\\n\\tat org.elasticsearch.common.util.concurrent.ThreadContext$ContextPreservingRunnable.run(ThreadContext.java:688)\\n\\tat org.elasticsearch.common.util.concurrent.PrioritizedEsThreadPoolExecutor$TieBreakingPrioritizedRunnable.runAndClean(PrioritizedEsThreadPoolExecutor.java:252)\\n\\tat org.elasticsearch.common.util.concurrent.PrioritizedEsThreadPoolExecutor$TieBreakingPrioritizedRunnable.run(PrioritizedEsThreadPoolExecutor.java:215)\\n\\tat java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)\\n\\tat java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)\\n\\tat java.base/java.lang.Thread.run(Thread.java:834)\\n\"}"
+    } ,
+    "next_execution": "2019-04-24T01:30:00.000Z",                        
+    "next_execution_millis": 1556048160000
+  }
+}
+'
+```
+
+### 测试快照策略
+
+```bash
+curl -X POST "http://127.0.0.1:9200/_slm/policy/nightly-snapshots/_execute?pretty"
+```
+
+### SLM权限设置
+
+```bash
+curl -X POST "http://127.0.0.1:9200/_security/role/slm-admin?pretty" -H 'Content-Type: application/json' -d'
+{
+  "cluster": ["manage_slm", "cluster:admin/snapshot/*"],
+  "indices": [
+    {
+      "names": [".slm-history-*"],
+      "privileges": ["all"]
+    }
+  ]
+}'
+```
+
+### 参考文档
+
+https://www.elastic.co/guide/en/elasticsearch/reference/7.13/snapshot-restore.html
+
+## 使用对象存储库备份快照（`repository-s3`）
+
+### 集群快照备份
+
+集群每个节点安装 `repository-s3` 插件
+
+```bash
+# 进入ES安装目录
+cd /opt/elasticsearch
+
+# 切换到 elastic 用户
+su elastic
+
+# 安装插件
+bin/elasticsearch-plugin install repository-s3
+
+# 该插件必须安装在集群中的每个节点上，安装后必须重新启动每个节点。
+```
+
+重启集群每个节点（数据节点优先，主节点最后）
+
+```bash
+# 禁止分片自动分布
+PUT _cluster/settings
+{
+  "persistent": {
+    "cluster.routing.allocation.enable": "primaries"
+  }
+}
+
+# 执行同步刷新
+POST _flush/synced
+
+# 关闭一个节点
+systemctl stop elasticsearch.service 
+
+# 启动关闭的节点
+systemctl start elasticsearch.service 
+
+# 启用分片自动分布
+PUT _cluster/settings
+{
+  "persistent": {
+    "cluster.routing.allocation.enable": null
+  }
+}
+
+# 执行同步刷新，等待全部分片重新加入集群
+POST _flush/synced
+
+# 对集群中每个节点重复以上操作，完成集群全部节点重启；
+# 注意：ES集群对外访问使用负载均衡，该重启方式不会影响线上业务运行。
+```
+
+集群每个节点添加 `repository-s3` 密钥
+
+```bash
+# 切换到 elastic 用户
+su elastic
+
+# 添加 access_key，回车后输入秘钥key
+bin/elasticsearch-keystore add s3.client.default.access_key
+
+# 添加 secret_key，回车后输入秘钥字符串
+bin/elasticsearch-keystore add s3.client.default.secret_key
+
+# 重载秘钥配置
+POST _nodes/reload_secure_settings
+
+# 查看秘钥列表
+bin/elasticsearch-keystore list
+```
+
+创建快照仓库，并验证是否包含每个节点
+
+```bash
+# 创建快照仓库
+PUT _snapshot/仓库名
+{
+  "type": "s3",
+  "settings": {
+    "endpoint": "oss-cn-shenzhen.aliyuncs.com",     # OSS节点
+    "bucket": "es",                                 # bucket名称
+    "base_path": "esdata",                          # 快照文件所在路径
+    "max_snapshot_bytes_per_sec": "200mb",          # 调整快照创建的速度，默认 40mb
+    "max_restore_bytes_per_sec": "200mb"            # 调整快照恢复的速度，默认无限制
+  }
+}
+
+# 验证快照仓库
+POST /_snapshot/仓库名/_verify
+
+# 查看所有仓库
+GET _snapshot/_all
+
+# 删除快照仓库
+DELETE _snapshot/仓库名
+```
+
+创建快照，并查看快照备份状态
+
+```bash
+# 创建快照
+PUT /_snapshot/仓库名/快照名
+{
+  "indices": "index_*",             # 需要备份的表名，支持通配符
+  "ignore_unavailable": true,       # 忽略indices丢失或关闭的数据流和索引
+  "include_global_state": true      # 备份全局设置，全量备份为true，增量备份为false
+}
+
+# 查看快照状态
+GET _snapshot/仓库名/快照名/_status
+GET _snapshot/仓库名/快照名
+
+# 查仓库下所有快照
+GET _snapshot/仓库名/_all
+
+# 删除快照
+DELETE _snapshot/仓库名/快照名
+
+# 多次备份“快照名”不能重复；同一仓库下，第一次快照为全量备份，后续快照都是增量备份。
+```
+
+### 集群快照还原
+
+集群每个节点安装 `repository-s3` 插件
+
+```bash
+# 进入ES安装目录
+cd /opt/elasticsearch
+
+# 安装插件
+sudo bin/elasticsearch-plugin install repository-s3
+
+# 该插件必须安装在集群中的每个节点上，安装后必须重新启动每个节点。
+
+# 注意：因为是新集群，还未在线运行，所以可以直接重启所有节点。
+```
+
+集群每个节点添加 `repository-s3` 密钥
+
+```bash
+# 添加 access_key，回车后输入秘钥key
+bin/elasticsearch-keystore add s3.client.default.access_key
+
+# 添加 secret_key，回车后输入秘钥字符串
+bin/elasticsearch-keystore add s3.client.default.secret_key
+
+# 重载秘钥配置
+POST _nodes/reload_secure_settings
+
+# 查看秘钥列表
+bin/elasticsearch-keystore list
+```
+
+创建快照仓库，并验证是否包含每个节点
+
+```bash
+# 创建快照仓库【只读】
+PUT _snapshot/仓库名
+{
+  "type": "s3",
+  "settings": {
+    "endpoint": "oss-cn-shenzhen.aliyuncs.com",     # OSS节点
+    "bucket": "es",                                 # bucket名称
+    "base_path": "esdata",                          # 快照文件所在路径
+    "max_snapshot_bytes_per_sec": "200mb",          # 调整快照创建的速度，默认 40mb
+    "max_restore_bytes_per_sec": "200mb",           # 调整快照恢复的速度，默认无限制
+    "readonly": true                                # 恢复建议设置为只读，避免误操作
+  }
+}
+
+# 验证快照仓库
+POST /_snapshot/仓库名/_verify
+```
+
+调整集群恢复分片速度和并发数
+
+```bash
+# 修改集群配置
+PUT _cluster/settings 
+{
+  "transient": {
+    "indices.recovery.max_bytes_per_sec": "200mb",                 # 恢复时每秒字节数限制
+    "cluster.routing.allocation.node_concurrent_recoveries": "3"   # 分片恢复并发数，不宜设置过大，否则容易死锁
+  }
+}
+
+# 查看集群配置（包括默认配置）
+GET _cluster/settings?flat_settings&include_defaults
+```
+
+查看仓库所有快照，按顺序恢复快照备份
+
+```bash
+# 查仓库下所有快照
+GET _snapshot/仓库名/_all
+
+# 恢复快照（恢复整个快照）
+POST /_snapshot/仓库名/快照名/_restore
+{
+  "include_global_state": true,           # 恢复全局设置，全量备份为true，增量备份为false
+  "index_settings": {
+    "index.number_of_replicas": 0         # 关闭副本节约时间
+  }
+}
+
+# 恢复快照（部分恢复快照）
+POST /_snapshot/仓库名/快照名/_restore
+{
+  "indices": "index_1,index_2",           # 部分恢复需索引不存在，或自动重命名为新索引（原索引不受影响）
+  "index_settings": {
+    "index.number_of_replicas": 0         # 关闭副本节约时间
+  },
+  "rename_pattern": "index_(.+)",
+  "rename_replacement": "restored_index_$1",
+  "include_aliases": false
+}
+
+# 关闭索引（快照增量恢复前需关闭索引）
+POST index_*/_close
+
+# 打开索引（快照恢复后会自动打开索引，也可以手动打开）
+POST index_*/_open
+
+# 查看恢复状态
+GET /_cat/recovery?active_only
+```
+
+所有快照恢复完成后，增加索引副本
+
+```bash
+PUT index_*/_settings
+{
+  "index.number_of_replicas": 1
+}
+```
+
+
 
 ## elasticsearch-head插件安装
 
@@ -1461,69 +2182,258 @@ http.cors.allow-origin: "*"
 
 ## 第三方工具elasticdump备份恢复
 
-1. **安装**
+[官方文档](https://github.com/elasticsearch-dump/elasticsearch-dump)
+
+### 安装
+
+```bash
+# 安装部署 node 环境
+npm install elasticdump -g
+```
+
+### 命令参数介绍
+
+- `--input`: 数据来源 
+- `--output`: 接收数据的目标 
+- `--type`: 导出的数据类型（settings, analyzer, data, mapping, alias, template）
+
+备份数据类型
+
+- settings：指定 index 的配置信息，比如分片数、副本数，tranlog 同步条件、refresh 策略等信息；
+- mappings：指定 index 的内部构建信息；
+- templates：索引模板，就是把已经创建好的某个索引的参数设置（settings）和索引映射（mapping）保存下来作为模板，在创建新索引时，指定要使用的模板名,，就可以直接重用已经定义好的模板中的设置和映射；
+- analyzer：分词器；
+- data：数据；
+- alias：索引别名
+
+### 查看需要迁移的索引
+
+```bash
+curl -X GET http://127.0.0.1:9200/_cat/indices?v=true
+```
+
+### 备份数据到集群
+
+```bash
+# 备份数据到另一个 ES 集群
+elasticdump \
+  --input=http://10.0.0.121:9200/my_index \
+  --output=http://10.0.0.51:9200/my_index \
+  --type=analyzer
+ 
+elasticdump \
+  --input=http://10.0.0.121:9200/my_index \
+  --output=http://10.0.0.51:9200/my_index \
+  --type=mapping
+  
+elasticdump \
+  --input=http://10.0.0.121:9200/my_index \
+  --output=http://10.0.0.51:9200/my_index \
+  --type=data
+
+elasticdump \
+  --input=http://10.0.0.121:9200/my_index \
+  --output=http://10.0.0.51:9200/my_index \
+  --type=template
+```
+
+### 备份数据到本地
+
+```bash
+elasticdump \
+  --input=http://10.0.0.121:9200/student \
+  --output=/tmp/student_mapping.json \
+  --type=mapping
+  
+elasticdump \
+  --input=http://10.0.0.121:9200/student \
+  --output=/tmp/student_data.json \
+  --type=data
+```
+
+### 导出文件打包
+
+```bash
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=$ \
+  | gzip > /data/my_index.json.gz
+```
+
+### 备份指定条件的数据
+
+```bash
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=query.json \
+  --searchBody="{\"query\":{\"term\":{\"username\": \"admin\"}}}"
+```
+
+### 导入数据命令
+
+```bash
+elasticdump \
+  --input=./student_template.json \
+  --output=http://10.0.0.121:9200 \
+  --type=template
+  
+elasticdump \
+  --input=./student_mapping.json \
+  --output=http://10.0.0.121:9200 \
+  --type=mapping
+  
+elasticdump \
+  --input=./student_data.json \
+  --output=http://10.0.0.121:9200 \
+  --type=data
+  
+elasticdump \
+  --input=./student_analyzer.json \
+  --output=http://10.0.0.121:9200 \
+  --type=analyzer
+
+# 恢复数据的时候，如果数据已存在，会覆盖原数据
+```
+
+### 备份脚本
+
+1. 指定索引
 
    ```bash
-   # 安装部署 node 环境
-   npm install elasticdump -g
+   [root@dbtest03 test]# cat bak.sh
+   #!/bin/bash
+   # 备份集群节点 IP 
+   host_ip=10.0.0.121
+   index_name='
+   student
+   teacher
+   abc
+   '
+   for index in `echo $index_name`
+   do
+       echo "start input index ${index}"
+       elasticdump --input=http://${host_ip}:9200/${index} --output=/data/${index}_alias.json --type=alias &> /dev/null
+       elasticdump --input=http://${host_ip}:9200/${index} --output=/data/${index}_analyzer.json --type=analyzer &> /dev/null
+       elasticdump --input=http://${host_ip}:9200/${index} --output=/data/${index}_data.json --type=data &> /dev/null
+       elasticdump --input=http://${host_ip}:9200/${index} --output=/data/${index}_alias.json --type=alias &> /dev/null
+       elasticdump --input=http://${host_ip}:9200/${index} --output=/data/${index}_template.json --type=template &> /dev/null
+   done
    ```
 
-2. **使用**
+2. 全部索引
 
-   [官方文档](https://github.com/elasticsearch-dump/elasticsearch-dump)
+   ```bash
+   [root@dbtest03 test]# cat back.sh
+   ES=http://10.0.0.121:9200
+   ED=/data
+   
+   mkdir /data -p
+   
+   for index in `curl -s -XGET $ES/_cat/indices?h=i`
+   do
+       # settings, analyzer, data, mapping, alias, template
+       echo "elasticdump --input=$ES/$index --output=$ED/$index"
+       elasticdump --input=$ES/$index --output=${ED}/${index}_setting.json --limit=10000 --type=settings --searchBody '{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'
+       elasticdump --input=$ES/$index --output=${ED}/${index}_analyzer.json --limit=10000 --type=analyzer --searchBody '{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'
+       elasticdump --input=$ES/$index --output=${ED}/${index}_alias.json --limit=10000 --type=alias --searchBody '{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'
+       elasticdump --input=$ES/$index  --output=${ED}/${index}_template.json --limit=10000 --type=template --searchBody '{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'
+       elasticdump --input=$ES/$index --output=${ED}/${index}_mapping.json --limit=10000 --type=mapping --searchBody '{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'
+       elasticdump --input=$ES/$index --output=${ED}/${index}_data.json --limit=10000 --type=data --searchBody '{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'
+       echo ""
+   done
+   
+   ```
 
-   - 查看需要迁移的索引
+### 导入脚本
 
-     ```bash
-     curl http://127.0.0.1:9200/_cat/indices?v=true
-     ```
+1. 指定索引
 
-   - 远程迁移命令
+   ```bash
+   [root@dbtest03 test]# cat imp.sh
+   #!/bin/bash
+   # 导入集群节点 IP 
+   host_ip=10.0.0.121
+   index_name='
+   abc
+   student
+   '
+   for index in `echo $index_name`
+   do
+       echo "start input index ${index}"
+       elasticdump --input=/data/${index}_alias.json --output=http://${host_ip}:9200/${index} --type=alias &> /dev/null
+       elasticdump --input=/data/${index}_analyzer.json --output=http://${host_ip}:9200/${index} --type=analyzer &> /dev/null
+       elasticdump --input=/data/${index}_data.json --output=http://${host_ip}:9200/${index} --type=data &> /dev/null
+       elasticdump --input=/data/${index}_template.json --output=http://${host_ip}:9200/${index} --type=template &> /dev/null
+   done
+   ```
 
-     ```bash
-     #远程迁移mapping结构
-     elasticdump \
-       --input=http://production.es.com:9200/my_index \
-       --output=http://staging.es.com:9200/my_index \
-       --type=mapping
-     
-     #远程迁移索引数据
-     elasticdump \
-       --input=http://production.es.com:9200/my_index \
-       --output=http://staging.es.com:9200/my_index \
-       --type=data
-     
-     #远程迁移分词
-     elasticdump \
-       --input=http://production.es.com:9200/my_index \
-       --output=http://staging.es.com:9200/my_index \
-       --type=analyzer
-     
-     #远程认证迁移
-     elasticdump \
-       --input=http://production.es.com:9200/my_index \
-       --output=http://staging.es.com:9200/my_index \
-       --httpAuthFile pass.ini \
-       --type=data
-     
-     #远程迁移多个索引
-     multielasticdump \
-       --direction=dump \
-       --match='^.*$' \
-       --input=http://production.es.com:9200 \
-       --output=/tmp/es_backup
-     
-     multielasticdump \
-       --direction=dump \
-       --match='^.*-index$'\
-       --input=http://production.es.com:9200 \
-       --ignoreType='mapping,settings,template' \
-       --output=/tmp/es_backup
-     
-     multielasticdump \
-       --direction=load \
-       --input=/tmp/es_backup \
-       --output=http://127.0.0.1:9200
-     ```
+### 迁移全部索引数据脚本
 
-     
+```bash
+# 源 ES 集群地址
+ES=http://search-es-0.search-es.app.svc.cluster.local:9200
+# 目标 ES 集群地址
+ED=http://es-0.es.infra.svc.cluster.local:9200
+ 
+for index in `curl -s -XGET $ES/_cat/indices?h=i`
+do
+    # settings, analyzer, data, mapping, alias, template
+    echo "elasticdump --input=$ES/$index --output=$ED/$index"
+    elasticdump --input=$ES/$index --output=$ED/$index --limit=10000 --type=settings --searchBody '{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'
+    elasticdump --input=$ES/$index --output=$ED/$index --limit=10000 --type=analyzer --searchBody '{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'
+    elasticdump --input=$ES/$index --output=$ED/$index --limit=10000 --type=alias --searchBody '{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'
+    elasticdump --input=$ES/$index --output=$ED/$index --limit=10000 --type=template --searchBody '{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'
+    elasticdump --input=$ES/$index --output=$ED/$index --limit=10000 --type=mapping --searchBody '{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'
+    elasticdump --input=$ES/$index --output=$ED/$index --limit=10000 --type=data --searchBody '{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'
+    echo ""
+done
+```
+
+### 迁移命令汇总
+
+```bash
+# 远程迁移mapping结构
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=http://staging.es.com:9200/my_index \
+  --type=mapping
+
+# 远程迁移索引数据
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=http://staging.es.com:9200/my_index \
+  --type=data
+
+# 远程迁移分词
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=http://staging.es.com:9200/my_index \
+  --type=analyzer
+
+# 远程认证迁移
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=http://staging.es.com:9200/my_index \
+  --httpAuthFile pass.ini \
+  --type=data
+
+# 远程迁移多个索引
+multielasticdump \
+  --direction=dump \
+  --match='^.*$' \
+  --input=http://production.es.com:9200 \
+  --output=/tmp/es_backup
+
+multielasticdump \
+  --direction=dump \
+  --match='^.*-index$'\
+  --input=http://production.es.com:9200 \
+  --ignoreType='mapping,settings,template' \
+  --output=/tmp/es_backup
+
+multielasticdump \
+  --direction=load \
+  --input=/tmp/es_backup \
+  --output=http://127.0.0.1:9200
+```
+

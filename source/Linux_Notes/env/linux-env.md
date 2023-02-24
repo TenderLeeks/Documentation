@@ -299,3 +299,21 @@ $ echo -e "export DOTNET_ROOT=/opt/dotnet\nexport PATH=\$PATH:/opt/dotnet" >> /e
 
 
 
+## 安装 .NET 7.0 SDK
+
+[官方文档](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+
+```bash
+wget https://download.visualstudio.microsoft.com/download/pr/c646b288-5d5b-4c9c-a95b-e1fad1c0d95d/e13d71d48b629fe3a85f5676deb09e2d/dotnet-sdk-7.0.102-linux-x64.tar.gz -P /tmp
+
+mkdir -p /opt/dotnet-sdk-7.0.102 && \
+tar zxf /tmp/dotnet-sdk-7.0.102-linux-x64.tar.gz -C /opt/dotnet-sdk-7.0.102
+
+# 设置环境变量
+echo -e "export DOTNET_ROOT=/opt/dotnet-sdk-7.0.102\nexport PATH=\$PATH:/opt/dotnet-sdk-7.0.102" >> /etc/profile
+
+# 手动设置
+export DOTNET_ROOT=/opt/dotnet-sdk-7.0.102
+export PATH=$PATH:/opt/dotnet-sdk-7.0.102
+```
+

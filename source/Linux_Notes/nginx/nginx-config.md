@@ -432,6 +432,18 @@ server {
 }
 ```
 
+## 长连接配置
+
+```nginx
+location /websocket/ {
+   proxy_pass   http://xx.xx.xxx.xxx:2222;
+   # 以下三个配置加上即可开始wss服务
+   proxy_http_version 1.1;
+   proxy_set_header Upgrade $http_upgrade;
+   proxy_set_header Connection "upgrade";
+}
+```
+
 ## 跨域配置
 
 ```nginx

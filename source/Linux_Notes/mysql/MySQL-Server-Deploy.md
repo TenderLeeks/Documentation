@@ -443,7 +443,11 @@ $ apt-get install libncurses5 libaio1 -y
 ```shell
 $ export UNZIP_DIR="/opt" && export MYSQL_VERSION="mysql-8.0.29"
 
-$ wget https://cdn.mysql.com//Downloads/MySQL-8.0/"${MYSQL_VERSION}"-linux-glibc2.12-x86_64.tar.xz
+# wget https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.30-linux-glibc2.17-x86_64-minimal.tar.xz
+
+# wget https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.28-linux-glibc2.17-x86_64-minimal.tar.xz
+
+$ wget https://cdn.mysql.com/Downloads/MySQL-8.0/"${MYSQL_VERSION}"-linux-glibc2.12-x86_64.tar.xz
 
 $ tar -xf "${MYSQL_VERSION}"-linux-glibc2.12-x86_64.tar.xz -C "${UNZIP_DIR}"
 $ mv "${UNZIP_DIR}"/"${MYSQL_VERSION}"-linux-glibc2.12-x86_64 "${UNZIP_DIR}"/"${MYSQL_VERSION}"
