@@ -292,7 +292,7 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
   # 如果不打开此项，当系统物理内存空间不足，ES将使用交换分区，ES如果使用交换分区，那么ES的性能将会变得很差
   bootstrap.memory_lock: true
   
-  # 删除索引时要求明确的名称
+  # 删除索引时要求明确的名称，这个设置使删除只限于特定名称指向的数据, 而不允许通过指定 _all 或通配符来删除指定索引库
   action.destructive_requires_name: true
   ingest.geoip.downloader.enabled: false
   
@@ -1089,9 +1089,22 @@ Option             Description
 1. 删除索引数据
 
    ```bash
-   curl -XDELETE 'http://127.0.0.1:9200/jr-2018.08.06'
+   # 删除单个索引
+   curl -XDELETE 'http://127.0.0.1:9200/index_name_01'
+   # 删除多个索引
+   curl -XDELETE 'http://127.0.0.1:9200/index_name_01,index_name_02,index_name_03'
+   
+   curl -XDELETE 'http://127.0.0.1:9200/index_name_*'
+   
+   # 删除全部索引（强烈不建议）
+   curl -XDELETE 'http://127.0.0.1:9200/_all'
+   curl -XDELETE 'http://127.0.0.1:9200/*'
+   
+   # 删除全部索引操作非常危险，禁止措施是：在elasticsearch.yml 配置文件中添加以下配置
+   # action.destructive_requires_name: true
+   # 这个设置使删除只限于特定名称指向的数据, 而不允许通过指定 _all 或通配符来删除指定索引库
    ```
-
+   
    
 
 

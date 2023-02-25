@@ -417,7 +417,7 @@ server {
   location @ystarvote_router {
     rewrite ^.*$ /dapp/ystarvote/index.html last;
   }
-
+s
   location /dapp/yswap {
     proxy_pass http://xxx.xxx.xxx.xxx;
     proxy_redirect  off;
