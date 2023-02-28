@@ -301,11 +301,11 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
   xpack.security.transport.ssl.enabled: true
   xpack.monitoring.collection.enabled: true
   xpack.security.transport.ssl.verification_mode: certificate
-  xpack.security.transport.ssl.keystore.path: /etc/elasticsearch/certs/elastic-certificates.p12
-  xpack.security.transport.ssl.truststore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+  xpack.security.transport.ssl.keystore.path: /opt/elasticsearch/certs/elastic-certificates.p12
+  xpack.security.transport.ssl.truststore.path: /opt/elasticsearch/certs/elastic-certificates.p12
   xpack.security.http.ssl.enabled: true
-  xpack.security.http.ssl.keystore.path: /etc/elasticsearch/certs/elastic-certificates.p12
-  xpack.security.http.ssl.truststore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+  xpack.security.http.ssl.keystore.path: /opt/elasticsearch/certs/elastic-certificates.p12
+  xpack.security.http.ssl.truststore.path: /opt/elasticsearch/certs/elastic-certificates.p12
   xpack.security.http.ssl.client_authentication: none
   xpack.security.http.ssl.verification_mode: certificate
   
@@ -414,7 +414,39 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
 
 2. 设置内置用户密码
 
-   启动集群初始化 `elastic,apm_system,kibana,logstash_system,beats_system,remote_monitoring_user`用户的密码，请牢记！ `bin/elasticsearch-setup-passwords auto` 各用户生成随机密码。 `bin/elasticsearch-setup-passwords interactive` 手动定义密码。
+   启动集群初始化 `elastic,apm_system,kibana,logstash_system,beats_system,remote_monitoring_user`用户的密码，请牢记！ `bin/elasticsearch-setup-passwords auto` 各用户生成随机密码。 
+
+   ```bash
+   $ bin/elasticsearch-setup-passwords auto
+   Initiating the setup of passwords for reserved users elastic,apm_system,kibana,kibana_system,logstash_system,beats_system,remote_monitoring_user.
+   The passwords will be randomly generated and printed to the console.
+   Please confirm that you would like to continue [y/N]y
+   
+   
+   Changed password for user apm_system
+   PASSWORD apm_system = m7d5aijhnm24fyTt1oAh
+   
+   Changed password for user kibana_system
+   PASSWORD kibana_system = BOIvKntIxW3dB0OAX5f6
+   
+   Changed password for user kibana
+   PASSWORD kibana = BOIvKntIxW3dB0OAX5f6
+   
+   Changed password for user logstash_system
+   PASSWORD logstash_system = QrPfd7GnH0Ey3qRwRqQS
+   
+   Changed password for user beats_system
+   PASSWORD beats_system = 2OKJEs1XrqwNIo1D1sGg
+   
+   Changed password for user remote_monitoring_user
+   PASSWORD remote_monitoring_user = pIfpLEu5WtnJ2JYYsJL1
+   
+   Changed password for user elastic
+   PASSWORD elastic = bYhCy16GSKmnl6cddSqM
+   
+   ```
+
+   `bin/elasticsearch-setup-passwords interactive` 手动定义密码。
 
    ```bash
    bin/elasticsearch-setup-passwords interactive
@@ -685,7 +717,7 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
 7. 查看集群状态
 
    ```bash
-   curl 'http://127.0.0.1:9200/_cat/nodes?v=true'
+   curl -XGET 'http://127.0.0.1:9200/_cat/nodes?v=true'
    
    curl -XGET 'http://127.0.0.1:9200/_cat/health?v'
    ```
@@ -1805,7 +1837,7 @@ http.cors.allow-origin: "*"
 
    ```bash
    wget https://artifacts.elastic.co/downloads/kibana/kibana-7.15.1-linux-x86_64.tar.gz -P /tmp
-   tar -xzf kibana-7.15.1-linux-x86_64.tar.gz -C /opt
+   tar -xzf /tmp/kibana-7.15.1-linux-x86_64.tar.gz -C /opt
    mv /opt/kibana-7.15.1-linux-x86_64 /opt/kibana-7.15.1
    ```
 
