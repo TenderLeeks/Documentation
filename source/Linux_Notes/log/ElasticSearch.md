@@ -1050,6 +1050,16 @@ Option             Description
    ```bash
    curl -XGET "http://127.0.0.1:9200/_xpack/security/role_mapping/<username>"
    ```
+   
+9. 查询所有索引信息
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/_cat/indices?v"
+   ```
+   
+   
+
+
 
 ### 修改
 
