@@ -85,6 +85,7 @@ $ sudo apt-get update -y
 $ sudo apt-get upgrade -y
 
 # 下载 http://tengine.taobao.org/download.html
+# http://tengine.taobao.org/download/tengine-3.0.0.tar.gz
 $ wget http://tengine.taobao.org/download/tengine-2.3.3.tar.gz -P /tmp
 $ tar -zxf /tmp/tengine-2.3.3.tar.gz -C /tmp
 
@@ -186,12 +187,12 @@ $ sudo systemctl stop nginx.service
 
 ## 使用 Docker 配置 Tengine
 
-Dockerfile 内容
+### Dockerfile
 
 ```dockerfile
 FROM ubuntu:20.04
 
-ARG VERSION=2.3.3
+ARG VERSION=3.0.0
 
 WORKDIR /opt
 
@@ -267,49 +268,128 @@ EXPOSE 80/tcp 443/tcp
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
-构建 Docker 镜像
+### 构建 Docker 镜像
 
 ```bash
-docker build -t leeks200930/nginx:tengine-2.3.3 .
+image_name="leeks200930/nginx:tengine-3.0.0"
+docker build -t ${image_name} .
 ```
 
-部署 Tengine Docker 环境
+### 部署 Tengine Docker 环境
 
 ```bash
-# 首次启动
-mkdir -p /opt/nginx/conf/{conf.d,ssl-cert} /opt/nginx/{www,logs}
+mkdir -p /opt/nginx/conf/{conf.d,ssl-cert} /opt/nginx/{www,logs,bin}
 
-docker pull leeks200930/nginx:tengine-2.3.3
+docker pull ${image_name}
 
-docker run -d --name nginx \
-  -p 80:80 -p 443:443 \
-  -v /etc/localtime:/etc/localtime \
-  -v /opt/nginx/conf/conf.d:/opt/nginx/conf/conf.d \
-  -v /opt/nginx/conf/ssl-cert:/opt/nginx/conf/ssl-cert \
-  -v /opt/nginx/www:/opt/nginx/www \
-  -v /opt/nginx/logs:/opt/nginx/logs \
-  leeks200930/nginx:tengine-2.3.3
+# 拷贝配置
+docker run --rm --name nginx -v /opt/nginx/conf:/tmp \
+  ${image_name} cp -a /opt/nginx/conf/nginx.conf /tmp
 
-docker cp nginx:/opt/nginx/conf/nginx.conf /opt/nginx/conf
-
-docker rm -f nginx
-
-# 重新启动
-docker run -d --name nginx \
-  -p 80:80 -p 443:443 \
+# 启动
+docker run -d --name nginx --network=host \
   -v /etc/localtime:/etc/localtime \
   -v /opt/nginx/conf/nginx.conf:/opt/nginx/conf/nginx.conf \
   -v /opt/nginx/conf/conf.d:/opt/nginx/conf/conf.d \
   -v /opt/nginx/conf/ssl-cert:/opt/nginx/conf/ssl-cert \
   -v /opt/nginx/www:/opt/nginx/www \
   -v /opt/nginx/logs:/opt/nginx/logs \
-  leeks200930/nginx:tengine-2.3.3
+  ${image_name}
 
+# 测试
 docker exec nginx sh -c 'nginx -t'
 docker exec nginx sh -c 'nginx -s reload'
 ```
 
+`vim /opt/nginx/bin/nginx`
 
+```bash
+#!/bin/bash
+#set -x
+
+function main() {
+  [ -z "$1" ] && docker exec nginx sh -c 'nginx -h' && return
+  command="nginx $@"
+  docker exec nginx sh -c "${command}"
+}
+
+main "$@"
+```
+
+```bash
+chmod +x /opt/nginx/bin/nginx
+echo -e "export PATH=\$PATH:/opt/nginx/bin" >> /etc/profile
+source /etc/profile
+```
+
+### nginx.conf 配置信息
+
+```nginx
+user nginx;
+worker_processes auto;
+worker_cpu_affinity auto;
+worker_rlimit_nofile 65535;
+
+error_log logs/error.log;
+pid logs/nginx.pid;
+
+events {
+  use epoll;
+  worker_connections 65535;
+  accept_mutex off;
+  multi_accept off;
+}
+
+http {
+  server_tokens off;
+  sendfile on;
+  tcp_nopush on;
+  tcp_nodelay on;
+
+  log_format main '"$proxy_add_x_forwarded_for", "$time_iso8601", '
+      '"$host$uri", "$http_referer", "$uri", "$server_addr", '
+      '"$request_body", "$request", "$status", '
+      '"$body_bytes_sent", "$request_time", "$upstream_response_time", '
+      '"$upstream_addr", "$http_user_agent", "$remote_addr", "$remote_user", '
+      '"$http_x_forwarded_for"';
+
+  access_log  logs/access.log  main;
+
+  keepalive_timeout 30;
+  client_header_timeout 10;
+  client_body_timeout 10;
+  reset_timedout_connection on;
+  send_timeout 10;
+
+#    limit_conn_zone $binary_remote_addr zone=addr:10m;
+#    limit_conn addr 100;
+#    limit_conn_zone $server_name zone=perserver:10m;
+#    limit_conn perserver 100;
+
+  include mime.types;
+  default_type application/octet-stream;
+  charset UTF-8;
+
+  gzip on;
+  gzip_disable "msie6";
+  gzip_proxied any;
+  gzip_min_length 1k;
+  gzip_comp_level 5;
+  gzip_vary on;
+  gzip_buffers 16 8k;
+  gzip_types text/plain application/x-javascript text/css application/xml application/json text/javascript text/xml;
+
+  open_file_cache max=102400 inactive=20s;
+  open_file_cache_valid 30s;
+  open_file_cache_min_uses 1;
+
+  types_hash_max_size 2048;
+  client_header_buffer_size 4k;
+  client_max_body_size 64m;
+
+  include /opt/nginx/conf/conf.d/*.conf;
+}
+```
 
 
 

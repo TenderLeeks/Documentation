@@ -334,6 +334,28 @@ http {
 
 ```nginx
 server {
+    listen 443 ssl;
+
+    server_name xxx.leeks.info;
+
+    ssl_certificate /opt/nginx/conf/ssl_cert/leeks.info.crt;
+    ssl_certificate_key /opt/nginx/conf/ssl_cert/leeks.info.key;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+
+    access_log logs/leeks.info.log main;
+  
+    set $static_dir "/opt/nginx/www";
+  
+    location / {
+      root $static_dir;
+      index index.html index.htm;
+      try_files $uri $uri /index.html;
+    }
+}
+
+server {
   listen 80;
   server_name xxxxx.cn;
   location / {
