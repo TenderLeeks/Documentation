@@ -24,8 +24,13 @@ $ sudo apt-get install -y libaio1
 ### 下载二进制包
 
 ```shell
-$ export UNZIP_DIR="/opt" && export NAME="mysql-5.7.28"
-$ wget https://cdn.mysql.com/archives/mysql-5.7/${NAME}-linux-glibc2.12-x86_64.tar.gz -P /tmp
+$ export UNZIP_DIR="/opt" && export NAME="mysql-5.7.38"
+# https://downloads.mysql.com/archives/community/
+
+#$ wget https://cdn.mysql.com/archives/mysql-5.7/${NAME}-linux-glibc2.12-x86_64.tar.gz -P /tmp
+
+wget https://downloads.mysql.com/archives/get/p/23/file/${NAME}-linux-glibc2.12-x86_64.tar.gz -P /tmp
+
 $ tar -zxf /tmp/${NAME}-linux-glibc2.12-x86_64.tar.gz -C ${UNZIP_DIR}
 $ mv ${UNZIP_DIR}/${NAME}-linux-glibc2.12-x86_64/ ${UNZIP_DIR}/${NAME}
 ```
@@ -426,6 +431,81 @@ $ docker run -itd -p ${MYSQL_PORT}:3306 --name ${MYSQL_NAME} \
 -e MYSQL_ROOT_PASSWORD=root123456 mysql
 ```
 
+## docker安装 MySQL 8.0
+
+[docker mysql 镜像仓库](https://hub.docker.com/_/mysql?tab=tags&page=1&ordering=last_updated)
+
+```bash
+docker pull mysql:8.0.33
+
+mkdir -p /opt/mysql8/{conf,logs,data}
+```
+
+
+
+my.cnf
+
+```bash
+vim /opt/mysql8/conf/my.cnf
+
+[mysqld]
+pid-file=/var/run/mysqld/mysqld.pid
+socket=/var/run/mysqld/mysqld.sock
+datadir=/var/lib/mysql
+port=3306
+sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+bind-address=0.0.0.0
+
+# 只能用IP地址检查客户端的登录，不用主机名
+skip_name_resolve=1
+# 事务隔离级别，默认为可重复读，mysql默认可重复读级别（此级别下可能参数很多间隙锁，影响性能）
+transaction_isolation=READ-COMMITTED
+
+secure-file-priv=NULL
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+character-set-server=utf8mb4
+
+[client]
+default-character-set=utf8mb4
+[mysql]
+default-character-set=utf8mb4
+# Custom config should go here
+!includedir /etc/mysql/conf.d/
+```
+
+
+
+```bash
+docker run --restart=always  --name mysql-8.0.33\
+  --privileged=true --net=host \
+  -v /opt/mysql8/conf/my.cnf:/etc/mysql/my.cnf \
+  -v /opt/mysql8/logs:/logs \
+  -v  /opt/mysql8/data/:/var/lib/mysql \
+  -v /etc/localtime:/etc/localtime \
+  -e MYSQL_ROOT_PASSWORD='root123456' \
+  -d  mysql:8.0.33 \
+  --character-set-server=utf8mb4
+#  --lower_case_table_names=1
+
+# --lower_case_table_names=1：让表名忽略大小写，docker mysql默认区分大小写的
+# 注:参数顺序一定要对，--lower_case_table_names=1要加在镜像名后面，镜像名前面是参数，后面是mysql配置
+-p 3306:3306  \
+```
+
+
+
+```bash
+#创建账号并授权
+CREATE USER 'test'@'%' IDENTIFIED BY 'test';
+CREATE DATABASE test_database CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+GRANT ALL PRIVILEGES ON test_database .* TO 'test'@'%';
+FLUSH PRIVILEGES;
+
+ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'root123456';
+
+```
+
 
 
 ## 二进制方式部署MySQL 8.0
@@ -446,6 +526,8 @@ $ export UNZIP_DIR="/opt" && export MYSQL_VERSION="mysql-8.0.29"
 # wget https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.30-linux-glibc2.17-x86_64-minimal.tar.xz
 
 # wget https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.28-linux-glibc2.17-x86_64-minimal.tar.xz
+
+# https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.32-linux-glibc2.12-x86_64.tar.xz
 
 $ wget https://cdn.mysql.com/Downloads/MySQL-8.0/"${MYSQL_VERSION}"-linux-glibc2.12-x86_64.tar.xz
 

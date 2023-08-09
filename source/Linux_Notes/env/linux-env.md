@@ -113,6 +113,25 @@ $ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bas
 $ nvm install v14
 ```
 
+## 使用 n 命令管理node 版本
+
+```bash
+apt-get update -y
+
+apt-get install curl git make -y
+
+curl -L https://git.io/n-install | bash
+
+. /root/.bashrc
+
+sudo ln -s /root/n/bin/n /usr/bin/n
+
+sudo ln -s /root/n/bin/node /usr/local/bin/node
+
+
+
+```
+
 
 
 ```shell
@@ -319,5 +338,22 @@ echo -e "export DOTNET_ROOT=/opt/dotnet-sdk-7.0.102\nexport PATH=\$PATH:/opt/dot
 # 手动设置
 export DOTNET_ROOT=/opt/dotnet-sdk-7.0.102
 export PATH=$PATH:/opt/dotnet-sdk-7.0.102
+```
+
+```bash
+wget https://download.visualstudio.microsoft.com/download/pr/351400ef-f2e6-4ee7-9d1b-4c246231a065/9f7826270fb36ada1bdb9e14bc8b5123/dotnet-sdk-7.0.302-linux-x64.tar.gz -P /tmp
+
+mkdir -p /opt/dotnet-sdk-7.0.302 && \
+tar zxf /tmp/dotnet-sdk-7.0.302-linux-x64.tar.gz -C /opt/dotnet-sdk-7.0.302
+
+# 设置环境变量
+echo -e "export DOTNET_ROOT=/opt/dotnet-sdk-7.0.302\nexport PATH=\$PATH:/opt/dotnet-sdk-7.0.302" >> /etc/profile
+
+ln -s /opt/dotnet-sdk-7.0.302/dotnet /usr/bin/dotnet
+
+# 手动设置
+export DOTNET_ROOT=/opt/dotnet-sdk-7.0.302
+export PATH=$PATH:/opt/dotnet-sdk-7.0.302
+
 ```
 

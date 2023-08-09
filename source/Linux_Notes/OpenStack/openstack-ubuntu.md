@@ -92,6 +92,24 @@ OpenStack 和支持服务在安装和操作期间需要管理权限。在某些�
    down ip link set dev $IFACE down
    ```
 
+   在 Ubuntu 系统中，`/etc/network/interfaces` 文件用于配置网络接口的设置。这个文件定义了系统中网络接口的配置参数，以便系统能够正确地管理网络连接。每个网络接口都在文件中用一组配置行来表示。下面是给定配置的解释：
+
+   - `auto INTERFACE_NAME`：这一行指示系统在启动时自动激活指定的网络接口。`INTERFACE_NAME` 应该替换为实际的网络接口名称，比如 `eth0` 或 `wlan0`。
+
+   - `iface INTERFACE_NAME inet manual`：这一行定义了接口的配置。`INTERFACE_NAME` 应该替换为实际的网络接口名称。`inet manual` 表示该接口将会由手动配置管理，而不是通过 DHCP 自动获取网络设置。
+
+   - `up ip link set dev $IFACE up`：这一行在接口启动时运行指定的命令。`$IFACE` 是一个特殊的变量，它会被实际的接口名称替换。`ip link set dev $IFACE up` 这个命令会将指定的网络接口置为启用状态，使其能够传输和接收数据。
+
+   - `down ip link set dev $IFACE down`：这一行在接口关闭时运行指定的命令。与上面类似，`$IFACE` 会被实际的接口名称替换。`ip link set dev $IFACE down` 这个命令会将指定的网络接口置为禁用状态，从而停止数据的传输和接收。
+
+   综上所述，这个配置片段的含义是：
+
+   - 在系统启动时，自动激活某个指定的网络接口。
+   - 指定该接口将由手动配置管理，而不会通过 DHCP 自动获取网络设置。
+   - 在接口启动时，将该接口置为启用状态。
+   - 在接口关闭时，将该接口置为禁用状态。
+   - 这种配置方式通常用于一些特定的网络设置，例如需要手动配置 IP 地址、子网掩码和网关等情况。
+
 3. 重新启动系统以激活更改。
 
 ##### 配置名称解析
@@ -316,7 +334,7 @@ service chrony restart
 1. *在控制器*节点上运行此命令：
 
    ```bash
-   chronyc sources
+   $ chronyc sources
    
    MS Name/IP address         Stratum Poll Reach LastRx Last sample               
    ===============================================================================
@@ -328,7 +346,7 @@ service chrony restart
 2. 在所有其他节点上运行相同的命令：
 
    ```bash
-   chronyc sources
+   $ chronyc sources
    
    MS Name/IP address         Stratum Poll Reach LastRx Last sample               
    ===============================================================================
@@ -375,7 +393,7 @@ apt install -y python3-openstackclient
 
 大多数 OpenStack 服务使用 SQL 数据库来存储信息。数据库通常在控制器节点上运行。本指南中的过程根据发行版使用 MariaDB 或 MySQL。OpenStack 服务还支持其他 SQL 数据库，包括 [PostgreSQL](https://www.postgresql.org/)。
 
-如果您在 OpenStack 服务上看到或 出现错误日志消息，请验证最大连接数设置是否适用于您的环境。在 MariaDB 中，您可能还需要更改 [open_files_limit](https://mariadb.com/kb/en/library/server-system-variables/#open_files_limit) 配置。`Too many connections``Too many open files`
+如果您在 OpenStack 服务上看到或 出现错误日志消息，请验证最大连接数设置是否适用于您的环境。在 MariaDB 中，您可能还需要更改 [open_files_limit](https://mariadb.com/kb/en/library/server-system-variables/#open_files_limit) 配置。`Too many connectionsToo many open files`
 
 从 Ubuntu 16.04 开始，MariaDB 被更改为使用“unix_socket Authentication Plugin”。现在使用用户凭据 (UID) 执行本地身份验证，默认情况下不再使用密码身份验证。这意味着 root 用户不再使用密码来本地访问服务器。
 
@@ -459,13 +477,13 @@ OpenStack 服务可能会使用 Etcd，一种分布式可靠的键值存储，�
 
    从 Ubuntu 18.04 开始，etcd默认存储库中不再提供该软件包。要成功安装，请Universe在 Ubuntu 上启用存储库。
 
-2. 编辑`/etc/default/etcd`文件，并将`etcd_IINITIAL_CLUSTER`、`etcd_INITIAL_ADVERTISE_PEER_URLS`、`etcd_ADVERTISE_CLIENT_URLS`、`ETCT_LISTEN_CLIENT.URLS`设置为控制器节点的管理IP地址，以使其他节点能够通过管理网络进行访问：
+2. 编辑`/etc/default/etcd`文件，并将`ETCD_INITIAL_CLUSTER`、`ETCD_INITIAL_ADVERTISE_PEER_URLS`、`ETCD_ADVERTISE_CLIENT_URLS`、`ETCD_LISTEN_CLIENT.URLS`设置为控制器节点的管理IP地址，以使其他节点能够通过管理网络进行访问：
 
    ```bash
    vim /etc/default/etcd
    -----------
    ETCD_NAME="controller"
-   ETCD_DATA_DIR="/var/lib/etcd"
+   ETCD_DATA_DIR="/var/lib/etcd/default"
    ETCD_INITIAL_CLUSTER_STATE="new"
    ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster-01"
    ETCD_INITIAL_CLUSTER="controller=http://192.168.67.19:2380"
@@ -632,22 +650,23 @@ export OS_IDENTITY_API_VERSION=3
 Identity服务为每个OpenStack服务提供身份验证服务。身份验证服务使用域、项目、用户和角色的组合。
 
 ```bash
+# 创建新域
 openstack domain create --description "An Example Domain" example
 
-openstack project create --domain default \
-  --description "Service Project" service
+# 创建service 项目
+openstack project create --domain default --description "Service Project" service
 
-openstack project create --domain default \
-  --description "Demo Project" myproject
+# 创建myproject项目
+openstack project create --domain default --description "Demo Project" myproject
 
-# 为了方便记忆，密码也设置成 myuser
-openstack user create --domain default \
-  --password-prompt myuser
+# 创建myuser用户，为了方便记忆，密码也设置成 myuser
+openstack user create --domain default --password-prompt myuser
 
+# 创建myrole角色
 openstack role create myrole
 
+# 添加myrole角色到myproject项目和myuser用户
 openstack role add --project myproject --user myuser myrole
-
 ```
 
 ### 验证keystone是否安装成功
@@ -655,6 +674,7 @@ openstack role add --project myproject --user myuser myrole
 在控制器节点上执行这些命令。
 
 ```bash
+# 取消设置临时变量OS_AUTH_URL和OS_PASSWORD 环境变量
 unset OS_AUTH_URL OS_PASSWORD
 
 # 用admin用户尝试获取一个token
@@ -689,9 +709,7 @@ openstack --os-auth-url http://controller:5000/v3 \
 为**admin**和**demo**项目以及用户创建客户端环境脚本。本指南的后续部分将参考这些脚本来为客户端操作加载适当的凭据。
 
 ```bash
-mkdir ~/openrc
-
-vim ~/openrc/admin-openrc
+vim ~/admin-openrc
 # 将 ADMIN_PASS 替换为您在Identity服务中为admin用户选择的密码。
 ----------
 export OS_PROJECT_DOMAIN_NAME=Default
@@ -704,14 +722,14 @@ export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 ----------
 
-vim ~/openrc/demo-openrc
+vim ~/demo-openrc
 # 将 DEMO_PASS 替换为您在Identity服务中为demo用户选择的密码。
 ----------
 export OS_PROJECT_DOMAIN_NAME=Default
 export OS_USER_DOMAIN_NAME=Default
 export OS_PROJECT_NAME=myproject
 export OS_USERNAME=myuser
-export OS_PASSWORD=DEMO_PASS
+export OS_PASSWORD=myuser
 export OS_AUTH_URL=http://controller:5000/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
@@ -721,7 +739,7 @@ export OS_IMAGE_API_VERSION=2
 ### 加载admin-openrc
 
 ```bash
-. ~/openrc/admin-openrc
+. admin-openrc
 
 # 请求身份验证令牌
 openstack token issue
@@ -799,19 +817,22 @@ exit;
 加载 admin 用户（在keystone安装时创建）
 
 ```bash
-. ~/openrc/admin-openrc
+. ~/admin-openrc
 ```
 
 创建glance用户和项目
 
 ```bash
-# 这里要输入密码，密码也设置成 GLANCE_PASS
+# 创建glance用户，密码也设置成 GLANCE_PASS
 openstack user create --domain default --password-prompt glance
 
+# 将admin角色添加到glance用户和 service项目中
 openstack role add --project service --user glance admin
 
+# 创建glance服务实体
 openstack service create --name glance --description "OpenStack Image" image
 
+# 创建图像服务 API 端点
 openstack endpoint create --region RegionOne image public http://controller:9292
 
 openstack endpoint create --region RegionOne image internal http://controller:9292
@@ -915,7 +936,7 @@ service glance-api restart
 Ubuntu Cloud Images：https://cloud-images.ubuntu.com/
 
 ```bash
-. ~/openrc/admin-openrc
+. ~/admin-openrc
 # 下载一个cirros镜像用于测试，大小12M
 
 apt -y install wget
@@ -996,7 +1017,7 @@ exit;
 创建项目和用户
 
 ```bash
-. ~/openrc/admin-openrc
+. ~/admin-openrc
 
 # 创建一个 Placement 服务用户，密码 PLACEMENT_PASS
 openstack user create --domain default --password-prompt placement
@@ -1063,7 +1084,7 @@ service apache2 restart
 在进行这些调用之前，您需要以管理员身份向身份服务进行身份验证。有许多不同的方法可以做到这一点，具体取决于您的系统设置方式。如果你没有 admin-openrc 文件，你会有类似的东西。
 
 ```bash
-. ~/openrc/admin-openrc
+. ~/admin-openrc
 
 placement-status upgrade check
 
@@ -1159,9 +1180,9 @@ exit;
 创建项目、用户、角色
 
 ```bash
-. ~/openrc/admin-openrc
+. ~/admin-openrc
 
-# 创建nova用户，密码是 NOVA_DBPASS
+# 创建nova用户，密码是 NOVA_PASS
 openstack user create --domain default --password-prompt nova
 
 # 将nova用户添加到admin组中变成管理员
@@ -1385,7 +1406,7 @@ service nova-compute restart
 **以下步骤在controller节点执行！！！**
 
 ```bash
-. ~/openrc/admin-openrc
+. ~/admin-openrc
 
 openstack compute service list --service nova-compute
 
@@ -1425,7 +1446,7 @@ discover_hosts_in_cells_interval = 300
 **在控制器节点上执行这些命令。**
 
 ```bash
-. ~/openrc/admin-openrc
+. ~/admin-openrc
 
 # 列出服务组件以验证每个进程的成功启动和注册
 openstack compute service list
@@ -1572,9 +1593,9 @@ exit;
 创建用户和角色
 
 ```bash
-. ~/openrc/admin-openrc
+. ~/admin-openrc
 
-# 创建 neutron 用户，密码为 NEUTRON_DBPASS
+# 创建 neutron 用户，密码为 NEUTRON_PASS
 openstack user create --domain default --password-prompt neutron
 # 把neutron用户加到admin组
 openstack role add --project service --user neutron admin
@@ -1692,6 +1713,7 @@ vim /etc/neutron/plugins/ml2/linuxbridge_agent.ini
 -----------
 [linux_bridge]
 # 这里的PROVIDER_INTERFACE_NAME是 203.0.113.0/24 网段的网口名称，你需要根据你自己的实际填写。
+# physical_interface_mappings = provider:enp1s0f0
 physical_interface_mappings = provider:PROVIDER_INTERFACE_NAME
 
 [vxlan]
@@ -1784,10 +1806,6 @@ metadata_proxy_shared_secret = METADATA_SECRET
 ```bash
 su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf \
   --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron
-
-
-
-
 
 ```
 

@@ -672,6 +672,51 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
    cluster.routing.allocation.cluster_concurrent_rebalance: 4
    ```
 
+   ```bash
+   node.name: node-01
+   cluster.name: mainnet-indexer-cluster
+   path.data: /opt/elasticsearch-data/data
+   path.logs: /opt/elasticsearch/logs
+   path.repo: /opt/elasticsearch-data/backup
+   
+   # 启动内存锁定
+   bootstrap.memory_lock: true
+   network.host: 0.0.0.0
+   http.port: 9200
+   transport.port: 9300
+   
+   node.roles: [master, data]
+   
+   http.max_content_length: 200mb
+   http.cors.enabled: true
+   http.cors.allow-origin: "*"
+   
+   discovery.seed_hosts: ["172.31.45.88:9300", "172.31.37.130:9300", "172.31.45.195:9300"]
+   cluster.initial_master_nodes: ["node-01", "node-02", "node-03"]
+   
+   ingest.geoip.downloader.enabled: false
+   
+   discovery.seed_providers: file
+   discovery.probe.connect_timeout: 3s
+   discovery.probe.handshake_timeout: 1s
+   
+   action.auto_create_index: true
+   action.destructive_requires_name: true
+   indices.requests.cache.size: 2%
+   gateway.expected_nodes: -1
+   gateway.expected_master_nodes: -1
+   gateway.expected_data_nodes: -1
+   gateway.recover_after_time: 0ms
+   gateway.recover_after_nodes: -1
+   gateway.recover_after_master_nodes: 0
+   gateway.recover_after_data_nodes: -1
+   cluster.routing.allocation.cluster_concurrent_rebalance: 4
+   
+   indices.fielddata.cache.size: 5%
+   ```
+
+   
+
 5. 主机node-02、node-03、node-04配置需要修改`node.name`即可
 
    ```bash

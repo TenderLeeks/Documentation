@@ -536,5 +536,17 @@ http {
    $ cp -a objs/nginx /opt/nginx/sbin/
    ```
 
-   
+
+
+
+## 部署遇到的问题
+
+启动错误：
+
+`nginx: error while loading shared libraries: libssl.so.1.1: cannot open shared object file: No such file or directory`
+
+```bash
+```
+
+
 
