@@ -278,7 +278,7 @@ docker build -t ${image_name} .
 ### 部署 Tengine Docker 环境
 
 ```bash
-mkdir -p /opt/nginx/conf/{conf.d,ssl-cert} /opt/nginx/{www,logs,bin}
+mkdir -p /opt/nginx/conf/{conf.d,ssl-cert} /opt/nginx/{html,logs,sbin}
 
 docker pull ${image_name}
 
@@ -292,7 +292,7 @@ docker run -d --name nginx --network=host \
   -v /opt/nginx/conf/nginx.conf:/opt/nginx/conf/nginx.conf \
   -v /opt/nginx/conf/conf.d:/opt/nginx/conf/conf.d \
   -v /opt/nginx/conf/ssl-cert:/opt/nginx/conf/ssl-cert \
-  -v /opt/nginx/www:/opt/nginx/www \
+  -v /opt/nginx/html:/opt/nginx/html \
   -v /opt/nginx/logs:/opt/nginx/logs \
   ${image_name}
 
@@ -301,7 +301,7 @@ docker exec nginx sh -c 'nginx -t'
 docker exec nginx sh -c 'nginx -s reload'
 ```
 
-`vim /opt/nginx/bin/nginx`
+`vim /opt/nginx/sbin/nginx`
 
 ```bash
 #!/bin/bash
@@ -317,10 +317,60 @@ main "$@"
 ```
 
 ```bash
-chmod +x /opt/nginx/bin/nginx
-echo -e "export PATH=\$PATH:/opt/nginx/bin" >> /etc/profile
+chmod +x /opt/nginx/sbin/nginx
+echo -e "export PATH=\$PATH:/opt/nginx/sbin" >> /etc/profile
 source /etc/profile
 ```
+
+### 升级脚本
+
+`vim /opt/nginx/upgrade.sh`
+
+`chmod +x /opt/nginx/upgrade.sh`
+
+```bash
+#!/bin/bash
+set -e
+
+IMAGE_NAME="${1:-hoopoxtest/nginx:tengine-latest}"
+
+DOCKER_NAME="nginx"
+
+function docker_exist() {
+  docker ps -a -q -f "name=${DOCKER_NAME}"
+}
+
+function docker_pull() {
+  docker pull "${IMAGE_NAME}"
+}
+
+function docker_init() {
+  docker run -d --name nginx --network=host \
+    -v /etc/localtime:/etc/localtime \
+    -v /opt/nginx/conf/nginx.conf:/opt/nginx/conf/nginx.conf \
+    -v /opt/nginx/conf/conf.d:/opt/nginx/conf/conf.d \
+    -v /opt/nginx/conf/ssl-cert:/opt/nginx/conf/ssl-cert \
+    -v /opt/nginx/html:/opt/nginx/html \
+    -v /opt/nginx/logs:/opt/nginx/logs \
+    ${IMAGE_NAME}
+}
+
+function docker_rm() {
+  [ $(docker_exist) ] && docker rm -f ${DOCKER_NAME}
+}
+
+function main() {
+  docker_pull
+  sleep 1
+  docker_rm
+  sleep 1
+  docker_init
+}
+
+main "$@"
+```
+
+`bash -x /opt/nginx/upgrade.sh`
 
 ### nginx.conf 配置信息
 
