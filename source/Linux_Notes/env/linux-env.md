@@ -113,6 +113,25 @@ $ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bas
 $ nvm install v14
 ```
 
+## 使用 n 命令管理node 版本
+
+```bash
+apt-get update -y
+
+apt-get install curl git make -y
+
+curl -L https://git.io/n-install | bash
+
+. /root/.bashrc
+
+sudo ln -s /root/n/bin/n /usr/bin/n
+
+sudo ln -s /root/n/bin/node /usr/local/bin/node
+
+
+
+```
+
 
 
 ```shell
@@ -291,11 +310,50 @@ $ source /etc/profile
 # 下载源码
 $ wget https://download.visualstudio.microsoft.com/download/pr/cd0d0a4d-2a6a-4d0d-b42e-dfd3b880e222/008a93f83aba6d1acf75ded3d2cfba24/dotnet-sdk-6.0.400-linux-x64.tar.gz -P /tmp
 
-$ mkdir -p /opt/dotnet && tar zxf /tmp/dotnet-sdk-6.0.400-linux-x64.tar.gz -C /opt/dotnet
+$ mkdir -p /opt/dotnet-sdk-6.0.400 \
+  && tar zxf /tmp/dotnet-sdk-6.0.400-linux-x64.tar.gz \
+  -C /opt/dotnet-sdk-6.0.400
 
-$ echo -e "export DOTNET_ROOT=/opt/dotnet\nexport PATH=\$PATH:/opt/dotnet" >> /etc/profile
+$ export PATH=$PATH:/opt/dotnet-sdk-6.0.400
+
+$ echo -e "export DOTNET_ROOT=/opt/dotnet-sdk-6.0.400\nexport PATH=\$PATH:/opt/dotnet-sdk-6.0.400" >> /etc/profile
 
 ```
 
 
+
+## 安装 .NET 7.0 SDK
+
+[官方文档](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+
+```bash
+wget https://download.visualstudio.microsoft.com/download/pr/c646b288-5d5b-4c9c-a95b-e1fad1c0d95d/e13d71d48b629fe3a85f5676deb09e2d/dotnet-sdk-7.0.102-linux-x64.tar.gz -P /tmp
+
+mkdir -p /opt/dotnet-sdk-7.0.102 && \
+tar zxf /tmp/dotnet-sdk-7.0.102-linux-x64.tar.gz -C /opt/dotnet-sdk-7.0.102
+
+# 设置环境变量
+echo -e "export DOTNET_ROOT=/opt/dotnet-sdk-7.0.102\nexport PATH=\$PATH:/opt/dotnet-sdk-7.0.102" >> /etc/profile
+
+# 手动设置
+export DOTNET_ROOT=/opt/dotnet-sdk-7.0.102
+export PATH=$PATH:/opt/dotnet-sdk-7.0.102
+```
+
+```bash
+wget https://download.visualstudio.microsoft.com/download/pr/351400ef-f2e6-4ee7-9d1b-4c246231a065/9f7826270fb36ada1bdb9e14bc8b5123/dotnet-sdk-7.0.302-linux-x64.tar.gz -P /tmp
+
+mkdir -p /opt/dotnet-sdk-7.0.302 && \
+tar zxf /tmp/dotnet-sdk-7.0.302-linux-x64.tar.gz -C /opt/dotnet-sdk-7.0.302
+
+# 设置环境变量
+echo -e "export DOTNET_ROOT=/opt/dotnet-sdk-7.0.302\nexport PATH=\$PATH:/opt/dotnet-sdk-7.0.302" >> /etc/profile
+
+ln -s /opt/dotnet-sdk-7.0.302/dotnet /usr/bin/dotnet
+
+# 手动设置
+export DOTNET_ROOT=/opt/dotnet-sdk-7.0.302
+export PATH=$PATH:/opt/dotnet-sdk-7.0.302
+
+```
 

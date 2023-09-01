@@ -334,6 +334,28 @@ http {
 
 ```nginx
 server {
+    listen 443 ssl;
+
+    server_name xxx.leeks.info;
+
+    ssl_certificate /opt/nginx/conf/ssl_cert/leeks.info.crt;
+    ssl_certificate_key /opt/nginx/conf/ssl_cert/leeks.info.key;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+
+    access_log logs/leeks.info.log main;
+  
+    set $static_dir "/opt/nginx/www";
+  
+    location / {
+      root $static_dir;
+      index index.html index.htm;
+      try_files $uri $uri /index.html;
+    }
+}
+
+server {
   listen 80;
   server_name xxxxx.cn;
   location / {
@@ -363,6 +385,35 @@ location /test {
 }
 
 ```
+
+```nginx
+server {
+
+    listen 443 ssl;
+    server_name xxx.xxx.io;
+
+    ssl_certificate /opt/nginx/conf/ssl_cert/aelf.io.crt;
+    ssl_certificate_key /opt/nginx/conf/ssl_cert/aelf.io.key;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+
+    access_log  logs/xxx.xxx.io.log  main;
+    set $static_dir "/opt/workspace/xxx";
+    if ($http_pre_release = "1") {
+      set $static_dir "/opt/workspace/yyy";
+    }
+    
+    location / {
+      root $static_dir;
+      index index.html index.htm;
+      try_files $uri $uri /index.html;
+      add_header Cache-Control "no-cache";
+    }
+}
+```
+
+
 
 ## 线上配置示例
 
@@ -432,15 +483,27 @@ server {
 }
 ```
 
+## 长连接配置
+
+```nginx
+location /websocket/ {
+   proxy_pass   http://xx.xx.xxx.xxx:2222;
+   # 以下三个配置加上即可开始wss服务
+   proxy_http_version 1.1;
+   proxy_set_header Upgrade $http_upgrade;
+   proxy_set_header Connection "upgrade";
+}
+```
+
 ## 跨域配置
 
 ```nginx
   location /dapp/yswap {
     proxy_pass http://xxx.xxx.xxx;
-    add_header Access-Control-Allow-Origin *;
-    add_header Access-Control-Allow-Methods 'GET,POST,PUT,DELETE,PATCH,OPTIONS';
-    add_header Access-Control-Allow-Credentials true;
-    add_header Access-Control-Allow-Headers 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Accept,Authorization';
+    add_header Access-Control-Allow-Origin * always;
+    add_header Access-Control-Allow-Methods 'GET,POST,PUT,DELETE,PATCH,OPTIONS' always;
+    add_header Access-Control-Allow-Credentials 'true' always;
+    add_header Access-Control-Allow-Headers 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Accept,Authorization' always;
   }
 ```
 
@@ -516,6 +579,20 @@ server {
   
   location /api/swagger/index.html {
     proxy_pass http://127.0.0.1:8888/swagger/index.html;
+  }
+
+  location /portkey/api {
+    rewrite ^/portkey/api(.*)$ https://did-portkey-test.portkey.finance/api$1 permanent;
+  }
+  location ~ ^/portkey/api/(.*)$ {
+    rewrite ^/portkey/api/(.*)$ https://did-portkey-test.portkey.finance/api/$1 permanent;
+  }
+  location /portkey/api/ {
+    rewrite ^/portkey/api/(.*)$ https://did-portkey-test.portkey.finance/api/$1$is_args$args permanent;
+  }
+  location /portkey/api/ {
+    proxy_pass https://did-portkey-test.portkey.finance/api/;
+    proxy_set_header Host $host;
   }
 }
 ```
@@ -867,6 +944,35 @@ stream {
     proxy_pass $ssl_preread_server_name:$server_port;
   }
 }
+```
+
+## 四层负载均衡
+
+```nginx
+stream {
+  log_format proxy '$remote_addr [$time_local] '
+                   '$protocol $status $bytes_sent $bytes_received '
+                   '$session_time "$upstream_addr" '
+                   '"$upstream_bytes_sent" "$upstream_bytes_received" '
+                   '"$upstream_connect_time" '
+                   '"$ssl_preread_server_name:$server_port"';
+
+  access_log  /var/log/nginx/stream.log proxy;
+  error_log /var/log/nginx/error-stream.log;
+
+  resolver 114.114.114.114 8.8.8.8;
+  upstream soho2 {
+    server 123.127.215.130:14430;
+  }
+
+  server {
+    listen 443;
+    ssl_preread on;
+    proxy_connect_timeout 60s;
+    proxy_pass soho2;
+  }
+}
+
 ```
 
 

@@ -18,6 +18,12 @@
 下载二进制包请使用此[链接](https://www.percona.com/downloads/Percona-XtraBackup-LATEST/)查找
 
 ```shell
+# https://www.percona.com/downloads
+
+# wget https://downloads.percona.com/downloads/Percona-XtraBackup-8.0/Percona-XtraBackup-8.0.30-23/binary/tarball/percona-xtrabackup-8.0.30-23-Linux-x86_64.glibc2.17.tar.gz
+
+# wget https://downloads.percona.com/downloads/Percona-XtraBackup-8.0/Percona-XtraBackup-8.0.28-21/binary/tarball/percona-xtrabackup-8.0.28-21-Linux-x86_64.glibc2.17.tar.gz
+
 $ wget https://downloads.percona.com/downloads/Percona-XtraBackup-LATEST/Percona-XtraBackup-8.0.28-20/binary/tarball/percona-xtrabackup-8.0.28-20-Linux-x86_64.glibc2.17.tar.gz
 
 $ tar -zxf percona-xtrabackup-8.0.28-20-Linux-x86_64.glibc2.17.tar.gz -C /opt

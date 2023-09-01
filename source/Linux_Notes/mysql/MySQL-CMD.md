@@ -48,6 +48,11 @@ mysql > select * from schema_version order by 2;
 数据库对象的格式为`<database>.<table>`。`<database>.*`：表示授权数据库对象该数据库的所有表；`*.*`：表示授权数据库对象为所有数据库的所有表。
 
 ```mysql
+# MySQL 8.0 用户赋权
+# 首先创建用户，然后在给用户赋权
+mysql > create user 'user_name'@'%' identified by 'password';
+mysql > grant all privileges on `db_name`.* to 'user_name'@'%';
+
 # 创建用户并赋权
 mysql > grant select, insert, update, delete, alter on `db_name`.* to 'user_name'@'%' identified by 'password';
 

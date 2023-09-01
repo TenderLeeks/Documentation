@@ -45,6 +45,8 @@
 ```shell
 $ wget https://downloads.percona.com/downloads/Percona-XtraBackup-2.4/Percona-XtraBackup-2.4.25/binary/tarball/percona-xtrabackup-2.4.25-Linux-x86_64.glibc2.12.tar.gz
 
+# https://downloads.percona.com/downloads/Percona-XtraBackup-2.4/Percona-XtraBackup-2.4.28/binary/tarball/percona-xtrabackup-2.4.28-Linux-x86_64.glibc2.17.tar.gz
+
 $ tar -zxf percona-xtrabackup-2.4.25-Linux-x86_64.glibc2.12.tar.gz -C /opt
 $ mv /opt/percona-xtrabackup-2.4.25-Linux-x86_64.glibc2.12 /opt/percona-xtrabackup-2.4.25
 
