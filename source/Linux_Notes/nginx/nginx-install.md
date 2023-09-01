@@ -190,7 +190,7 @@ $ sudo systemctl stop nginx.service
 ### Dockerfile
 
 ```dockerfile
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ARG VERSION=3.0.0
 

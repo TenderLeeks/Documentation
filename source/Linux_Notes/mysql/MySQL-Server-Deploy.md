@@ -521,13 +521,15 @@ $ apt-get install libncurses5 libaio1 -y
 ### 下载二进制包
 
 ```shell
-$ export UNZIP_DIR="/opt" && export MYSQL_VERSION="mysql-8.0.29"
+$ export UNZIP_DIR="/opt" && export MYSQL_VERSION="mysql-8.0.34"
 
 # wget https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.30-linux-glibc2.17-x86_64-minimal.tar.xz
 
 # wget https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.28-linux-glibc2.17-x86_64-minimal.tar.xz
 
 # https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.32-linux-glibc2.12-x86_64.tar.xz
+
+# wget https://dev.mysql.com/get/Downloads/MySQL-8.0/"${MYSQL_VERSION}"-linux-glibc2.12-x86_64.tar.xz
 
 $ wget https://cdn.mysql.com/Downloads/MySQL-8.0/"${MYSQL_VERSION}"-linux-glibc2.12-x86_64.tar.xz
 
@@ -662,6 +664,9 @@ $ chown -R mysql.mysql "${UNZIP_DIR}"/"${MYSQL_VERSION}"
 $ "${UNZIP_DIR}"/"${MYSQL_VERSION}"/bin/mysqld \
   --defaults-file="${UNZIP_DIR}"/"${MYSQL_VERSION}"/conf/my.cnf \
   --initialize
+
+# 查看密码
+$ cat data/error.log | grep "A temporary password is generated"
 
 # 初始化不带密码的方法
 $ "${UNZIP_DIR}"/"${MYSQL_VERSION}"/bin/mysqld \
