@@ -935,6 +935,8 @@ service glance-api restart
 
 Ubuntu Cloud Images：https://cloud-images.ubuntu.com/
 
+https://cloud-images.ubuntu.com/focal/20231124/focal-server-cloudimg-amd64-disk-kvm.img
+
 ```bash
 . ~/admin-openrc
 # 下载一个cirros镜像用于测试，大小12M

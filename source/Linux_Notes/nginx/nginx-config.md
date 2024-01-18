@@ -503,7 +503,7 @@ location /websocket/ {
     add_header Access-Control-Allow-Origin * always;
     add_header Access-Control-Allow-Methods 'GET,POST,PUT,DELETE,PATCH,OPTIONS' always;
     add_header Access-Control-Allow-Credentials 'true' always;
-    add_header Access-Control-Allow-Headers 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Accept,Authorization' always;
+    add_header Access-Control-Allow-Headers 'version,Authorization,Accept,Origin,DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type' always;
   }
 ```
 
@@ -581,6 +581,11 @@ server {
     proxy_pass http://127.0.0.1:8888/swagger/index.html;
   }
 
+  # 访问 https://test.beangotown.com/portkey/api/ 重定向到 https://did-portkey-test.portkey.finance/api/
+  location /portkey/api/ {
+    rewrite ^/portkey/api/(.*)$ https://did-portkey-test.portkey.finance/api/$1 permanent;
+  }
+  
   location /portkey/api {
     rewrite ^/portkey/api(.*)$ https://did-portkey-test.portkey.finance/api$1 permanent;
   }
@@ -972,6 +977,109 @@ stream {
     proxy_pass soho2;
   }
 }
+
+```
+
+## 使用 cookie 实现负载均衡
+
+文档：https://tengine.taobao.org/document_cn/http_upstream_session_sticky_cn.html
+
+```nginx
+upstream xxx.xxx {
+  #session_sticky cookie=aelf-uid fallback=on mode=insert option=indirect maxage=3600;
+  session_sticky cookie=aelf-uid fallback=on mode=insert option=indirect;
+  server 10.10.32.88:8000;
+  server 10.10.32.86:8000;
+}
+
+server {
+  listen 443 ssl;
+  server_name xxx.xxx.io;
+
+  ssl_certificate /opt/nginx/conf/ssl-cert/xxx.io.crt;
+  ssl_certificate_key /opt/nginx/conf/ssl-cert/xxx.io.key;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_prefer_server_ciphers on;
+  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+ 
+  add_header Access-Control-Allow-Origin * always;
+  add_header Access-Control-Allow-Methods 'GET,POST,PUT,DELETE,PATCH,OPTIONS' always;
+  add_header Access-Control-Allow-Credentials 'true' always;
+  add_header Access-Control-Allow-Headers 'version,Authorization,Accept,Origin,DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type' always;
+
+  access_log  logs/xxx.xxx.io.log main;
+  
+  location / {
+    session_sticky_hide_cookie upstream=xxx.xxx;
+    
+    proxy_pass http://xxx.xxx;
+    proxy_redirect off;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Real-IP $remote_addr;
+  }
+
+}
+```
+
+## 配置 Nginx Status 模块
+
+```bash
+# 检查是否安装 with-http_stub_status_module 模块
+nginx -V 2>&1 | grep -o with-http_stub_status_module
+```
+
+配置 nginx status 模块
+
+```nginx
+  location /private/nginx_status {
+    stub_status on;
+    access_log   off;
+    allow 127.0.0.1;
+    deny all;
+  }
+# /private/nginx_status表示Nginx Status模块的URI，请根据实际情况替换。
+# allow 127.0.0.1 表示只允许IP地址为127.0.0.1的服务器访问Nginx Status模块，请根据实际情况替换。
+```
+
+验证
+
+```bash
+curl http://127.0.0.1:8080/private/nginx_status
+```
+
+回显信息
+
+```bash
+Active connections: 1 
+server accepts handled requests request_time
+ 2801 2801 2778 56
+Reading: 0 Writing: 1 Waiting: 0 
+
+# Active connections – 活跃的连接数量
+# server accepts handled requests — 总共处理了 2801 个连接 , 成功创建 2801 次握手, 总共处理了 2778 个请求。
+# accepts Nginx启动到现在共处理的连接总数。
+# handled Nginx启动到现在共成功创建握手的总次数。
+# requests Nginx总共处理的请求总次数。
+# request_time 自Tengine启动以来所有请求的总响应时间
+# reading — 读取客户端的连接数。Nginx读取到客户端的 Header 信息数。
+# writing — 响应数据到客户端的数量。Nginx返回给客户端的 Header 信息数。
+# waiting — 开启 keep-alive 的情况下,这个值等于 active – (reading+writing), 意思就是 Nginx 已经处理完正在等候下一次请求指令的驻留连接。
+# 请求丢失数=(握手数-连接数)可以看出,本次状态显示没有丢失请求。
+```
+
+`vim nginx_request_time.sh`
+
+```bash
+#!/bin/bash
+# 夜莺监控
+ip="127.0.0.1"
+port="8080"
+nginx_status_url="http://${ip}:${port}/private/nginx_status"
+
+request_time=$(curl -s ${nginx_status_url} | grep -v "Total" | grep -w -A 1 "request_time" | sed -n '2p' | awk '{print $4}' | tr -d '\r')
+
+echo "nginx,port=${port},server=${ip} request_time=${request_time}"
 
 ```
 

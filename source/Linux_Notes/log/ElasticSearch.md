@@ -1,4 +1,4 @@
-# Elasticsearch 集群部署
+# ElasticSearch 集群部署
 
 ## 简介
 
@@ -755,7 +755,7 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
 6. 启动服务
 
    ```bash
-   systemctl start elasticsearch 
+   systemctl start elasticsearch
    systemctl enable elasticsearch
    ```
 
@@ -789,7 +789,7 @@ Elasticsearch REST API支持结构化查询、全文查询和将两者结合的�
    执行同步刷新可加快分片恢复。当你执行同步刷新时，检查响应以确保没有失败。由于挂起的索引操作而失败的同步刷新操作会在响应体中列出，尽管请求本身仍然返回200 OK状态。如果有失败，重新发出请求。此功能将在8.0版本中删除。
 
    ```bash
-   curl -X POST "localhost:9200/_flush/synced?pretty"
+   curl -X POST "http://127.0.0.1:9200/_flush/synced?pretty"
    ```
 
 3. **关闭所有节点**
@@ -1054,55 +1054,159 @@ Option             Description
    curl -X GET "http://127.0.0.1:9200/_cluster/health?pretty --user elastic:123456"
    ```
 
-3. 查看每个索引的状态
+3. 查看分片的状态
+
+   ```bash
+   GET /_cluster/health?level=shards
+   
+   curl -X GET "http://127.0.0.1:9200/_cluster/health?level=shards&pretty"
+   ```
+
+4. 查看分片信息
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/_cat/shards"
+   
+   curl -XGET 'http://127.0.0.1:9200/_cat/shards?h=index,shard,prirep,state,unassigned.reason'
+   ```
+
+5. 查看每个索引的状态
 
    ```bash
    curl -XGET "http://127.0.0.1:9200/_cat/indices?v"
    ```
 
-4. 查看某个索引的status
+6. 查看某个索引的status
 
    ```bash
    curl -s "http://127.0.0.1:9200/_cat/indices/Index_Name?h=status"
    ```
 
-5. 查看状态是red的索引
+7. 查看状态是red的索引
 
    ```bash
    curl -XGET "http://127.0.0.1:9200/_cat/indices | awk '$1 ~/red/'"
    ```
 
-6. 查询索引库的settings信息
+8. 查询索引库的settings信息
 
    ```bash
    curl -XGET "http://127.0.0.1:9200/<index_name>/settings?pretty&pretty=true"
    ```
 
-7. 查询所有索引别名信息
+9. 查询所有索引别名信息
 
    ```bash
    curl -XGET "http://127.0.0.1:9200/_cat/aliases?v"
    ```
 
-8. 查询某个索引的别名信息
+10. 查询某个索引的别名信息
 
-   ```bash
-   curl -XGET "http://127.0.0.1:9200/<index_name>/_alias/*"
-   ```
+    ```bash
+    curl -XGET "http://127.0.0.1:9200/<index_name>/_alias/*"
+    ```
 
-9. 查询用户信息
+11. 查询用户信息
 
-   ```bash
-   curl -XGET "http://127.0.0.1:9200/_xpack/security/role_mapping/<username>"
-   ```
-   
-9. 查询所有索引信息
+    ```bash
+    curl -XGET "http://127.0.0.1:9200/_xpack/security/role_mapping/<username>"
+    ```
 
-   ```bash
-   curl -XGET "http://127.0.0.1:9200/_cat/indices?v"
-   ```
-   
-   
+12. 查询所有索引信息
+
+    ```bash
+    curl -XGET "http://127.0.0.1:9200/_cat/indices?v"
+    ```
+
+13. 查看集群当前配置
+
+    ```bash
+    curl -XGET 'http://127.0.0.1:9200/_cluster/settings?pretty'
+    ```
+
+    
+
+14. 查询模板
+
+    ```bash
+    curl -XGET 'http://127.0.0.1:9200/aelfindexer_beangotown-cc9d80a0e0664cf5883a57ba5c68a027.gameindex/_count' -H 'Content-Type: application/json' -d '{
+      "query": {
+        "term": {
+          "caAddress": {
+            "value": "ELF_26p8oByNEWg7zx5LGGWbvPV7wrcjHbXAsd4hgJWpYMHojqMM4L_tDVV"
+          }
+        }
+      }
+    }'
+    ```
+
+15. 排错命令
+
+    ```bash
+    # 查看集群状态
+    GET _cluster/health
+    
+    # 查看分片的状态
+    GET /_cluster/health?level=shards
+    curl -XGET "http://127.0.0.1:9200/_cluster/health?level=shards"
+    
+    # 查看没有分配的原因
+    GET _cluster/allocation/explain?pretty
+    
+    # 下面的请求返回 unassigned.reason 列，该列指示未分配分片的原因。
+    GET _cat/shards?h=index,shard,prirep,state,unassigned.reason
+    
+    # 查看正在恢复的分片
+    curl http://127.0.0.1:9200/_cat/recovery?active_only=true
+    
+    # 查看所有索引的副本数
+    curl http://127.0.0.1:9200/_cluster/health?level=indices | jq .indices > test2222.txt
+    cat test2222.txt | jq .[].number_of_replicas | grep 0
+    
+    # 查看所有分片的详情
+    curl http://127.0.0.1:9200/_cat/shards?v  > shared111.txt
+    
+    # 查看各节点文件打开数限制
+    GET _nodes/stats/process?filter_path=**.max_file_descriptors
+    curl -XGET "http://127.0.0.1:9200/_nodes/stats/process?filter_path=**.max_file_descriptors"
+    
+    # 查看节点详情
+    GET _nodes/process
+    curl -XGET "http://127.0.0.1:9200/_nodes/process"
+    
+    ```
+
+16. 查询索引中数据信息
+
+    ```bash
+    # 在ES如果使用match_all查询索引的全量数据时，默认只会返回10条数据。
+    # 因为_search查询默认采用的是分页查询，每页记录数size的默认值为10.
+    curl -XGET "http://127.0.0.1:9200/<index_name>/_search?pretty"
+    # 等同于
+    curl -XGET "http://127.0.0.1:9200/<index_name>/_search?pretty" -H 'Content-Type: application/json' -d '{
+      "query": {
+        "match_all": {}
+      }
+    }'
+    
+    # 添加size参数，但是size的值不能大于10000
+    curl -XGET "http://127.0.0.1:9200/<index_name>/_search?pretty" -H 'Content-Type: application/json' -d '{
+      "query": {
+        "match_all": {}
+      },
+      "size": 100
+    }'
+    
+    curl -s -XGET "http://172.31.33.57:9200/<index_name>/_search?pretty" -H 'Content-Type: application/json' -d '{
+      "query": {
+        "match_all": {}
+      },
+      "size": 1000
+    }' | grep -v Total > <index_name>.json
+    
+    ```
+
+    
 
 
 
@@ -1271,6 +1375,52 @@ POST /_cluster/voting_config_exclusions?node_names=<node_names>
 DELETE /_cluster/voting_config_exclusions?node_names=<node_names>
     从投票配置排除列表中删除符合主节点资格的节点。
 ```
+
+## 因ES节点磁盘占用率高，导致无法分配分片
+
+有场景会出现因没有关注到，导致es-data的磁盘使用占用超过85%，es 集群的默认配置是当集群中的某个节点磁盘达到使用率为 85% 的时候，就不会在该节点进行创建副本，当磁盘使用率达到 90% 的时候，尝试将该节点的副本重分配到其他节点。当磁盘使用率达到95% 的时候，当前节点的所有索引将被设置为只读索引。
+
+es根据磁盘使用情况来分配shard，默认设置是开启的，也可以通过api关闭：
+`cluster.routing.allocation.disk.threshold_enabled: false`
+在开启的情况下，有两个重要的设置：
+`cluster.routing.allocation.disk.watermark.low`：控制磁盘最小使用率。默认85%.说明es在磁盘使用率达到85%的时候将会停止分配新的shard。也可以设置为一个绝对数值，比如500M.
+`cluster.routing.allocation.disk.watermark.high`：控制磁盘的最大使用率。默认90%.说明在磁盘使用率达到90%的时候es将会relocate shard去其他的节点。同样也可以设置为一个绝对值。
+
+### 查看 ES 当前的配置
+
+```bash
+curl -XGET 'http://127.0.0.1:9200/_cluster/settings?pretty'
+```
+
+### 更改配置
+
+临时更改 transient 重启后配置失效
+
+```bash
+curl -H "Content-Type: application/json" -XPUT 'http://127.0.0.1:9200/_cluster/settings?pretty' -d'
+{
+    "transient":{
+        "cluster.routing.allocation.disk.watermark.low":"94%",
+        "cluster.routing.allocation.disk.watermark.high":"95%",
+        "cluster.info.update.interval":"1m"
+    }
+}'
+```
+
+永久更改 persistent 重启后不失效
+
+```bash
+curl -H "Content-Type: application/json" -XPUT 'http://127.0.0.1:9200/_cluster/settings?pretty' -d'
+{
+    "persistent":{
+        "cluster.routing.allocation.disk.watermark.low":"94%",
+        "cluster.routing.allocation.disk.watermark.high":"95%",
+        "cluster.info.update.interval":"1m"
+    }
+}'
+```
+
+
 
 ## 快照备份恢复
 
@@ -1607,36 +1757,40 @@ https://www.elastic.co/guide/en/elasticsearch/reference/7.13/snapshot-restore.ht
 
 ## 使用对象存储库备份快照（`repository-s3`）
 
-### 集群快照备份
+官方文档链接：https://www.elastic.co/guide/en/elasticsearch/plugins/7.17/repository-s3.html#repository-s3-remove
 
-集群每个节点安装 `repository-s3` 插件
+### 配置S3插件
+
+**注意：以下操作需要在所有ES节点上执行**
 
 ```bash
-# 进入ES安装目录
-cd /opt/elasticsearch
-
-# 切换到 elastic 用户
-su elastic
-
-# 安装插件
-bin/elasticsearch-plugin install repository-s3
+# 安装 repository-s3 插件
+sudo /opt/elasticsearch/bin/elasticsearch-plugin install repository-s3
 
 # 该插件必须安装在集群中的每个节点上，安装后必须重新启动每个节点。
 ```
 
-重启集群每个节点（数据节点优先，主节点最后）
+如果要移除repository-s3插件请执行：
+
+```bash
+sudo /opt/elasticsearch/bin/elasticsearch-plugin remove repository-s3
+```
+
+### 重启集群每个节点
+
+数据节点优先，主节点最后
 
 ```bash
 # 禁止分片自动分布
-PUT _cluster/settings
+curl -X PUT "http://127.0.0.1:9200/_cluster/settings?pretty" -H 'Content-Type: application/json' -d'
 {
   "persistent": {
     "cluster.routing.allocation.enable": "primaries"
   }
-}
+}'
 
 # 执行同步刷新
-POST _flush/synced
+curl -X POST "http://127.0.0.1:9200/_flush/synced?pretty"
 
 # 关闭一个节点
 systemctl stop elasticsearch.service 
@@ -1645,40 +1799,564 @@ systemctl stop elasticsearch.service
 systemctl start elasticsearch.service 
 
 # 启用分片自动分布
-PUT _cluster/settings
+curl -X PUT "http://127.0.0.1:9200/_cluster/settings?pretty" -H 'Content-Type: application/json' -d'
 {
   "persistent": {
     "cluster.routing.allocation.enable": null
   }
-}
+}'
 
 # 执行同步刷新，等待全部分片重新加入集群
-POST _flush/synced
+curl -X POST "http://127.0.0.1:9200/_flush/synced?pretty"
 
 # 对集群中每个节点重复以上操作，完成集群全部节点重启；
 # 注意：ES集群对外访问使用负载均衡，该重启方式不会影响线上业务运行。
 ```
 
-集群每个节点添加 `repository-s3` 密钥
+### 配置账号权限
 
-```bash
-# 切换到 elastic 用户
-su elastic
-
-# 添加 access_key，回车后输入秘钥key
-bin/elasticsearch-keystore add s3.client.default.access_key
-
-# 添加 secret_key，回车后输入秘钥字符串
-bin/elasticsearch-keystore add s3.client.default.secret_key
-
-# 重载秘钥配置
-POST _nodes/reload_secure_settings
-
-# 查看秘钥列表
-bin/elasticsearch-keystore list
+```json
+{
+  "Statement": [
+    {
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetBucketLocation",
+        "s3:ListBucketMultipartUploads",
+        "s3:ListBucketVersions"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::bucket-name"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:AbortMultipartUpload",
+        "s3:ListMultipartUploadParts"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::bucket-name/*"
+      ]
+    }
+  ],
+  "Version": "2012-10-17"
+}
 ```
 
-创建快照仓库，并验证是否包含每个节点
+### 添加秘钥库配置
+
+**注意：以下操作需要在所有ES节点上执行**
+
+```bash
+# 添加 AK
+/opt/elasticsearch/bin/elasticsearch-keystore add s3.client.default.access_key
+
+# 添加 SK
+/opt/elasticsearch/bin/elasticsearch-keystore add s3.client.default.secret_key
+
+# 重载秘钥配置
+curl -X POST "http://127.0.0.1:9200/_nodes/reload_secure_settings?pretty"
+
+POST _nodes/reload_secure_settings
+{
+  "secure_settings_password": "s3.client.default.secret_key" 
+}
+
+# 查看秘钥库信息
+/opt/elasticsearch/bin/elasticsearch-keystore list
+
+chown -R elastic. /opt/elasticsearch*
+```
+
+### 修改jvm.options文件
+
+在`/opt/elasticsearch/config/jvm.options`文件中添加以下参数：
+
+```bash
+-Des.allow_insecure_settings=true
+```
+
+**操作完后，需要重启 ES 集群中所有节点服务**
+
+### 备份数据
+
+调用 snapshot api 创建快照以备份索引数据，创建快照时可以指定只对部分索引进行备份，也可以备份所有的索引。
+
+**多次备份“快照名”不能重复；同一仓库下，第一次快照为全量备份，后续快照都是增量备份。**
+
+1. 创建 S3 repository
+
+   ```bash
+   curl -XPUT "http://127.0.0.1:9200/_snapshot/s3_repository?pretty" -H 'Content-Type: application/json' -d '{
+     "type": "s3",
+     "settings": {
+       "region": "ap-northeast-1",
+       "bucket": "portkey-did-resized",
+       "base_path": "SOHO-ES-Snapshot/tmp/",
+       "max_snapshot_bytes_per_sec": "200mb",
+       "max_restore_bytes_per_sec": "200mb"
+     }
+   }'
+   ```
+
+2. 备份单个或多个索引
+
+   这个命令会立刻返回，并在后台异步执行直到结束。如果希望创建快照命令阻塞执行，可以添加 `wait_for_completion=true` 参数
+
+   ```bash
+   # snapshot_name_01 是快照名称
+   # 备份单个索引
+   curl -XPUT "http://127.0.0.1:9200/_snapshot/s3_repository/snapshot_name_01?pretty&wait_for_completion=false" -H 'Content-Type: application/json' -d'{
+     "indices": "tmp_index_name_01",
+     "ignore_unavailable": true,
+     "include_global_state": false
+   }'
+   
+   # 备份多个索引
+   # 参数 indices 的值为多个索引的时候，需要用,隔开且不能有空格。
+   curl -XPUT "http://127.0.0.1:9200/_snapshot/s3_repository/snapshot_name?pretty&wait_for_completion=false" -H 'Content-Type: application/json' -d'{
+     "indices": "tmp_index_name_03,tmp_index_name_04,tmp_index_name_05",
+     "ignore_unavailable": true,
+     "include_global_state": false
+   }'
+   
+   # 备份所有索引数据
+   curl -XPUT "http://127.0.0.1:9200/_snapshot/s3_repository/snapshot_all?wait_for_completion=false&pretty"
+   ```
+
+### 查看数据
+
+1. 查看 S3 repository 信息
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/_snapshot/s3_repository?pretty"
+   ```
+
+2. 查看所有快照仓库
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/_snapshot/_all?pretty"
+   ```
+
+3. 查看索引信息
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/_cat/indices?v"
+   ```
+
+4. 查看快照信息
+
+   通过以下命令检查快照是否备份完成，返回结果中的state字段为SUCCESS则说明快照已经备份成功。
+
+   获取所有快照信息：
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/_snapshot/s3_repository/_all?pretty"
+   ```
+
+   查看快照snapshot_name信息
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/_snapshot/s3_repository/snapshot_name/?pretty"
+   ```
+
+   查看所有当前正在运行的快照以及显示他们的详细状态信息
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/_snapshot/_status?pretty"
+   ```
+
+   查看`s3_repository`当前正在运行的快照以及显示他们的详细状态信息
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/_snapshot/s3_repository/_status?pretty"
+   ```
+
+   查看指定快照的详细状态信息即使不是正在运行
+
+   ```bash
+   curl -XGET "http://127.0.0.1:9200/_snapshot/s3_repository/snapshot_name_01/_status?pretty"
+   ```
+
+### 恢复数据
+
+1. 恢复索引数据
+
+   如果 snapshot_name 包括5个索引，则这5个索引都会被恢复到 ES 集群中。您还可以使用附加的选项对索引进行重命名。该选项允许您通过模式匹配索引名称，并通过恢复进程提供一个新名称。如果您想在不替换现有数据的前提下，恢复旧数据来验证内容或进行其他操作，则可以使用该选项。从快照里恢复单个索引并提供一个替换的名称：
+
+   ```bash
+   curl -XPOST 'http://127.0.0.1:9200/_snapshot/s3_repository/snapshot_name/_restore'
+   
+   curl -XPOST 'http://127.0.0.1:9200/_snapshot/s3_repository/snapshot_name_01/_restore' -H 'Content-Type: application/json' -d'{
+       "indices": "index_1",
+       "rename_pattern": "index_(.+)",
+       "rename_replacement": "restored_index_$1"
+   }'
+   ```
+
+   - `indices`：只恢复 index_1 索引，忽略快照中存在的其他索引。
+   - `rename_pattern`：查找所提供的模式能匹配上的正在恢复的索引。
+   - `rename_replacement`：将匹配的索引重命名成替代的模式。
+
+2. 查看恢复状态
+
+   ```bash
+   curl -XGET 'http://127.0.0.1:9200/_recovery/snapshot_name_01?pretty'
+   
+   curl -XGET 'http://127.0.0.1:9200/snapshot_name_01/_recovery?pretty'
+   
+   curl -XGET "http://127.0.0.1:9200/_recovery/?pretty"
+   ```
+
+3. 查看指定索引的状态
+
+   另外可以通过调用以下 API，查看指定索引的状态，返回结果中 status 为 green，则说明索引已经完全恢复：
+
+   ```bash
+   curl -XGET 'http://127.0.0.1:9200/_cluster/health/snapshot_name_01?pretty'
+   ```
+
+4. 验证快照仓库
+
+   ```bash
+   curl -XPOST 'http://127.0.0.1:9200/_snapshot/s3_repository/_verify'
+   ```
+
+   
+
+### 删除数据
+
+1. 删除一个快照存储桶
+
+   ```bash
+   curl -XDELETE 'http://127.0.0.1:9200/_snapshot/s3_repository/snapshot_name?pretty'
+   ```
+
+   **注意：**
+
+   - 用 API 删除快照很重要，而不能用其他机制（比如手动删除，或者用 S3 上的自动清除工具）。因为快照是增量的，有可能很多快照依赖于过去的段。delete API 知道哪些数据还在被更多近期快照使用，然后会只删除不再被使用的段。
+   - 但是，如果你做了一次人工文件删除，你将会面临备份严重损坏的风险，因为你在删除的是可能还在使用中的数据。
+
+### 监测备份状态
+
+```bash
+curl -XGET "http://127.0.0.1:9200/_snapshot/s3_repository/_status?pretty";
+
+### 输出 ###
+{
+  "snapshots" : [ ]
+}
+```
+
+### 脚本
+
+```bash
+#!/usr/bin/env bash
+
+# es_data_snapshot.sh
+
+HOME_DIR=$(cd $(dirname "$0") && pwd )
+
+function log() {
+  [ -d "${HOME_DIR}/logs" ] || mkdir -p ${HOME_DIR}/logs
+  LOG_FILE="${HOME_DIR}/logs/backup_$(date +%Y%m%d).log"
+  
+  if [[ $# -eq 1 ]];then
+    msg=$1
+    echo -e "$(date +"%Y-%m-%d %H:%M:%S") \033[32m[INFO]\033[0m ${msg}" >> ${LOG_FILE}
+  elif [[ $# -eq 2 ]];then
+    param=$1
+    msg=$2
+    if [[ ${param} = "-w" ]];then
+      echo -e "$(date +"%Y-%m-%d %H:%M:%S") \033[34m[WARNING]\033[0m ${msg}" >> ${LOG_FILE}
+    elif [[ ${param} = "-e" ]];then
+      echo -e "$(date +"%Y-%m-%d %H:%M:%S") \033[31m[ERROR]\033[0m ${msg}" >> ${LOG_FILE}
+      exit 1
+    elif [[ ${param} = "-d" ]];then
+      echo "$(date +"%Y-%m-%d %H:%M:%S") [DEBUG] ${msg}" >> ${LOG_FILE}
+      if [[ ${DEBUG_FLAG} = 1 ]];then
+        set -x
+      fi
+    fi
+  fi
+}
+
+HEAD_INFO='Content-Type: application/json'
+
+function es_url() {
+  _ES_URL="${1:-http://127.0.0.1:9200}"
+  # log "ElasticSearch URL: ${_ES_URL}"
+  echo "ElasticSearch URL: ${_ES_URL}"
+}
+
+
+# 监测备份状态
+function status {
+  [ -z "${_REPOSITORY}" ] && { show_help; echo "参数 -r, --repository 不能为空。"; exit 0; }
+  es_url "${_ES_URL}"
+  curl -XGET "${_ES_URL}/_snapshot/${_REPOSITORY}/_status?pretty";
+}
+
+
+# 查看当前的snapshot状态信息
+function list_snapshot {
+  [ -z "${_REPOSITORY}" ] && { show_help; echo "参数 -r, --repository 不能为空。"; exit 0; }
+  es_url "${_ES_URL}"
+  curl -XGET "${_ES_URL}/_cat/snapshots/${_REPOSITORY}?v"
+}
+
+
+# 查看 s3 repository
+function check_snapshot_repository {
+  [ -z "${_REPOSITORY}" ] && { show_help; echo "参数 -r, --repository 不能为空。"; exit 0; }
+  
+  es_url "${_ES_URL}"
+  repos=$(curl -XGET "${_ES_URL}/_snapshot/${_REPOSITORY}")
+  
+  if [[ ${repos} =~ "bucket" ]] && [[ ${repos} =~ "uuid" ]]; then
+    echo "快照存储库：${_REPOSITORY} 已存在。"
+    echo "${repos}"
+    exit 0
+  else
+    echo "没有查找到快照存储库：${_REPOSITORY}"
+  fi
+}
+
+
+# 创建新的s3 repository
+function create_snapshot_repository {
+  [ -z "${_REPOSITORY}" ] && { show_help; echo "参数 -r, --repository 不能为空。"; exit 0; }
+  [ -z "${_BUCKET_NAME}" ] && { show_help; echo "参数 --bucket <name> 不能为空。"; exit 0; }
+  [ -z "${_BASE_PATH}" ] && { show_help; echo "参数 --base-path <path> 不能为空。"; exit 0; }
+  [ -z "${_REGION}" ] && { show_help; echo "参数 --region <region> 不能为空。"; exit 0; }
+  
+  es_url "${_ES_URL}"
+
+  check_snapshot_repository ${_REPOSITORY}
+ 
+  echo "创建新的快照存储库：${_REPOSITORY}"
+  
+  result=$(curl -XPUT "${_ES_URL}/_snapshot/${_REPOSITORY}?pretty" -H ${HEAD_INFO} -d '{
+    "type": "s3",
+    "settings": {
+      "region": '\"${_REGION}\"',
+      "bucket": '\"${_BUCKET_NAME}\"',
+      "base_path": '\"${_BASE_PATH}\"',
+      "max_snapshot_bytes_per_sec": "200mb",
+      "max_restore_bytes_per_sec": "200mb"
+    }
+  }')
+  
+  echo ${result}
+  repos=$(curl -XGET "${_ES_URL}/_snapshot/${_REPOSITORY}?pretty");
+  echo -e "当前S3存储库为: \n ${repos} \n";
+}
+
+
+# 备份一个或多个索引
+function indices_snapshot {
+  [ -z "${_REPOSITORY}" ] && { show_help; echo "参数 -r, --repository 不能为空。"; exit 0; }
+  [ -z "${_INDICES}" ] && { show_help; echo "参数 -i, --index 不能为空。"; exit 0; }
+
+  es_url "${_ES_URL}"
+
+  CURRENT_DATE=$(date '+%Y-%m-%d.%H:%M:%S');
+  SNAPSHOT_NAME="indices_snapshot_${CURRENT_DATE}"
+  
+  echo "备份索引 ${_INDEX} 数据, 快照名称: ${SNAPSHOT_NAME}"
+  
+  result=$(curl -XPUT "${_ES_URL}/_snapshot/${_REPOSITORY}/${SNAPSHOT_NAME}?pretty" -H ${HEAD_INFO} -d'{
+        "indices": '\"${_INDICES}\"',
+        "ignore_unavailable": false,
+        "include_global_state": false
+    }')
+  echo ${result}
+}
+
+# 备份所有索引数据
+function all_snapshot {
+  [ -z "${_REPOSITORY}" ] && { show_help; echo "参数 -r, --repository 不能为空。"; exit 0; }
+  
+  es_url "${_ES_URL}"
+  
+  CURRENT_DATE=$(date '+%Y-%m-%d.%H:%M:%S');
+  SNAPSHOT_NAME="all_snapshot_"${CURRENT_DATE}
+  
+  result=$(curl -XPUT "${_ES_URL}/_snapshot/${_REPOSITORY}/${SNAPSHOT_NAME}")
+  echo ${result}
+}
+
+
+# 删除snapshot
+function delete_snapshot {
+  [ -z "${_REPOSITORY}" ] && { show_help; echo "参数 -r, --repository 不能为空。"; exit 0; }
+  [ -z "${_SNAPSHOT}" ] && { show_help; echo "参数 -s, --snapshot 不能为空。"; exit 0; }
+  
+  es_url "${_ES_URL}"
+  
+  # 需要添加判断索引名称是否存在
+  
+  curl -XDELETE "${_ES_URL}/_snapshot/${_REPOSITORY}/${_SNAPSHOT}?pretty"
+}
+
+# 恢复
+function restore_snapshot {
+  [ -z "${_REPOSITORY}" ] && { show_help; echo "参数 -r, --repository 不能为空。"; exit 0; }
+  [ -z "${_SNAPSHOT}" ] && { show_help; echo "参数 -s, --snapshot 不能为空。"; exit 0; }
+  
+  es_url "${_ES_URL}"
+  
+  # 需要添加判断索引名称是否存在
+  
+  # HTTP_CODE=$(curl -m 30 -o /dev/null -s -w "%{http_code}" "http://${es_url}/_snapshot/${REPO_NAME}/${snapshot_name}")
+  
+  curl -XPOST "${_ES_URL}/_snapshot/${_REPOSITORY}/${_SNAPSHOT}/_restore"
+}
+
+
+function show_help() {
+  echo "Usage: $0 <command> ... [parameters ...]
+
+Commands:
+  status                    监测备份状态
+  init                      初始化新的快照仓库
+  check                     检查快照仓库是否存在
+  backup                    备份所有索引数据
+  index_backup              备份部分索引数据
+  list                      查看当前快照状态信息
+  delete                    删除仓库中某个快照数据
+  restore                   恢复某个快照数据到当前集群
+
+Parameters:
+  -h, --help                            显示此帮助消息。
+  -r, --repository                      指定快照存储库名称，如: s3_repository
+  -s, --snapshot <name>                 指定快照名称
+  -i, --index <name>                    索引名称，多个使用逗号间隔，如: index1,index2,index3...
+  --bucket <name>                       S3 存储桶名称
+  --base-path <path>                    存储桶文件目录，例: backup/data/
+  --region <region>                     AWS 区域 ID
+  --es-url <url>                        ElasticSearch 地址，默认: http://127.0.0.1:9200
+"
+}
+
+function _process() {
+  _CMD=""
+  while [ ${#} -gt 0 ]; do
+    case "${1}" in
+      -h | --help)
+        show_help
+        return
+        ;;
+      status)
+        _CMD="status"
+        ;;
+      init)
+        _CMD="init"
+        ;;
+      check)
+        _CMD="check"
+        ;;
+      backup)
+        _CMD="backup"
+        ;;
+      index_backup)
+        _CMD="index_backup"
+        ;;
+      list)
+        _CMD="list"
+        ;;
+      delete)
+        _CMD="delete"
+        ;;
+      restore)
+        _CMD="restore"
+        ;;
+      -r | --repository)
+        _REPOSITORY="$2"
+        shift
+        ;;
+      -s | --snapshot)
+        _SNAPSHOT="$2"
+        shift
+        ;;
+      -i | --index)
+        _INDICES="$2"
+        shift
+        ;;
+      --bucket)
+        _BUCKET_NAME="$2"
+        shift
+        ;;
+      --base-path)
+        _BASE_PATH="$2"
+        shift
+        ;;
+      --region)
+        _REGION="$2"
+        shift
+        ;;
+      --es-url)
+        _ES_URL="$2"
+        shift
+        ;;
+      *)
+        echo "未知参数：$1"
+        show_help
+        return
+        ;;
+    esac
+    shift 1
+  done
+
+  case "${_CMD}" in
+    status)
+      status
+      ;;
+    init)
+      create_snapshot_repository
+      ;;
+    check)
+      check_snapshot_repository
+      ;;
+    backup)
+      all_snapshot
+      ;;
+    index_backup)
+      indices_snapshot
+      ;;
+    list)
+      list_snapshot
+      ;;
+    delete)
+      delete_snapshot
+      ;;
+    restore)
+      restore_snapshot
+      ;;
+    *)
+      echo "无效命令：${_CMD}"
+      show_help
+      return 1
+      ;;
+  esac
+}
+
+
+function main() {
+  [ -z "$1" ] && show_help && return
+  _process "$@"
+}
+
+main "$@"
+
+```
+
+### OSS存储桶配置示例
 
 ```bash
 # 创建快照仓库
@@ -1693,72 +2371,9 @@ PUT _snapshot/仓库名
     "max_restore_bytes_per_sec": "200mb"            # 调整快照恢复的速度，默认无限制
   }
 }
-
-# 验证快照仓库
-POST /_snapshot/仓库名/_verify
-
-# 查看所有仓库
-GET _snapshot/_all
-
-# 删除快照仓库
-DELETE _snapshot/仓库名
-```
-
-创建快照，并查看快照备份状态
-
-```bash
-# 创建快照
-PUT /_snapshot/仓库名/快照名
-{
-  "indices": "index_*",             # 需要备份的表名，支持通配符
-  "ignore_unavailable": true,       # 忽略indices丢失或关闭的数据流和索引
-  "include_global_state": true      # 备份全局设置，全量备份为true，增量备份为false
-}
-
-# 查看快照状态
-GET _snapshot/仓库名/快照名/_status
-GET _snapshot/仓库名/快照名
-
-# 查仓库下所有快照
-GET _snapshot/仓库名/_all
-
-# 删除快照
-DELETE _snapshot/仓库名/快照名
-
-# 多次备份“快照名”不能重复；同一仓库下，第一次快照为全量备份，后续快照都是增量备份。
 ```
 
 ### 集群快照还原
-
-集群每个节点安装 `repository-s3` 插件
-
-```bash
-# 进入ES安装目录
-cd /opt/elasticsearch
-
-# 安装插件
-sudo bin/elasticsearch-plugin install repository-s3
-
-# 该插件必须安装在集群中的每个节点上，安装后必须重新启动每个节点。
-
-# 注意：因为是新集群，还未在线运行，所以可以直接重启所有节点。
-```
-
-集群每个节点添加 `repository-s3` 密钥
-
-```bash
-# 添加 access_key，回车后输入秘钥key
-bin/elasticsearch-keystore add s3.client.default.access_key
-
-# 添加 secret_key，回车后输入秘钥字符串
-bin/elasticsearch-keystore add s3.client.default.secret_key
-
-# 重载秘钥配置
-POST _nodes/reload_secure_settings
-
-# 查看秘钥列表
-bin/elasticsearch-keystore list
-```
 
 创建快照仓库，并验证是否包含每个节点
 

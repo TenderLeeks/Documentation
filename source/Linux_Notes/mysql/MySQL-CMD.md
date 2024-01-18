@@ -41,8 +41,6 @@ mysql > set global read_only=0;
 mysql > select * from schema_version order by 2;
 ```
 
-
-
 ## 权限管理常用命令
 
 数据库对象的格式为`<database>.<table>`。`<database>.*`：表示授权数据库对象该数据库的所有表；`*.*`：表示授权数据库对象为所有数据库的所有表。
@@ -64,7 +62,7 @@ mysql > revoke select on `db_name`.* from 'user_name'@'%';
 mysql > revoke all privileges on `db_name`.* from 'user_name'@'%';
 
 # 查看所有用户信息
-mysql > select user, host from mysql.user; 
+mysql > select user, host from mysql.user;
 
 # 查看用户权限
 mysql > show grants for 'user_name'@'%'; 

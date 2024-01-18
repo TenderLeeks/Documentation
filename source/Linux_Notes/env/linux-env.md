@@ -318,6 +318,8 @@ $ export PATH=$PATH:/opt/dotnet-sdk-6.0.400
 
 $ echo -e "export DOTNET_ROOT=/opt/dotnet-sdk-6.0.400\nexport PATH=\$PATH:/opt/dotnet-sdk-6.0.400" >> /etc/profile
 
+# https://download.visualstudio.microsoft.com/download/pr/a2afb4da-478b-4ffa-aeeb-a37a313d6fc8/0897a8456d42f306519de9a15b1e14ef/dotnet-sdk-6.0.414-linux-arm64.tar.gz
+
 ```
 
 

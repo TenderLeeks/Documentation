@@ -7,7 +7,7 @@
 $ sudo apt-get remove docker docker-engine docker.io -y
 
 # 安装最新版本docker
-# curl -sSL https://get.docker.com/ | sh 
+# curl -sSL https://get.docker.com/ | sh
 $ curl -fsSL get.docker.com -o get-docker.sh
 $ sudo sh get-docker.sh
 
@@ -20,6 +20,8 @@ $ sudo sh get-docker.sh
 $ sudo curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 
 $ sudo curl -L https://github.com/docker/compose/releases/download/v2.20.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+
+$ sudo curl -L https://github.com/docker/compose/releases/download/v2.23.3/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 
 # 若是github访问太慢，可以用daocloud下载
 $ sudo curl -L https://get.daocloud.io/docker/compose/releases/download/1.25.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
@@ -86,8 +88,8 @@ $ docker images -f dangling=true
    ```shell
    $ systemctl stop docker.socket
    $ systemctl stop docker.service
-   $ mkdir -p /opt/docker/lib/
-   $ cp -a /var/lib/docker /opt/docker/lib/
+   $ mkdir -p /opt
+   $ cp -a /var/lib/docker /opt
    ```
 
 3. 修改文件 `/etc/docker/daemon.json` 配置
@@ -95,7 +97,7 @@ $ docker images -f dangling=true
    ```shell
    $ tee /etc/docker/daemon.json <<-'EOF'
    {
-     "data-root": "/opt/docker/lib/docker",
+     "data-root": "/opt/docker",
      "storage-driver": "overlay2",
      "log-level": "INFO",
      "log-driver": "json-file",
@@ -117,6 +119,25 @@ $ docker images -f dangling=true
    `log-level`：docker日志记录级别
 
    `log-opts`：dockr驱动程序选项
+
+## 使用普通用户管理docker服务
+
+```bash
+# 添加docker用户组
+sudo groupadd docker
+# 将登陆用户加入到docker用户组中
+sudo gpasswd -a $USER docker
+# 更新用户组
+newgrp docker
+```
+
+BUT 按照这种方式，执行 newgrp docker  的终端可以以普通用户执行docker相关命令，但是换一个终端就没有效果了！
+如果想要长期有效，可以再执行下面一个命令：
+
+```bash
+# a表示所有用户都被赋予后面的权限
+sudo chmod a+rw /var/run/docker.sock
+```
 
 ## 升级docker版本
 
