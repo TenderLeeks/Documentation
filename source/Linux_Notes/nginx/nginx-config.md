@@ -300,7 +300,7 @@ http {
    upstream xxx.xxxx.xxxx {
      server 127.0.0.2 down;  # 该节点不可用
      server 127.0.0.3 backup;  # 其他节点挂了后该节点自动上线
-     server 127.0.0.4 max_failes=1 fail_timeout=10s weight-5;
+     server 127.0.0.4 max_fails=1 fail_timeout=10s weight=5;
      server unix:/tmp/backend3;
      server www.example.com:8080;
      keepalive 32;  # 最多允许32个长连接
@@ -583,6 +583,7 @@ server {
 
   # 访问 https://test.beangotown.com/portkey/api/ 重定向到 https://did-portkey-test.portkey.finance/api/
   location /portkey/api/ {
+    proxy_ssl_server_name on;  # 忽略 ssl 证书配置
     rewrite ^/portkey/api/(.*)$ https://did-portkey-test.portkey.finance/api/$1 permanent;
   }
   
