@@ -496,6 +496,8 @@ docker run --restart=always  --name mysql-8.0.33\
 
 
 ```bash
+docker exec -it mysql-8.0.33 mysql -uroot -proot123456
+
 #创建账号并授权
 CREATE USER 'test'@'%' IDENTIFIED BY 'test';
 CREATE DATABASE test_database CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
@@ -504,6 +506,8 @@ FLUSH PRIVILEGES;
 
 ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'root123456';
 
+
+apt install mysql-client=8.0.*
 ```
 
 

@@ -95,7 +95,7 @@ $ fdisk /dev/vdc
 $ mkfs.ext4 /dev/vdc1
 $ blkid /dev/xvdb
 # echo 'UUID= /opt ext4 defaults 0 0' >> /etc/fstab
-$ echo 'UUID=4993a375-d69a-44e6-87cb-ca4b09584e2e /data ext4 defaults 0 0' >> /etc/fstab
+$ echo 'UUID=c0467267-6124-404b-952c-7c36fd4bd59a /data ext4 defaults 0 0' >> /etc/fstab
 $ mount -a
 $ df -lh
 ```

@@ -46,8 +46,7 @@ docker search redis
 docker pull redis:6.2.8
 
 # 创建数据和配置路径
-mkdir -p /opt/redis/conf
-mkdir -p /opt/redis/data
+mkdir -p /opt/redis/{conf,data}
 
 # https://redis.io/docs/management/config/ 查看redis各版本的配置文件
 # 下载配置文件
@@ -65,12 +64,23 @@ docker run -d --privileged=true -p 6379:6379 \
     --name redis redis:latest redis-server \
     /etc/redis/redis.conf --appendonly yes
 
+
+docker run -d --privileged=true --network=host \
+  --restart always -v /etc/timezone:/etc/timezone:ro \
+  -v /etc/localtime:/etc/localtime:ro \
+  -v /opt/redis/conf/redis.conf:/etc/redis/redis.conf \
+  -v /opt/redis/data:/data \
+  --name redis redis:6.2.8 redis-server \
+  /etc/redis/redis.conf --appendonly yes
+
+
 # 参数 --appendonly yes 开启数据持久化
 # 参数 --requirepass "redispassword"  设置密码为redispassword；当配置文件和命令行同时设置密码时，以命令行的密码为准！
 
 # redis-cli 访问
-docker exec -ti myredis redis-cli -h localhost -p 6379
-docker run -it --link myredis:redis --rm redis redis-cli -h redis -p 6379
+docker exec -it redis redis-cli -h localhost -p 6379
+docker run -it --link myr
+edis:redis --rm redis redis-cli -h redis -p 6379
 
 ```
 

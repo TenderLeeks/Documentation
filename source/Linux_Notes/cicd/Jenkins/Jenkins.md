@@ -2,21 +2,21 @@
 
 ## 使用 Docker 运行 Jenkins
 
-建议使用的Docker映像是[`jenkinsci/blueocean` image](https://hub.docker.com/r/jenkinsci/blueocean/)(来自 the [Docker Hub repository](https://hub.docker.com/))。 该镜像包含当前的[长期支持 (LTS) 的Jenkins版本](https://www.jenkins.io/download) （可以投入使用） ，捆绑了所有Blue Ocean插件和功能。这意味着你不需要单独安装Blue Ocean插件。
-
 运行容器
 
 ```shell
 $ mkdir -p /opt/jenkins/{jenkins_home,project}
 
+$ docker pull jenkins/jenkins:latest
+
 $ docker run --name jenkins \
-  -u root -d \
-  -p 8080:8080 \
-  -p 50000:50000 \
+  -u root -d --restart=always \
+  -p 8080:8080 -p 50000:50000 \
+  -v /etc/localtime:/etc/localtime \
   -v /opt/jenkins/jenkins_home:/var/jenkins_home \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /opt/jenkins/project:/app/project \
-  jenkinsci/blueocean
+  jenkins/jenkins:latest
 ```
 
 参考文档：
@@ -151,6 +151,14 @@ server {
 ```
 
 参考链接：https://cloud.tencent.com/developer/article/1476876
+
+
+
+## jenkins出现故障，报错HTTP ERROR 403 No valid crumb was included in the request
+
+在全局安全配置里面，找到代理，指定端口选禁用，勾选上启用代理兼容即可。
+
+
 
 ## 用户权限配置
 

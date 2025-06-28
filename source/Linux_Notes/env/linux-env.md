@@ -286,12 +286,18 @@ usermod -s /sbin/nologin username
 
 ```shell
 # 根据操作系统选择下载JDK版本，官方下载链接：https://www.oracle.com/java/technologies/downloads/#java11
+# https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz
 $ export DIR="/opt"
 $ export NAME="jdk-11.0.14"
 $ tar -zxf jdk-11.0.14_linux-x64_bin.tar.gz -C ${DIR}
 # 解压后的目录中是没有jre配置，增加jre配置执行命令
 $ ${DIR}/${NAME}/bin/jlink --module-path jmods --add-modules \
     java.desktop --output ${DIR}/${NAME}/jre
+
+# /opt/jenkins/jdk-21.0.7/bin/jlink --module-path jmods --add-modules java.desktop --output /opt/jenkins/jdk-21.0.7/jre
+# export JAVA_HOME=/opt/jenkins/jdk-21.0.7
+# export PATH=${JAVA_HOME}/bin:${JAVA_HOME}/jre/bin:$PATH
+# export CLASSPATH=.:${JAVA_HOME}/lib:${JAVA_HOME}/jre/lib
 
 $ tee /etc/profile.d/java-11.sh << EOF
 export JAVA_HOME=${DIR}/${NAME}
